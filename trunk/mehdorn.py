@@ -1,6 +1,6 @@
 #!/usr/bin/env python2.4
 
-import getopt, logging, os, random, time, sys, urllib2
+import getopt, logging, os, random, re, time, sys, urllib2
 
 import ClientForm
 from BeautifulSoup import BeautifulSoup
@@ -15,6 +15,8 @@ LOGFORMAT = '%(levelname)s: %(message)s'
 logging.basicConfig(level=LOGLEVEL, format=LOGFORMAT, stream=sys.stderr)
 #filename='/tmp/myapp.log', filemode='w'
 
+
+re_eur = re.compile(r'([0-9]+,[0-9]+)&nbsp;EUR')
 
 def tuples2dict(ts):
     d = {}
@@ -46,6 +48,39 @@ class TravelData:
         self.to = to
         self.date = date
         self.time = time
+
+
+class Connection:
+    def __init__(self, 
+            st_dep, st_arr, dt_dep, tm_dep, dt_arr, tm_arr, duration, changes, trains
+            ):
+        self.st_dep = st_dep
+        self.st_arr = st_arr
+
+        self.time_dep = time.strptime(dt_dep + ' ' + tm_dep, '%d.%m.%y %H:%M')
+        self.time_arr = time.strptime(dt_arr + ' ' + tm_arr, '%d.%m.%y %H:%M')
+        
+        self.duration = duration
+        self.changes = changes
+        self.trains = trains
+
+        self.price_n = None
+        self.price_s = None
+
+    def f2s(self, f):
+        if f:
+            return '%6.2f' % (f)
+        return '-.- '
+
+    def __str__(self):
+        return '%-20s %s\n%-20s %s   %5s %2s  %-10s  %6s  %6s' % (
+            self.st_dep, 
+            time.strftime('%d.%m.%y %H:%M', self.time_dep),
+            self.st_arr,
+            time.strftime('%d.%m.%y %H:%M', self.time_arr),
+            self.duration, self.changes, self.trains,
+            self.f2s(self.price_n), self.f2s(self.price_s),
+            )
 
 
 class UnexpectedPage:
@@ -109,7 +144,49 @@ class TimetablePage:
             if incident.contents[0] == u'Sp&#228;ter':
                 if not self.link_later:
                     self.link_later = incident['href']
-    
+
+        table = self.soup.findAll('table', attrs={'class':'result', 'cellspacing':'0'})
+        table = table[0]
+        for row in table.findAll('tr', recursive=False):
+            colums = row.findAll('td', recursive=False)
+            print '---', colums
+            if len(colums) < 2 or colums[2].contents[0] != u'ab':
+                continue
+
+            c = (
+                # st_dep
+                colums[0].a.contents[0],
+                # st_arr
+                colums[0].a.contents[2],
+                # dt_dep
+                colums[1].contents[0].split()[1],
+                # tm_dep
+                colums[3].contents[0],
+                # dt_arr
+                colums[1].contents[2].split()[1],
+                # tm_arr
+                colums[3].contents[2],
+                # duration
+                colums[4].string,
+                # changes
+                colums[5].string,
+                # trains
+                colums[6].a.contents[-1],
+                )
+
+            c = [i.strip() for i in c]
+                
+            conn = Connection(*c)
+            
+            m = re_eur.search(str(colums[7]))
+            if m:
+                conn.price_n = float(m.group(1).replace(',', '.'))
+
+            m = re_eur.search(str(colums[8]))
+            if m:
+                conn.price_s = float(m.group(1).replace(',', '.'))
+            
+            print conn
         
     def follow_link_later(self):
         logging.info('follow link <Spaeter>...')
@@ -151,7 +228,7 @@ class AvailabilityPage:
 
 ################################################################################
 
-def request_timetable_page(travelData):
+def request_timetable_page(travelData, complete=True):
     logging.info('request_timetable_page...')
 
     find_page = FindConnectionPage()
@@ -162,9 +239,10 @@ def request_timetable_page(travelData):
     if not timetable_page.ok:
         open_browser_and_exit(timetable_page.url)
 
-    while timetable_page.link_later:
-        response = timetable_page.follow_link_later()
-        timetable_page = TimetablePage(response)
+    if complete:
+        while timetable_page.link_later:
+            response = timetable_page.follow_link_later()
+            timetable_page = TimetablePage(response)
     
     return timetable_page
 
@@ -179,6 +257,10 @@ def show_all_availability_pages(timetable_page):
     
 def show_resolved_yourtimetable_page(timetable_page):
     logging.info('show_resolved_yourtimetable_page...')
+
+    if len(timetable_page.links_check_availability) == 0:
+        open_browser(timetable_page.url)
+        return
 
     first_link = timetable_page.links_check_availability[0]
 
@@ -204,6 +286,8 @@ def main():
     try:
         #show_all_availability_pages(request_timetable_page(travelData))
         show_resolved_yourtimetable_page(request_timetable_page(travelData))
+        #page = request_timetable_page(travelData, complete=False)
+        #open_browser(page.url)
 
     except UnexpectedPage, e:
         logging.error('UnexpectedPage')
