@@ -1,10 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.4
 
 import getopt, logging, os, random, time, sys, urllib2
 
 import ClientForm
-import TableParse
-from sgmllib import SGMLParser
 from BeautifulSoup import BeautifulSoup
 
 
@@ -55,29 +53,32 @@ class UnexpectedPage:
         self.url = url
     
 
-class StartPage:
+class FindConnectionPage:
     def __init__(self):
-        response = urlopen("http://www.bahn.de/p/view/index.shtml")
+        response = urlopen("http://reiseauskunft.bahn.de/bin/query.exe/d")
         forms = ClientForm.ParseResponse(response)
 
         for form in forms:
             logging.debug('form:\n' + str(form))
 
-        self.form = forms[2]
+        self.form = forms[1]
 
         logging.debug('selected form:\n' + str(self.form))
 
     def fill_form(self, travelData):
-        self.form['S'] = travelData.fr0m
-        self.form['Z'] = travelData.to
-        self.form['date'] = travelData.date
-        self.form['time'] = travelData.time
+        self.form['REQ0JourneyStopsSG'] = travelData.fr0m
+        self.form['REQ0JourneyStopsZG'] = travelData.to
+        self.form['REQ0JourneyDate'] = travelData.date
+        self.form['REQ0JourneyTime'] = travelData.time
         # it's a BC 50, 2. Kl
         self.form['REQ0Tariff_TravellerReductionClass.1'] = ['4']
+        # 2. Kl
+        self.form['REQ0Tariff_Class'] = ['2']
+        
 
     def submit(self):
         logging.info('submit form...')
-        response = self.form.click('submitButton')
+        response = self.form.click('start')
         return urlopen(response)
 
 
@@ -153,39 +154,44 @@ class AvailabilityPage:
 def request_timetable_page(travelData):
     logging.info('request_timetable_page...')
 
-    startPage = StartPage()
-    startPage.fill_form(travelData)
+    find_page = FindConnectionPage()
+    find_page.fill_form(travelData)
     
-    overview = TimetablePage(startPage.submit())
+    timetable_page = TimetablePage(find_page.submit())
 
-    if not overview.ok:
-        open_browser_and_exit(overview.url)
+    if not timetable_page.ok:
+        open_browser_and_exit(timetable_page.url)
 
-    while overview.link_later:
-        response = overview.follow_link_later()
-        overview = TimetablePage(response)
+    while timetable_page.link_later:
+        response = timetable_page.follow_link_later()
+        timetable_page = TimetablePage(response)
     
-    return overview
+    return timetable_page
 
-def show_all_availability_pages(overview):
+
+def show_all_availability_pages(timetable_page):
     logging.info('show_all_availability_pages...')
 
-    for link in overview.links_check_availability:
+    for link in timetable_page.links_check_availability:
         open_browser(link)
         sleep()
+
     
-def show_resolved_yourtimetable_page(overview):
+def show_resolved_yourtimetable_page(timetable_page):
     logging.info('show_resolved_yourtimetable_page...')
 
-    first_link = overview.links_check_availability[0]
-    print first_link
-    open_browser(first_link)
+    first_link = timetable_page.links_check_availability[0]
+
     page = AvailabilityPage(urlopen(first_link))
     response = page.follow_link_back()
-    open_browser(response.geturl())
+
+    timetable_page = TimetablePage(response)
+    if len(timetable_page.links_check_availability):
+        show_resolved_yourtimetable_page(timetable_page)
+    else:
+        open_browser(response.geturl())
 
             
-
 
 def main():
     opts, args = getopt.getopt(sys.argv[1:], '', [])
@@ -197,23 +203,15 @@ def main():
 
     try:
         #show_all_availability_pages(request_timetable_page(travelData))
-
         show_resolved_yourtimetable_page(request_timetable_page(travelData))
+
     except UnexpectedPage, e:
+        logging.error('UnexpectedPage')
         open_browser(e.url)
-
-
-if __name__ == "__main__":
-    main()
-
 
 ################################################################################
 
-#forms = ParseResponse(response2)
-#for form in forms:
-#    print form
-#f = open('out.html', 'w')
-#f.write(html)
-#f.close()
+if __name__ == "__main__":
+    main()
 
 
