@@ -42,6 +42,20 @@ def urlopen(url):
     return urllib2.urlopen(url)
 
 
+class Price:
+    def __init__(self, price=None):
+        if price:
+            # FIXME: test for string type
+            price = float(price.replace(',', '.'))
+
+        self.price = price
+        
+    def __str__(self):
+        if self.price:
+            return '%6.2f' % (self.price)
+        return '-.- '
+        
+
 class TravelData:
     def __init__(self, fr0m, to, date, time):
         self.fr0m = fr0m
@@ -64,22 +78,18 @@ class Connection:
         self.changes = changes
         self.trains = trains
 
-        self.price_n = None
-        self.price_s = None
-
-    def f2s(self, f):
-        if f:
-            return '%6.2f' % (f)
-        return '-.- '
+        self.price_n = Price()
+        self.price_s = Price()
 
     def __str__(self):
-        return '%-20s %s\n%-20s %s   %5s %2s  %-10s  %6s  %6s' % (
+        return '%-20s %s  %s\n%-20s %s   %5s %-2s  %6s  %6s' % (
             self.st_dep, 
             time.strftime('%d.%m.%y %H:%M', self.time_dep),
+            self.trains, 
             self.st_arr,
             time.strftime('%d.%m.%y %H:%M', self.time_arr),
-            self.duration, self.changes, self.trains,
-            self.f2s(self.price_n), self.f2s(self.price_s),
+            self.duration, self.changes,
+            self.price_n, self.price_s,
             )
 
 
@@ -123,6 +133,7 @@ class TimetablePage:
         self.url = response.geturl()
         self.links_check_availability = []
         self.link_later = None
+        self.connections = []
 
         self.soup = BeautifulSoup(response.read())
 
@@ -149,11 +160,11 @@ class TimetablePage:
         table = table[0]
         for row in table.findAll('tr', recursive=False):
             colums = row.findAll('td', recursive=False)
-            print '---', colums
+            #print '---', colums
             if len(colums) < 2 or colums[2].contents[0] != u'ab':
                 continue
 
-            c = (
+            conn = (
                 # st_dep
                 colums[0].a.contents[0],
                 # st_arr
@@ -173,20 +184,21 @@ class TimetablePage:
                 # trains
                 colums[6].a.contents[-1],
                 )
-
-            c = [i.strip() for i in c]
-                
-            conn = Connection(*c)
+            conn = [i.strip() for i in conn]
+            conn = Connection(*conn)
+            conn.price_n = self.parse_price(str(colums[7]))
+            conn.price_s = self.parse_price(str(colums[8]))
             
-            m = re_eur.search(str(colums[7]))
-            if m:
-                conn.price_n = float(m.group(1).replace(',', '.'))
+            self.connections.append(conn)
+    
+    def __str__(self):
+        return '\n\n'.join([str(c) for c in self.connections])
 
-            m = re_eur.search(str(colums[8]))
-            if m:
-                conn.price_s = float(m.group(1).replace(',', '.'))
-            
-            print conn
+    def parse_price(self, s):
+        m = re_eur.search(s)
+        if m:
+            return Price(m.group(1))
+        return Price()
         
     def follow_link_later(self):
         logging.info('follow link <Spaeter>...')
@@ -235,6 +247,7 @@ def request_timetable_page(travelData, complete=True):
     find_page.fill_form(travelData)
     
     timetable_page = TimetablePage(find_page.submit())
+    print timetable_page
 
     if not timetable_page.ok:
         open_browser_and_exit(timetable_page.url)
@@ -243,6 +256,7 @@ def request_timetable_page(travelData, complete=True):
         while timetable_page.link_later:
             response = timetable_page.follow_link_later()
             timetable_page = TimetablePage(response)
+            print timetable_page
     
     return timetable_page
 
