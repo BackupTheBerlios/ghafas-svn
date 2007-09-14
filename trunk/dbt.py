@@ -6,17 +6,19 @@ import ClientForm
 from BeautifulSoup import BeautifulSoup
 
 
-LOGLEVEL  = logging.INFO
-#LOGLEVEL  = logging.DEBUG
-LOGFORMAT = '%(asctime)s %(levelname)s %(message)s'
-LOGFORMAT = '%(levelname)s: %(message)s'
-
-
-logging.basicConfig(level=LOGLEVEL, format=LOGFORMAT, stream=sys.stderr)
-#filename='/tmp/myapp.log', filemode='w'
-
-
 re_eur = re.compile(r'([0-9]+,[0-9]+)&nbsp;EUR')
+
+
+def init_logger(debug = False):
+    if debug:
+        level  = logging.DEBUG
+    else:
+        level  = logging.INFO
+    format = '%(asctime)s %(levelname)s %(message)s'
+    format = '%(levelname)s: %(message)s'
+    
+    logging.basicConfig(level=level, format=format, stream=sys.stderr)
+    #filename='/tmp/myapp.log', filemode='w'
 
 def tuples2dict(ts):
     d = {}
@@ -290,7 +292,15 @@ def show_resolved_yourtimetable_page(timetable_page):
             
 
 def main():
-    opts, args = getopt.getopt(sys.argv[1:], '', [])
+    debug = False
+
+    opts, args = getopt.getopt(sys.argv[1:], 'd', [])
+
+    for o, v in opts:
+        if o == '-d':
+            debug = True
+
+    init_logger(debug)
 
     if len(args) == 0:
         args = ('Frankfurt am Main', 'Berlin hbf', '30.10.2007', '08:00')
