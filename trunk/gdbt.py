@@ -79,7 +79,7 @@ class Base:
         settingsvbox.pack_start(self.prevbutton, False, False, 2)
 
         # finish settings vbox
-        clienthbox.pack_start(settingsvbox, True, True, 3)
+        clienthbox.pack_start(settingsvbox, False, False, 3)
 
         # setup timetable; just a simple text dump
         ttlabel = gtk.Label()
@@ -91,10 +91,10 @@ class Base:
         timetableView.set_editable(False)
         timetableView.set_wrap_mode(gtk.WRAP_WORD)
         timetableScrollWindow.add_with_viewport(timetableView)
-        clienthbox.pack_start(timetableScrollWindow, False, False, 3)
+        clienthbox.pack_start(timetableScrollWindow, True, True, 3)
 
         # layout client area containing settings and timetable
-        mainvbox.pack_start(clienthbox, False, False, 2)
+        mainvbox.pack_start(clienthbox, True, True, 2)
 
         # setup status bar
         self.statusbar = gtk.Statusbar()
