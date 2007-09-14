@@ -23,6 +23,20 @@ def error(window):
     error_dialog.show()
 
 
+class PropertyEntry(gtk.Entry):
+    def __init__(self, name, value, layout=None):
+        gtk.Entry.__init__(self)
+        
+        self.hbox = gtk.HBox()
+        self.label = gtk.Label(name)
+        self.label.set_alignment(0, 0.5)
+        self.set_text(value)
+        self.hbox.pack_start(self.label, False, False, 0)
+        self.hbox.pack_start(self, False, False, 5)
+        if layout:
+            layout.pack_start(self.hbox, False, False, 2)
+
+
 class Base:
     def __init__(self):
         self.x = 300
@@ -50,28 +64,36 @@ class Base:
         clienthbox = gtk.HBox()
         # ... contains a:
         settingsvbox = gtk.VBox()
+            
+        # setup start & destination
+        settingsvbox.pack_start(gtk.Label(str=_("Start & Destination")), False, False, 2)
+        self.fromentry = PropertyEntry(_("From:"), "Berlin", settingsvbox)
+        self.toentry = PropertyEntry(_("To:"), "Frankfurt", settingsvbox)
 
         # setup departure data
-        settingsvbox.pack_start(gtk.Label(str=_("Departure")), False, False, 2)
-        departurevbox = gtk.HBox()
-        departurevbox.pack_start(gtk.Label(str=_("###")), False, False, 2)
-        departurevbox.pack_start(gtk.Label(str=_("###")), False, False, 2)
-        departurevbox.pack_start(gtk.Label(str=_("###")), False, False, 2)
-        settingsvbox.pack_start(departurevbox, False, False, 2)
+        settingsvbox.pack_start(gtk.Label(str=_("Departure (earliest)")), False, False, 2)
+        self.depdateentry = PropertyEntry(_("Time:"), "10:00", settingsvbox)
+        self.deptimeentry = PropertyEntry(_("Date:"), "10.10.2007", settingsvbox)
 
         # setup destination data
-        settingsvbox.pack_start(gtk.Label(str=_("Arrival")), False, False, 2)
-        arrivalvbox = gtk.HBox()
-        arrivalvbox.pack_start(gtk.Label(str=_("###")), False, False, 2)
-        arrivalvbox.pack_start(gtk.Label(str=_("###")), False, False, 2)
-        arrivalvbox.pack_start(gtk.Label(str=_("###")), False, False, 2)
-        settingsvbox.pack_start(arrivalvbox, False, False, 2)
+        settingsvbox.pack_start(gtk.Label(str=_("Arrival (latest)")), False, False, 2)
+        self.destdateentry = PropertyEntry(_("Time:"), "18:00", settingsvbox)
+        self.desttimeentry = PropertyEntry(_("Date:"), "10.10.2007", settingsvbox)
 
         # setup option panel; contains bahncard type, no of passengers
         settingsvbox.pack_start(gtk.Label(str=_("Options")), False, False, 2)
         optionsvbox = gtk.HBox()
         optionsvbox.pack_start(gtk.Label(str=_("BahnCard")), False, False, 2)
-        optionsvbox.pack_start(gtk.Label(str=_("###")), False, False, 2)
+
+        self.card_combo = gtk.combo_box_new_text()
+        self.card_combo.append_text(_("No reduction"))
+        self.card_combo.append_text(_("BC25, 2nd class"))
+        self.card_combo.append_text(_("BC25, 1st class"))
+        self.card_combo.append_text(_("BC50, 2nd class"))
+        self.card_combo.append_text(_("BC50, 1st class"))
+        self.card_combo.set_active(0)
+        optionsvbox.pack_start(self.card_combo, False, False, 5)
+
         settingsvbox.pack_start(optionsvbox, False, False, 2)
 
         # setup button to start request for timetable
@@ -109,7 +131,7 @@ class Base:
 
         # final main window setup
         self.window.move(self.x, self.y)
-        self.window.set_size_request(270, -1)
+        self.window.set_size_request(600, -1)
 
         self.window.show()
         self.window.show_all()
