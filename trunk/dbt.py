@@ -207,7 +207,7 @@ class TimetablePage:
                 )
         table = table[0]
         for row in table.findAll('tr', recursive=False):
-            for incident in self.soup('a'):
+            for incident in row.findAll('a'):
                 if incident.contents[0] == u'Verf&#252;gbarkeit pr&#252;fen':
                     link = incident['href']
                     self.links_check_availability.append(link)
