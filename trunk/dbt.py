@@ -112,8 +112,12 @@ class Connection:
         self.st_dep = st_dep
         self.st_arr = st_arr
 
-        self.time_dep = time.strptime(dt_dep + ' ' + tm_dep, '%d.%m.%y %H:%M')
-        self.time_arr = time.strptime(dt_arr + ' ' + tm_arr, '%d.%m.%y %H:%M')
+        self.time_dep = time.mktime(time.strptime(
+                dt_dep + ' ' + tm_dep, '%d.%m.%y %H:%M'
+                ))
+        self.time_arr = time.mktime(time.strptime(
+                dt_arr + ' ' + tm_arr, '%d.%m.%y %H:%M'
+                ))
         
         self.duration = duration
         self.changes = changes
@@ -125,10 +129,10 @@ class Connection:
     def __str__(self):
         return '%-20s %s  %s\n%-20s %s   %5s %-2s  %6s  %6s' % (
             self.st_dep, 
-            time.strftime('%d.%m.%y %H:%M', self.time_dep),
+            time.strftime('%d.%m.%y %H:%M', time.localtime(self.time_dep)),
             self.trains, 
             self.st_arr,
-            time.strftime('%d.%m.%y %H:%M', self.time_arr),
+            time.strftime('%d.%m.%y %H:%M', time.localtime(self.time_arr)),
             self.duration, self.changes,
             self.price_n, self.price_s,
             )
