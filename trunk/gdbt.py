@@ -159,7 +159,7 @@ class Base:
         result = dbt.request_timetable_page(travelData)
 
         self.timetableBuffer.insert_at_cursor('...\n')
-        result = dbt.get_resolved_yourtimetable_page(result)
+        result = dbt.get_resolved_timetable_page(result)
         
         self.timetableBuffer.set_text(_('Time table:\n'))
 

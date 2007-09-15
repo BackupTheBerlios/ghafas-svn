@@ -302,8 +302,8 @@ def show_all_availability_pages(timetable_page):
         sleep()
 
     
-def get_resolved_yourtimetable_page(timetable_page):
-    logging.info('get_resolved_yourtimetable_page...')
+def get_resolved_timetable_page(timetable_page):
+    logging.info('get_resolved_timetable_page...')
 
     if len(timetable_page.links_check_availability) == 0:
         return timetable_page
@@ -315,7 +315,7 @@ def get_resolved_yourtimetable_page(timetable_page):
 
     timetable_page = TimetablePage(response)
     if len(timetable_page.links_check_availability):
-        timetable_page = get_resolved_yourtimetable_page(timetable_page)
+        timetable_page = get_resolved_timetable_page(timetable_page)
     
     return timetable_page
 
@@ -323,7 +323,7 @@ def get_resolved_yourtimetable_page(timetable_page):
 def show_resolved_yourtimetable_page(timetable_page):
     logging.info('show_resolved_yourtimetable_page...')
 
-    timetable_page = get_resolved_yourtimetable_page(timetable_page)
+    timetable_page = get_resolved_timetable_page(timetable_page)
     open_browser(timetable_page.url)
             
 
