@@ -74,13 +74,13 @@ class Base:
 
         # setup departure data
         settingsvbox.pack_start(gtk.Label(str=_("Departure (earliest)")), False, False, 2)
-        self.depdateentry = PropertyEntry(_("Time:"), travelData.get_departure_time(), settingsvbox)
-        self.deptimeentry = PropertyEntry(_("Date:"), travelData.get_departure_date(), settingsvbox)
+        self.deptimeentry = PropertyEntry(_("Time:"), travelData.get_departure_time(), settingsvbox)
+        self.depdateentry = PropertyEntry(_("Date:"), travelData.get_departure_date(), settingsvbox)
 
         # setup destination data
         settingsvbox.pack_start(gtk.Label(str=_("Arrival (latest)")), False, False, 2)
-        self.destdateentry = PropertyEntry(_("Time:"), travelData.get_arrival_time(), settingsvbox)
-        self.desttimeentry = PropertyEntry(_("Date:"), travelData.get_arrival_date(), settingsvbox)
+        self.desttimeentry = PropertyEntry(_("Time:"), travelData.get_arrival_time(), settingsvbox)
+        self.destdateentry = PropertyEntry(_("Date:"), travelData.get_arrival_date(), settingsvbox)
 
         # setup option panel; contains bahncard type, no of passengers
         settingsvbox.pack_start(gtk.Label(str=_("Options")), False, False, 2)
@@ -140,6 +140,13 @@ class Base:
 
 
     def request_timetable(self, action=None):
+        travelData = dbt.TravelData(
+                self.fromentry.get_text(),
+                self.toentry.get_text(),
+                self.depdateentry.get_text(),
+                self.deptimeentry.get_text()
+                )
+    
         self.timetableBuffer.set_text('Searching ...\n')
         
         result = dbt.request_timetable_page(travelData)
