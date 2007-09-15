@@ -344,8 +344,10 @@ def main():
         travelData = TravelData(*args)
 
     try:
+        result = request_timetable_page(travelData)
+        show_resolved_yourtimetable_page(result)
+
         #show_all_availability_pages(request_timetable_page(travelData))
-        show_resolved_yourtimetable_page(request_timetable_page(travelData))
         #page = request_timetable_page(travelData, complete=False)
         #open_browser(page.url)
 
