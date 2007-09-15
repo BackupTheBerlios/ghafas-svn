@@ -72,11 +72,33 @@ class Price:
         
 
 class TravelData:
-    def __init__(self, fr0m, to, date, time):
+    def __init__(self, fr0m, to, dep_date, dep_time):
         self.fr0m = fr0m
         self.to = to
-        self.date = date
-        self.time = time
+        self.time_dep = time.strptime(dep_date + ' ' + dep_time, '%d.%m.%Y %H:%M')
+        self.time_arr = self.time_dep
+
+    def get_start(self):
+        return self.fr0m
+
+    def get_destination(self):
+        return self.to
+
+    def get_departure_time(self):
+        return time.strftime('%H:%M', self.time_dep)
+
+    def get_departure_date(self):
+        return time.strftime('%d.%m.%y', self.time_dep)
+
+    def get_arrival_time(self):
+        return time.strftime('%H:%M', self.time_arr)
+
+    def get_arrival_date(self):
+        return time.strftime('%d.%m.%y', self.time_arr)
+
+
+testTravelData = TravelData('Frankfurt am Main', 'Berlin Hbf', '30.10.2007', '08:00')
+
 
 
 class Connection:
@@ -316,9 +338,9 @@ def main():
     init_logger(debug)
 
     if len(args) == 0:
-        args = ('Frankfurt am Main', 'Berlin hbf', '30.10.2007', '08:00')
-
-    travelData = TravelData(*args)
+        travelData = testTravelData
+    else:
+        travelData = TravelData(*args)
 
     try:
         #show_all_availability_pages(request_timetable_page(travelData))
