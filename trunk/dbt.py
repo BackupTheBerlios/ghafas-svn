@@ -150,8 +150,8 @@ class FindConnectionPage:
     def fill_form(self, travelData):
         self.form['REQ0JourneyStopsSG'] = travelData.fr0m
         self.form['REQ0JourneyStopsZG'] = travelData.to
-        self.form['REQ0JourneyDate'] = travelData.date
-        self.form['REQ0JourneyTime'] = travelData.time
+        self.form['REQ0JourneyDate'] = travelData.get_arrival_date()
+        self.form['REQ0JourneyTime'] = travelData.get_arrival_time()
         # it's a BC 50, 2. Kl
         self.form['REQ0Tariff_TravellerReductionClass.1'] = ['4']
         # 2. Kl
@@ -306,12 +306,11 @@ def show_all_availability_pages(timetable_page):
         sleep()
 
     
-def show_resolved_yourtimetable_page(timetable_page):
-    logging.info('show_resolved_yourtimetable_page...')
+def get_resolved_yourtimetable_page(timetable_page):
+    logging.info('get_resolved_yourtimetable_page...')
 
     if len(timetable_page.links_check_availability) == 0:
-        open_browser(timetable_page.url)
-        return
+        return timetable_page
 
     first_link = timetable_page.links_check_availability[0]
 
@@ -320,10 +319,16 @@ def show_resolved_yourtimetable_page(timetable_page):
 
     timetable_page = TimetablePage(response)
     if len(timetable_page.links_check_availability):
-        show_resolved_yourtimetable_page(timetable_page)
-    else:
-        open_browser(response.geturl())
+        timetable_page = get_resolved_yourtimetable_page(timetable_page)
+    
+    return timetable_page
 
+
+def show_resolved_yourtimetable_page(timetable_page):
+    logging.info('show_resolved_yourtimetable_page...')
+
+    timetable_page = get_resolved_yourtimetable_page(timetable_page)
+    open_browser(timetable_page.url)
             
 
 def main():
