@@ -3,12 +3,16 @@
 import sys
 import os.path
 
-
 try:
     import gtk
 except ImportError, (strerror):
     print >>sys.stderr, "%s.  Please make sure you have this library installed into a directory in Python's path or in the same directory as Sonata.\n" % strerror
     sys.exit(1)
+
+import dbt
+
+
+travelData = dbt.testTravelData
 
 
 def _(s):
@@ -65,18 +69,18 @@ class Base:
             
         # setup start & destination
         settingsvbox.pack_start(gtk.Label(str=_("Start & Destination")), False, False, 2)
-        self.fromentry = PropertyEntry(_("From:"), "Berlin", settingsvbox)
-        self.toentry = PropertyEntry(_("To:"), "Frankfurt", settingsvbox)
+        self.fromentry = PropertyEntry(_("From:"), travelData.get_start(), settingsvbox)
+        self.toentry = PropertyEntry(_("To:"), travelData.get_destination(), settingsvbox)
 
         # setup departure data
         settingsvbox.pack_start(gtk.Label(str=_("Departure (earliest)")), False, False, 2)
-        self.depdateentry = PropertyEntry(_("Time:"), "10:00", settingsvbox)
-        self.deptimeentry = PropertyEntry(_("Date:"), "10.10.2007", settingsvbox)
+        self.depdateentry = PropertyEntry(_("Time:"), travelData.get_departure_time(), settingsvbox)
+        self.deptimeentry = PropertyEntry(_("Date:"), travelData.get_departure_date(), settingsvbox)
 
         # setup destination data
         settingsvbox.pack_start(gtk.Label(str=_("Arrival (latest)")), False, False, 2)
-        self.destdateentry = PropertyEntry(_("Time:"), "18:00", settingsvbox)
-        self.desttimeentry = PropertyEntry(_("Date:"), "10.10.2007", settingsvbox)
+        self.destdateentry = PropertyEntry(_("Time:"), travelData.get_arrival_time(), settingsvbox)
+        self.desttimeentry = PropertyEntry(_("Date:"), travelData.get_arrival_date(), settingsvbox)
 
         # setup option panel; contains bahncard type, no of passengers
         settingsvbox.pack_start(gtk.Label(str=_("Options")), False, False, 2)
