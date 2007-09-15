@@ -22,11 +22,7 @@ from BeautifulSoup import BeautifulSoup
 re_eur = re.compile(r'([0-9]+,[0-9]+)&nbsp;EUR')
 
 
-def init_logger(debug = False):
-    if debug:
-        level  = logging.DEBUG
-    else:
-        level  = logging.INFO
+def init_logger(level):
     format = '%(asctime)s %(levelname)s %(message)s'
     format = '%(levelname)s: %(message)s'
     
@@ -332,15 +328,15 @@ def show_resolved_yourtimetable_page(timetable_page):
             
 
 def main():
-    debug = False
+    log_level = logging.INFO
 
     opts, args = getopt.getopt(sys.argv[1:], 'd', [])
 
     for o, v in opts:
         if o == '-d':
-            debug = True
+            log_level = logging.DEBUG
 
-    init_logger(debug)
+    init_logger(log_level)
 
     if len(args) == 0:
         travelData = testTravelData
