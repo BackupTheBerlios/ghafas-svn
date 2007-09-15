@@ -3,8 +3,6 @@
 import sys
 import os.path
 
-sys.path.insert(0, '/opt/local/lib/python2.3/site-packages/gtk-2.0')
-sys.path.insert(0, '/opt/local/lib/python2.3/site-packages')
 
 try:
     import gtk
