@@ -84,13 +84,13 @@ class TravelData:
         return time.strftime('%H:%M', self.time_dep)
 
     def get_departure_date(self):
-        return time.strftime('%d.%m.%y', self.time_dep)
+        return time.strftime('%d.%m.%Y', self.time_dep)
 
     def get_arrival_time(self):
         return time.strftime('%H:%M', self.time_arr)
 
     def get_arrival_date(self):
-        return time.strftime('%d.%m.%y', self.time_arr)
+        return time.strftime('%d.%m.%Y', self.time_arr)
 
 
 testTravelData = TravelData('Frankfurt am Main', 'Berlin Hbf', '30.10.2007', '08:00')
