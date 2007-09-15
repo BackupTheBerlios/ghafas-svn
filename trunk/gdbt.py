@@ -136,7 +136,7 @@ class Base:
 
         # Connect to signals
         self.prevbutton.connect('clicked', self.request_timetable)
-        self.prevbutton.connect('clicked', self.show_timetable_in_browser)
+        self.showinbrowser.connect('clicked', self.show_timetable_in_browser)
 
         # final main window setup
         self.window.move(self.x, self.y)
