@@ -1,9 +1,22 @@
 #!/usr/bin/env python2.4
 
-import getopt, logging, os, random, re, time, sys, urllib2
+import getopt
+import logging
+import os
+import os.path
+import random
+import re
+import time
+import sys
+import urllib2
+
+sitepackages = os.path.join(os.path.dirname(__file__), 'site-packages')
+sys.path.insert(0, sitepackages)
 
 import ClientForm
 from BeautifulSoup import BeautifulSoup
+
+
 
 
 re_eur = re.compile(r'([0-9]+,[0-9]+)&nbsp;EUR')
