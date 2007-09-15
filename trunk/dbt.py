@@ -71,7 +71,9 @@ class TravelData:
     def __init__(self, fr0m, to, dep_date, dep_time):
         self.fr0m = fr0m
         self.to = to
-        self.time_dep = time.mktime(time.strptime(dep_date + ' ' + dep_time, '%d.%m.%Y %H:%M'))
+        self.time_dep = time.mktime(
+                time.strptime(dep_date + ' ' + dep_time, '%d.%m.%Y %H:%M')
+                )
         self.time_arr = self.time_dep
 
     def get_start(self):
@@ -93,13 +95,19 @@ class TravelData:
         return time.strftime('%d.%m.%Y', time.localtime(self.time_arr))
 
 
-testTravelData = TravelData('Frankfurt am Main', 'Berlin Hbf', '30.10.2007', '08:00')
+testTravelData = TravelData(
+        'Frankfurt am Main',
+        'Berlin Hbf',
+        '30.10.2007',
+        '08:00'
+        )
 
 
 
 class Connection:
     def __init__(self, 
-            st_dep, st_arr, dt_dep, tm_dep, dt_arr, tm_arr, duration, changes, trains
+            st_dep, st_arr, dt_dep, tm_dep, dt_arr, tm_arr,
+            duration, changes, trains
             ):
         self.st_dep = st_dep
         self.st_arr = st_arr
@@ -189,7 +197,10 @@ class TimetablePage:
                 if not self.link_later:
                     self.link_later = incident['href']
 
-        table = self.soup.findAll('table', attrs={'class':'result', 'cellspacing':'0'})
+        table = self.soup.findAll(
+                'table',
+                attrs={'class':'result', 'cellspacing':'0'}
+                )
         table = table[0]
         for row in table.findAll('tr', recursive=False):
             colums = row.findAll('td', recursive=False)
