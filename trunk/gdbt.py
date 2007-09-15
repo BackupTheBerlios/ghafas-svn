@@ -41,11 +41,13 @@ class PropertyEntry(gtk.Entry):
 
 class Base:
     def __init__(self):
+        self.timetable = False
         self.x = 300
         self.y = 300
             
         actions = (
             ('request_timetable', None, _('_RequestTimetable'), None, None, self.request_timetable),
+            ('show_timetable_in_browser', None, _('_ShowInBrowser'), None, None, self.show_timetable_in_browser),
             )
     
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
@@ -102,6 +104,10 @@ class Base:
         self.prevbutton = gtk.Button("Go", None, True)
         settingsvbox.pack_start(self.prevbutton, False, False, 2)
 
+        # setup button to start request for timetable
+        self.showinbrowser = gtk.Button("Show in Browser", None, True)
+        settingsvbox.pack_start(self.showinbrowser, False, False, 2)
+
         # finish settings vbox
         clienthbox.pack_start(settingsvbox, False, False, 3)
 
@@ -130,6 +136,7 @@ class Base:
 
         # Connect to signals
         self.prevbutton.connect('clicked', self.request_timetable)
+        self.prevbutton.connect('clicked', self.show_timetable_in_browser)
 
         # final main window setup
         self.window.move(self.x, self.y)
@@ -158,8 +165,13 @@ class Base:
 
         for c in result.connections:
             self.timetableBuffer.insert_at_cursor('\n%s\n' % str(c))
+            
+        self.timetable = result
 
-
+    def show_timetable_in_browser(self, action=None):
+        if self.timetable:
+            dbt.open_browser(self.timetable.url)
+        
 def main():
     gtk.gdk.threads_init()
 
