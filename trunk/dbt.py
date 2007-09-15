@@ -71,7 +71,7 @@ class TravelData:
     def __init__(self, fr0m, to, dep_date, dep_time):
         self.fr0m = fr0m
         self.to = to
-        self.time_dep = time.strptime(dep_date + ' ' + dep_time, '%d.%m.%Y %H:%M')
+        self.time_dep = time.mktime(time.strptime(dep_date + ' ' + dep_time, '%d.%m.%Y %H:%M'))
         self.time_arr = self.time_dep
 
     def get_start(self):
@@ -81,16 +81,16 @@ class TravelData:
         return self.to
 
     def get_departure_time(self):
-        return time.strftime('%H:%M', self.time_dep)
+        return time.strftime('%H:%M', time.localtime(self.time_dep))
 
     def get_departure_date(self):
-        return time.strftime('%d.%m.%Y', self.time_dep)
+        return time.strftime('%d.%m.%Y', time.localtime(self.time_dep))
 
     def get_arrival_time(self):
-        return time.strftime('%H:%M', self.time_arr)
+        return time.strftime('%H:%M', time.localtime(self.time_arr))
 
     def get_arrival_date(self):
-        return time.strftime('%d.%m.%Y', self.time_arr)
+        return time.strftime('%d.%m.%Y', time.localtime(self.time_arr))
 
 
 testTravelData = TravelData('Frankfurt am Main', 'Berlin Hbf', '30.10.2007', '08:00')
