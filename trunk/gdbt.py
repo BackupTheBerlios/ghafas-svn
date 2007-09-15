@@ -140,8 +140,17 @@ class Base:
 
 
     def request_timetable(self, action=None):
-        self.timetableBuffer.insert_at_cursor('foo\n')
+        self.timetableBuffer.set_text('Searching ...\n')
+        
+        result = dbt.request_timetable_page(travelData)
 
+        self.timetableBuffer.insert_at_cursor('...\n')
+        result = dbt.get_resolved_yourtimetable_page(result)
+        
+        self.timetableBuffer.set_text(_('Time table:\n'))
+
+        for c in result.connections:
+            self.timetableBuffer.insert_at_cursor('\n%s\n' % str(c))
 
 
 def main():
