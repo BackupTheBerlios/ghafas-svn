@@ -54,14 +54,17 @@ def urlopen(url):
 
 
 class Price:
-    def __init__(self, price=None):
+    def __init__(self, price=None, unknown=False):
         if price:
             # FIXME: test for string type
             price = float(price.replace(',', '.'))
 
         self.price = price
+        self.unknown = unknown # unknown availability
         
     def __str__(self):
+        if self.unknown == True:
+            return '?'
         if self.price:
             return '%6.2f' % (self.price)
         return '-.- '
@@ -236,16 +239,20 @@ class TimetablePage:
                 )
             conn = [i.strip() for i in conn]
             conn = Connection(*conn)
-            conn.price_n = self.parse_price(str(colums[7]))
-            conn.price_s = self.parse_price(str(colums[8]))
+            conn.price_n = self.parse_price(colums[7])
+            conn.price_s = self.parse_price(colums[8])
             
             self.connections.append(conn)
     
     def __str__(self):
         return '\n\n'.join([str(c) for c in self.connections])
 
-    def parse_price(self, s):
-        m = re_eur.search(s)
+    def parse_price(self, content):
+        for incident in content.findAll('a'):
+            if incident.contents[0] == u'Verf&#252;gbarkeit pr&#252;fen':
+                return Price(unknown=True)
+
+        m = re_eur.search(str(content))
         if m:
             return Price(m.group(1))
         return Price()
