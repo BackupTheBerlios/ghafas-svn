@@ -194,9 +194,6 @@ class TimetablePage:
             raise UnexpectedPage(self.url)
 
         for incident in self.soup('a'):
-            if incident.contents[0] == u'Verf&#252;gbarkeit pr&#252;fen':
-                link = incident['href']
-                self.links_check_availability.append(link)
             if incident.contents[0] == u'Sp&#228;ter':
                 if not self.link_later:
                     self.link_later = incident['href']
@@ -207,6 +204,11 @@ class TimetablePage:
                 )
         table = table[0]
         for row in table.findAll('tr', recursive=False):
+            for incident in self.soup('a'):
+                if incident.contents[0] == u'Verf&#252;gbarkeit pr&#252;fen':
+                    link = incident['href']
+                    self.links_check_availability.append(link)
+
             colums = row.findAll('td', recursive=False)
             #print '---', colums
             if len(colums) < 2 or colums[2].contents[0] != u'ab':
