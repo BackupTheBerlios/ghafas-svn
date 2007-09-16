@@ -74,15 +74,15 @@ class TravelData:
     def __init__(self, fr0m, to, dep_date, dep_time, arr_date=None, arr_time=None):
         self.fr0m = fr0m
         self.to = to
-        self.time_dep = time.mktime(
+        self.dep_time = time.mktime(
                 time.strptime(dep_date + ' ' + dep_time, '%d.%m.%Y %H:%M')
                 )
         if arr_date and arr_time:
-            self.time_arr = time.mktime(
+            self.arr_time = time.mktime(
                     time.strptime(arr_date + ' ' + arr_time, '%d.%m.%Y %H:%M')
                     )
         else:
-            self.time_arr = self.time_dep
+            self.arr_time = self.dep_time
 
     def get_start(self):
         return self.fr0m
@@ -91,16 +91,16 @@ class TravelData:
         return self.to
 
     def get_departure_time(self):
-        return time.strftime('%H:%M', time.localtime(self.time_dep))
+        return time.strftime('%H:%M', time.localtime(self.dep_time))
 
     def get_departure_date(self):
-        return time.strftime('%d.%m.%Y', time.localtime(self.time_dep))
+        return time.strftime('%d.%m.%Y', time.localtime(self.dep_time))
 
     def get_arrival_time(self):
-        return time.strftime('%H:%M', time.localtime(self.time_arr))
+        return time.strftime('%H:%M', time.localtime(self.arr_time))
 
     def get_arrival_date(self):
-        return time.strftime('%d.%m.%Y', time.localtime(self.time_arr))
+        return time.strftime('%d.%m.%Y', time.localtime(self.arr_time))
 
 
 testTravelData = TravelData(
@@ -122,10 +122,10 @@ class Connection:
         self.st_dep = st_dep
         self.st_arr = st_arr
 
-        self.time_dep = time.mktime(time.strptime(
+        self.dep_time = time.mktime(time.strptime(
                 dt_dep + ' ' + tm_dep, '%d.%m.%y %H:%M'
                 ))
-        self.time_arr = time.mktime(time.strptime(
+        self.arr_time = time.mktime(time.strptime(
                 dt_arr + ' ' + tm_arr, '%d.%m.%y %H:%M'
                 ))
         
@@ -139,10 +139,10 @@ class Connection:
     def __str__(self):
         return '%-20s %s  %s\n%-20s %s   %5s %-2s  %6s  %6s' % (
             self.st_dep, 
-            time.strftime('%d.%m.%y %H:%M', time.localtime(self.time_dep)),
+            time.strftime('%d.%m.%y %H:%M', time.localtime(self.dep_time)),
             self.trains, 
             self.st_arr,
-            time.strftime('%d.%m.%y %H:%M', time.localtime(self.time_arr)),
+            time.strftime('%d.%m.%y %H:%M', time.localtime(self.arr_time)),
             self.duration, self.changes,
             self.price_n, self.price_s,
             )
@@ -317,7 +317,7 @@ def request_timetable_page(travelData, complete=True):
         open_browser_and_exit(timetable_page.url)
 
     if complete:
-        while timetable_page.connections[-1].time_arr < travelData.time_arr:
+        while timetable_page.connections[-1].arr_time < travelData.arr_time:
             if not timetable_page.link_later:
                 break
             response = timetable_page.follow_link_later()
