@@ -71,13 +71,18 @@ class Price:
         
 
 class TravelData:
-    def __init__(self, fr0m, to, dep_date, dep_time):
+    def __init__(self, fr0m, to, dep_date, dep_time, arr_date=None, arr_time=None):
         self.fr0m = fr0m
         self.to = to
         self.time_dep = time.mktime(
                 time.strptime(dep_date + ' ' + dep_time, '%d.%m.%Y %H:%M')
                 )
-        self.time_arr = self.time_dep
+        if arr_date and arr_time:
+            self.time_arr = time.mktime(
+                    time.strptime(arr_date + ' ' + arr_time, '%d.%m.%Y %H:%M')
+                    )
+        else:
+            self.time_arr = self.time_dep
 
     def get_start(self):
         return self.fr0m
@@ -102,7 +107,9 @@ testTravelData = TravelData(
         'Frankfurt am Main',
         'Berlin Hbf',
         '30.10.2007',
-        '08:00'
+        '08:00',
+        '30.10.2007',
+        '14:00'
         )
 
 
@@ -161,8 +168,8 @@ class FindConnectionPage:
     def fill_form(self, travelData):
         self.form['REQ0JourneyStopsSG'] = travelData.fr0m
         self.form['REQ0JourneyStopsZG'] = travelData.to
-        self.form['REQ0JourneyDate'] = travelData.get_arrival_date()
-        self.form['REQ0JourneyTime'] = travelData.get_arrival_time()
+        self.form['REQ0JourneyDate'] = travelData.get_departure_date()
+        self.form['REQ0JourneyTime'] = travelData.get_departure_time()
         # it's a BC 50, 2. Kl
         self.form['REQ0Tariff_TravellerReductionClass.1'] = ['4']
         # 2. Kl
@@ -310,7 +317,9 @@ def request_timetable_page(travelData, complete=True):
         open_browser_and_exit(timetable_page.url)
 
     if complete:
-        while timetable_page.link_later:
+        while timetable_page.connections[-1].time_arr < travelData.time_arr:
+            if not timetable_page.link_later:
+                break
             response = timetable_page.follow_link_later()
             timetable_page = TimetablePage(response)
             print timetable_page
