@@ -77,12 +77,13 @@ class TravelData:
         self.dep_time = time.mktime(
                 time.strptime(dep_date + ' ' + dep_time, '%d.%m.%Y %H:%M')
                 )
-        if arr_date and arr_time:
-            self.arr_time = time.mktime(
-                    time.strptime(arr_date + ' ' + arr_time, '%d.%m.%Y %H:%M')
-                    )
-        else:
-            self.arr_time = self.dep_time
+        if not arr_date:
+            arr_date = dep_date:
+        if not arr_time:
+            arr_time = dep_time:
+        self.arr_time = time.mktime(
+                time.strptime(arr_date + ' ' + arr_time, '%d.%m.%Y %H:%M')
+                )
 
     def get_start(self):
         return self.fr0m
