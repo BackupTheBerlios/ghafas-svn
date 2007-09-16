@@ -69,21 +69,19 @@ class Price:
             return '%6.2f' % (self.price)
         return '-.- '
         
+def parse_time(d, t):
+    return time.mktime(time.strptime('%s %s' % (d, t), '%d.%m.%Y %H:%M'))
 
 class TravelData:
     def __init__(self, fr0m, to, dep_date, dep_time, arr_date=None, arr_time=None):
         self.fr0m = fr0m
         self.to = to
-        self.dep_time = time.mktime(
-                time.strptime(dep_date + ' ' + dep_time, '%d.%m.%Y %H:%M')
-                )
+        self.dep_time = parse_time(dep_date, dep_time)
         if not arr_date:
-            arr_date = dep_date:
+            arr_date = dep_date
         if not arr_time:
-            arr_time = dep_time:
-        self.arr_time = time.mktime(
-                time.strptime(arr_date + ' ' + arr_time, '%d.%m.%Y %H:%M')
-                )
+            arr_time = dep_time
+        self.arr_time = parse_time(arr_date, arr_time)
 
     def get_start(self):
         return self.fr0m
