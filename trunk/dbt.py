@@ -160,7 +160,7 @@ class Connection:
     def __str__(self):
         return '%-20s %s  %s\n%-20s %s   %5s %-2s  %6s  %6s' % (
             self.st_dep, 
-            format_time)'%d.%m.%y %H:%M', self.dep_time),
+            format_time('%d.%m.%y %H:%M', self.dep_time),
             self.trains, 
             self.st_arr,
             format_time('%d.%m.%y %H:%M', self.arr_time),
