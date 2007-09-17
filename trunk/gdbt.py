@@ -25,6 +25,10 @@ def error(window):
     #error_dialog.connect('response', self.choose_image_dialog_response)
     error_dialog.show()
 
+def invoke_later(target):
+    thread = threading.Thread(target=target)
+    thread.setDaemon(True)
+    thread.start()
 
 class PropertyEntry(gtk.Entry):
     def __init__(self, name, value, layout=None):
@@ -130,9 +134,7 @@ class Base:
 
 
     def request_timetable(self, action=None):
-    	thread = threading.Thread(target=self.request_timetable_async)
-    	thread.setDaemon(True)
-    	thread.start()
+    	invoke_later(target=self.request_timetable_async)
 
     def request_timetable_async(self):
         travelData = dbt.TravelData(
