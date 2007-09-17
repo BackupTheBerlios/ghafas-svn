@@ -5,6 +5,7 @@ import os.path
 
 try:
     import gtk
+    import gobject
 except ImportError, (strerror):
     print >>sys.stderr, "%s.  Please make sure you have this library installed into a directory in Python's path or in the same directory as Sonata.\n" % strerror
     sys.exit(1)
@@ -43,6 +44,15 @@ class PropertyEntry(gtk.Entry):
         if layout:
             layout.pack_start(self.hbox, False, False, 2)
 
+    def setup_completion(self, liststore):
+        completion = gtk.EntryCompletion()
+        completion.set_popup_completion(True)
+        completion.set_inline_completion(True)
+        completion.set_model(liststore)
+        completion.pack_start(gtk.CellRendererText())
+        completion.set_text_column(0)
+        self.set_completion(completion)
+
 
 class Base:
     def __init__(self):
@@ -65,6 +75,14 @@ class Base:
         settingsvbox.pack_start(gtk.Label(str=_("Start & Destination")), False, False, 2)
         self.fromentry = PropertyEntry(_("From:"), travelData.get_start(), settingsvbox)
         self.toentry = PropertyEntry(_("To:"), travelData.get_destination(), settingsvbox)
+
+        stationliststore = gtk.ListStore(gobject.TYPE_STRING)
+        stationliststore.append(['Frankfurt am Main'])
+        stationliststore.append(['Berlin Hbf'])
+        stationliststore.append(['Berlin Ostbahnhof'])
+        stationliststore.append(['Stuttgart'])
+        self.fromentry.setup_completion(stationliststore)
+        self.toentry.setup_completion(stationliststore)
 
         # setup departure data
         settingsvbox.pack_start(gtk.Label(str=_("Departure (earliest)")), False, False, 2)
