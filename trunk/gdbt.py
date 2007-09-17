@@ -42,8 +42,6 @@ class PropertyEntry(gtk.Entry):
 class Base:
     def __init__(self):
         self.timetable = False
-        self.x = 300
-        self.y = 300
             
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_title('dbt')
@@ -125,10 +123,8 @@ class Base:
         self.showinbrowser.connect('clicked', self.show_timetable_in_browser)
 
         # final main window setup
-        self.window.move(self.x, self.y)
         self.window.set_size_request(600, -1)
 
-        self.window.show()
         self.window.show_all()
 
 
