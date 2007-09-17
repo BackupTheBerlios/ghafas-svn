@@ -160,10 +160,10 @@ class Connection:
     def __str__(self):
         return '%-20s %s  %s\n%-20s %s   %5s %-2s  %6s  %6s' % (
             self.st_dep, 
-            time.strftime('%d.%m.%y %H:%M', time.localtime(self.dep_time)),
+            format_time)'%d.%m.%y %H:%M', self.dep_time),
             self.trains, 
             self.st_arr,
-            time.strftime('%d.%m.%y %H:%M', time.localtime(self.arr_time)),
+            format_time('%d.%m.%y %H:%M', self.arr_time),
             self.duration, self.changes,
             self.price_n, self.price_s,
             )
