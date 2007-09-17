@@ -85,7 +85,7 @@ def parse_time(d, t):
     return time.mktime(time.strptime('%s %s' % (d, t), '%d.%m.%Y %H:%M'))
 
 class TravelData:
-    def __init__(self, fr0m, to, dep_date, dep_time, arr_date=None, arr_time=None):
+    def __init__(self, fr0m, to, dep_date, dep_time, arr_date=None, arr_time=None, bahncard=0):
         self.fr0m = fr0m
         self.to = to
         self.dep_time = parse_time(dep_date, dep_time)
@@ -94,6 +94,7 @@ class TravelData:
         if not arr_time:
             arr_time = dep_time
         self.arr_time = parse_time(arr_date, arr_time)
+        self.bahncard = bahncard
 
     def get_start(self):
         return self.fr0m
@@ -120,7 +121,8 @@ testTravelData = TravelData(
         '30.10.2007',
         '08:00',
         '30.10.2007',
-        '14:00'
+        '14:00',
+        bahncard = 4
         )
 
 
@@ -182,7 +184,7 @@ class FindConnectionPage:
         self.form['REQ0JourneyDate'] = travelData.get_departure_date()
         self.form['REQ0JourneyTime'] = travelData.get_departure_time()
         # it's a BC 50, 2. Kl
-        self.form['REQ0Tariff_TravellerReductionClass.1'] = ['4']
+        self.form['REQ0Tariff_TravellerReductionClass.1'] = [travelData.bahncard]
         # 2. Kl
         self.form['REQ0Tariff_Class'] = ['2']
         

@@ -81,7 +81,7 @@ class Base:
         self.card_combo = gtk.combo_box_new_text()
         for bc in dbt.bahncards:
             self.card_combo.append_text(bc)
-        self.card_combo.set_active(0)
+        self.card_combo.set_active(travelData.bahncard)
         optionsvbox.pack_start(self.card_combo, False, False, 5)
 
         settingsvbox.pack_start(optionsvbox, False, False, 2)
@@ -137,7 +137,8 @@ class Base:
                 self.fromentry.get_text(),
                 self.toentry.get_text(),
                 self.depdateentry.get_text(),
-                self.deptimeentry.get_text()
+                self.deptimeentry.get_text(),
+                bahncard = self.card_combo.get_active()
                 )
     
         self.timetableBuffer.set_text('Searching ...\n')
