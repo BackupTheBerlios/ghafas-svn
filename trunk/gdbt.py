@@ -159,6 +159,8 @@ class Base:
         if self.timetable:
             dbt.open_browser(self.timetable.url)
         
+        
+        
 def main():
     gtk.gdk.threads_init()
 

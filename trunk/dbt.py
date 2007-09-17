@@ -68,6 +68,12 @@ def urlopen(url):
     logging.debug('open url: %s' % url)
     return urllib2.urlopen(url)
 
+def parse_time(d, t):
+    return time.mktime(time.strptime('%s %s' % (d, t), '%d.%m.%Y %H:%M'))
+
+def format_time(f, t):
+        return time.strftime(f, time.localtime(t))
+
 
 class Price:
     def __init__(self, price=None, unknown=False):
@@ -85,12 +91,6 @@ class Price:
             return '%6.2f' % (self.price)
         return '-.- '
         
-
-def parse_time(d, t):
-    return time.mktime(time.strptime('%s %s' % (d, t), '%d.%m.%Y %H:%M'))
-
-def format_time(f, t):
-        return time.strftime(f, time.localtime(t))
 
 class TravelData:
     def __init__(self, fr0m, to, dep_date, dep_time, arr_date=None, arr_time=None, bahncard=0):
