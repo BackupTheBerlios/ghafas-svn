@@ -16,10 +16,22 @@ sys.path.insert(0, sitepackages)
 import ClientForm
 from BeautifulSoup import BeautifulSoup
 
+def _(s):
+    return s
 
 
 
 re_eur = re.compile(r'([0-9]+,[0-9]+)&nbsp;EUR')
+
+
+bahncards = [
+        _("No reduction"),
+        _("BC25, 2nd class"),
+        _("BC25, 1st class"),
+        _("BC50, 2nd class"),
+        _("BC50, 1st class")
+        ]
+
 
 
 def init_logger(level):

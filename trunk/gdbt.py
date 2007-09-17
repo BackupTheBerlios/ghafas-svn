@@ -79,11 +79,8 @@ class Base:
         optionsvbox.pack_start(gtk.Label(str=_("BahnCard")), False, False, 2)
 
         self.card_combo = gtk.combo_box_new_text()
-        self.card_combo.append_text(_("No reduction"))
-        self.card_combo.append_text(_("BC25, 2nd class"))
-        self.card_combo.append_text(_("BC25, 1st class"))
-        self.card_combo.append_text(_("BC50, 2nd class"))
-        self.card_combo.append_text(_("BC50, 1st class"))
+        for bc in dbt.bahncards:
+            self.card_combo.append_text(bc)
         self.card_combo.set_active(0)
         optionsvbox.pack_start(self.card_combo, False, False, 5)
 
