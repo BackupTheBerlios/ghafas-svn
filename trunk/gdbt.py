@@ -9,6 +9,7 @@ except ImportError, (strerror):
     print >>sys.stderr, "%s.  Please make sure you have this library installed into a directory in Python's path or in the same directory as Sonata.\n" % strerror
     sys.exit(1)
 
+import threading
 import dbt
 
 
@@ -129,6 +130,11 @@ class Base:
 
 
     def request_timetable(self, action=None):
+    	thread = threading.Thread(target=self.request_timetable_async)
+    	thread.setDaemon(True)
+    	thread.start()
+
+    def request_timetable_async(self):
         travelData = dbt.TravelData(
                 self.fromentry.get_text(),
                 self.toentry.get_text(),
@@ -140,7 +146,7 @@ class Base:
                 )
     
         self.timetableBuffer.set_text('Searching ...\n')
-        
+            
         result = dbt.request_timetable_page(travelData)
 
         self.timetableBuffer.insert_at_cursor('...\n')
