@@ -130,7 +130,7 @@ testTravelData = TravelData(
         '08:00',
         '30.10.2007',
         '14:00',
-        bahncard = 4
+        bahncard = 3
         )
 
 
@@ -192,7 +192,7 @@ class FindConnectionPage:
         self.form['REQ0JourneyDate'] = travelData.get_departure_date()
         self.form['REQ0JourneyTime'] = travelData.get_departure_time()
         # it's a BC 50, 2. Kl
-        self.form['REQ0Tariff_TravellerReductionClass.1'] = [travelData.bahncard]
+        self.form['REQ0Tariff_TravellerReductionClass.1'] = [str(travelData.bahncard+1)]
         # 2. Kl
         self.form['REQ0Tariff_Class'] = ['2']
         
