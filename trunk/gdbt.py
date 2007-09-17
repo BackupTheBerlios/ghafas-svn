@@ -16,7 +16,6 @@ import dbt
 
 travelData = dbt.testTravelData
 
-
 def _(s):
     return s
     
@@ -54,6 +53,18 @@ class PropertyEntry(gtk.Entry):
         self.set_completion(completion)
 
 
+stationliststore = None
+
+def get_stationliststore():
+    global stationliststore
+    if not stationliststore:
+        stationliststore = gtk.ListStore(gobject.TYPE_STRING)
+        f = open('stations.txt', 'r')
+        for line in f.readlines():
+            stationliststore.append([line.strip()])
+    return stationliststore
+
+
 class Base:
     def __init__(self):
         self.timetable = False
@@ -76,13 +87,8 @@ class Base:
         self.fromentry = PropertyEntry(_("From:"), travelData.get_start(), settingsvbox)
         self.toentry = PropertyEntry(_("To:"), travelData.get_destination(), settingsvbox)
 
-        stationliststore = gtk.ListStore(gobject.TYPE_STRING)
-        stationliststore.append(['Frankfurt am Main'])
-        stationliststore.append(['Berlin Hbf'])
-        stationliststore.append(['Berlin Ostbahnhof'])
-        stationliststore.append(['Stuttgart'])
-        self.fromentry.setup_completion(stationliststore)
-        self.toentry.setup_completion(stationliststore)
+        self.fromentry.setup_completion(get_stationliststore())
+        self.toentry.setup_completion(get_stationliststore())
 
         # setup departure data
         settingsvbox.pack_start(gtk.Label(str=_("Departure (earliest)")), False, False, 2)
