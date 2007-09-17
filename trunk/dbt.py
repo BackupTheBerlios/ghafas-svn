@@ -81,8 +81,12 @@ class Price:
             return '%6.2f' % (self.price)
         return '-.- '
         
+
 def parse_time(d, t):
     return time.mktime(time.strptime('%s %s' % (d, t), '%d.%m.%Y %H:%M'))
+
+def format_time(f, t):
+        return time.strftime(f, time.localtime(t))
 
 class TravelData:
     def __init__(self, fr0m, to, dep_date, dep_time, arr_date=None, arr_time=None, bahncard=0):
@@ -103,16 +107,16 @@ class TravelData:
         return self.to
 
     def get_departure_time(self):
-        return time.strftime('%H:%M', time.localtime(self.dep_time))
+        return format_time('%H:%M', self.dep_time)
 
     def get_departure_date(self):
-        return time.strftime('%d.%m.%Y', time.localtime(self.dep_time))
+        return format_time('%d.%m.%Y', self.dep_time)
 
     def get_arrival_time(self):
-        return time.strftime('%H:%M', time.localtime(self.arr_time))
+        return format_time('%H:%M', self.arr_time)
 
     def get_arrival_date(self):
-        return time.strftime('%d.%m.%Y', time.localtime(self.arr_time))
+        return format_time('%d.%m.%Y', self.arr_time)
 
 
 testTravelData = TravelData(
