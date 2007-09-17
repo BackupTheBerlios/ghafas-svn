@@ -19,6 +19,10 @@ from BeautifulSoup import BeautifulSoup
 def _(s):
     return s
 
+MARK_LINK_LATER = 'Sp&#228;ter'
+MARK_LINK_AVAILABILTY = u'Verf&#252;gbarkeit pr&#252;fen'
+MARK_LINK_BACK = u'Zur&#252;ck'
+MARK_TEXT_FROM = u'ab'
 
 
 re_eur = re.compile(r'([0-9]+,[0-9]+)&nbsp;EUR')
@@ -221,7 +225,7 @@ class TimetablePage:
             raise UnexpectedPage(self.url)
 
         for incident in self.soup('a'):
-            if incident.contents[0] == u'Sp&#228;ter':
+            if incident.contents[0] == MARK_LINK_LATER:
                 if not self.link_later:
                     self.link_later = incident['href']
 
@@ -232,13 +236,13 @@ class TimetablePage:
         table = table[0]
         for row in table.findAll('tr', recursive=False):
             for incident in row.findAll('a'):
-                if incident.contents[0] == u'Verf&#252;gbarkeit pr&#252;fen':
+                if incident.contents[0] == MARK_LINK_AVAILABILTY
                     link = incident['href']
                     self.links_check_availability.append(link)
 
             colums = row.findAll('td', recursive=False)
             #print '---', colums
-            if len(colums) < 2 or colums[2].contents[0] != u'ab':
+            if len(colums) < 2 or colums[2].contents[0] != MARK_TEXT_FROM:
                 continue
 
             conn = (
@@ -273,7 +277,7 @@ class TimetablePage:
 
     def parse_price(self, content):
         for incident in content.findAll('a'):
-            if incident.contents[0] == u'Verf&#252;gbarkeit pr&#252;fen':
+            if incident.contents[0] == MARK_LINK_AVAILABILTY:
                 return Price(unknown=True)
 
         m = re_eur.search(str(content))
@@ -307,7 +311,7 @@ class AvailabilityPage:
         #    raise UnexpectedPage(self.url)
 
         for incident in self.soup('a'):
-            if incident.contents[0] == u'Zur&#252;ck':
+            if incident.contents[0] == MARK_LINK_BACK:
                 if not self.link_back:
                     self.link_back = incident['href']
 
