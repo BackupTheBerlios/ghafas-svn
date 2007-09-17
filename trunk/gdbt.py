@@ -45,20 +45,9 @@ class Base:
         self.x = 300
         self.y = 300
             
-        actions = (
-            ('request_timetable', None, _('_RequestTimetable'), None, None, self.request_timetable),
-            ('show_timetable_in_browser', None, _('_ShowInBrowser'), None, None, self.show_timetable_in_browser),
-            )
-    
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_title('dbt')
         self.window.set_resizable(True)
-
-        actionGroup = gtk.ActionGroup('Actions')
-        actionGroup.add_actions(actions)
-
-        self.UIManager = gtk.UIManager()
-        self.UIManager.insert_action_group(actionGroup, 0)
 
         # main window layout
         mainhbox = gtk.HBox()
