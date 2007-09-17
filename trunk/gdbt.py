@@ -134,7 +134,9 @@ class Base:
                 self.toentry.get_text(),
                 self.depdateentry.get_text(),
                 self.deptimeentry.get_text(),
-                bahncard = self.card_combo.get_active()
+                self.destdateentry.get_text(),
+                self.desttimeentry.get_text(),
+                bahncard = self.card_combo.get_active(),
                 )
     
         self.timetableBuffer.set_text('Searching ...\n')
