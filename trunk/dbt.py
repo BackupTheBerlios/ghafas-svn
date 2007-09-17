@@ -236,7 +236,7 @@ class TimetablePage:
         table = table[0]
         for row in table.findAll('tr', recursive=False):
             for incident in row.findAll('a'):
-                if incident.contents[0] == MARK_LINK_AVAILABILTY
+                if incident.contents[0] == MARK_LINK_AVAILABILTY:
                     link = incident['href']
                     self.links_check_availability.append(link)
 
