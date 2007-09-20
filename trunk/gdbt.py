@@ -207,7 +207,7 @@ class Base:
 
     def show_timetable_in_browser(self, action=None):
         if self.timetable:
-            dbt.open_browser(self.timetable.url)
+            dbt.open_browser(self.timetable[-1].url0)
         
         
         

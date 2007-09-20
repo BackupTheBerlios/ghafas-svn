@@ -157,6 +157,10 @@ class Connection:
         self.price_n = Price()
         self.price_s = Price()
 
+        self.url0 = None
+        self.url1 = None
+        self.url2 = None
+
     def __str__(self):
         return '%-20s %s  %s\n%-20s %s   %5s %-2s  %6s  %6s' % (
             self.st_dep, 
@@ -269,6 +273,7 @@ class TimetablePage:
             conn = Connection(*conn)
             conn.price_n = self.parse_price(colums[7])
             conn.price_s = self.parse_price(colums[8])
+            conn.url0 = self.url
             
             self.connections.append(conn)
     
