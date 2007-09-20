@@ -172,11 +172,13 @@ class Base:
                 bahncard = self.card_combo.get_active(),
                 )
     
-        self.timetableBuffer.set_text('Searching ...\n')
-            
+        self.timetableBuffer.set_text('')
+        self.statusbar.push(self.statusbar.get_context_id(""), "Run query...")
+    
         result = dbt.request_timetable_page(travelData)
 
-        self.timetableBuffer.insert_at_cursor('...\n')
+        self.statusbar.push(self.statusbar.get_context_id(""), "Resolve query...")
+
         result = dbt.get_resolved_timetable_page(result)
         
         for c in result.connections:
@@ -185,7 +187,12 @@ class Base:
         self.timetable = result.connections
 
         while self.timetable[-1].arr_time < travelData.arr_time:
+            self.statusbar.push(self.statusbar.get_context_id(""), "Run query...")
+
             travelData.dep_time = self.timetable[-1].dep_time
+
+            self.statusbar.push(self.statusbar.get_context_id(""), "Resolve query...")
+
             result = dbt.request_timetable_page(travelData)
             
             self.timetable.extend(result.connections)
@@ -195,7 +202,7 @@ class Base:
             for c in result.connections:
                 self.timetableBuffer.insert_at_cursor('\n%s\n' % str(c))
         
-            
+        self.statusbar.push(self.statusbar.get_context_id(""), "")
 
 
     def show_timetable_in_browser(self, action=None):
