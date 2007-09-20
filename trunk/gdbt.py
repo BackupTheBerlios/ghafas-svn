@@ -68,7 +68,7 @@ def get_stationliststore():
 
 class Base:
     def __init__(self):
-        self.timetable = False
+        self.timetable = None
             
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_title('dbt')
@@ -179,12 +179,24 @@ class Base:
         self.timetableBuffer.insert_at_cursor('...\n')
         result = dbt.get_resolved_timetable_page(result)
         
-        self.timetableBuffer.set_text(_('Time table:\n'))
-
         for c in result.connections:
             self.timetableBuffer.insert_at_cursor('\n%s\n' % str(c))
             
-        self.timetable = result
+        self.timetable = result.connections
+
+        while self.timetable[-1].arr_time < travelData.arr_time:
+            travelData.dep_time = self.timetable[-1].dep_time
+            result = dbt.request_timetable_page(travelData)
+            
+            self.timetable.extend(result.connections)
+
+            self.timetableBuffer.insert_at_cursor('...\n')
+            result = dbt.get_resolved_timetable_page(result)
+            for c in result.connections:
+                self.timetableBuffer.insert_at_cursor('\n%s\n' % str(c))
+        
+            
+
 
     def show_timetable_in_browser(self, action=None):
         if self.timetable:
