@@ -14,6 +14,7 @@ import threading
 import dbt
 
 
+install_path = os.path.dirname(__file__)
 travelData = dbt.testTravelData
 
 def _(s):
@@ -59,7 +60,7 @@ def get_stationliststore():
     global stationliststore
     if not stationliststore:
         stationliststore = gtk.ListStore(gobject.TYPE_STRING)
-        f = open('stations.txt', 'r')
+        f = open(os.path.join(install_path, 'stations.txt'), 'r')
         for line in f.readlines():
             stationliststore.append([line.strip()])
     return stationliststore
