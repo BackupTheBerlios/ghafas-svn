@@ -41,7 +41,7 @@ bahncards = [
 def init_logger(level):
     format = '%(asctime)s %(levelname)s %(message)s'
     format = '%(levelname)s: %(message)s'
-    
+
     logging.basicConfig(level=level, format=format, stream=sys.stderr)
     #filename='/tmp/myapp.log', filemode='w'
 
@@ -83,14 +83,14 @@ class Price:
 
         self.price = price
         self.unknown = unknown # unknown availability
-        
+
     def __str__(self):
         if self.unknown == True:
             return '?'
         if self.price:
             return '%6.2f' % (self.price)
         return '-.- '
-        
+
 
 class TravelData:
     def __init__(self, fr0m, to, dep_date, dep_time, arr_date=None, arr_time=None, bahncard=0):
@@ -136,7 +136,7 @@ testTravelData = TravelData(
 
 
 class Connection:
-    def __init__(self, 
+    def __init__(self,
             st_dep, st_arr, dt_dep, tm_dep, dt_arr, tm_arr,
             duration, changes, trains
             ):
@@ -149,7 +149,7 @@ class Connection:
         self.arr_time = time.mktime(time.strptime(
                 dt_arr + ' ' + tm_arr, '%d.%m.%y %H:%M'
                 ))
-        
+
         self.duration = duration
         self.changes = changes
         self.trains = trains
@@ -163,9 +163,9 @@ class Connection:
 
     def __str__(self):
         return '%-20s %s  %s\n%-20s %s   %5s %-2s  %6s  %6s' % (
-            self.st_dep, 
+            self.st_dep,
             format_time('%d.%m.%y %H:%M', self.dep_time),
-            self.trains, 
+            self.trains,
             self.st_arr,
             format_time('%d.%m.%y %H:%M', self.arr_time),
             self.duration, self.changes,
@@ -176,7 +176,7 @@ class Connection:
 class UnexpectedPage:
     def __init__(self, url):
         self.url = url
-    
+
 
 class FindConnectionPage:
     def __init__(self):
@@ -199,7 +199,7 @@ class FindConnectionPage:
         self.form['REQ0Tariff_TravellerReductionClass.1'] = [str(travelData.bahncard+1)]
         # 2. Kl
         self.form['REQ0Tariff_Class'] = ['2']
-        
+
 
     def submit(self):
         logging.info('submit form...')
@@ -274,9 +274,9 @@ class TimetablePage:
             conn.price_n = self.parse_price(colums[7])
             conn.price_s = self.parse_price(colums[8])
             conn.url0 = self.url
-            
+
             self.connections.append(conn)
-    
+
     def __str__(self):
         return '\n\n'.join([str(c) for c in self.connections])
 
@@ -289,12 +289,12 @@ class TimetablePage:
         if m:
             return Price(m.group(1))
         return Price()
-        
+
     def follow_link_later(self):
         logging.info('follow link <Spaeter>...')
         # return self.url + self.link_later
         return urlopen('http://reiseauskunft.bahn.de' + self.link_later)
-        
+
 
 
 class AvailabilityPage:
@@ -320,12 +320,12 @@ class AvailabilityPage:
                 if not self.link_back:
                     self.link_back = incident['href']
 
-        
+
     def follow_link_back(self):
         logging.info('follow link <Zurueck>...')
         return urlopen(self.link_back)
-        
-        
+
+
 
 
 ################################################################################
@@ -335,7 +335,7 @@ def request_timetable_page(travelData, complete=True):
 
     find_page = FindConnectionPage()
     find_page.fill_form(travelData)
-    
+
     timetable_page = TimetablePage(find_page.submit())
     print timetable_page
 
@@ -349,7 +349,7 @@ def request_timetable_page(travelData, complete=True):
             response = timetable_page.follow_link_later()
             timetable_page = TimetablePage(response)
             print timetable_page
-    
+
     return timetable_page
 
 
@@ -360,7 +360,7 @@ def show_all_availability_pages(timetable_page):
         open_browser(link)
         sleep()
 
-    
+
 def get_resolved_timetable_page(timetable_page):
     logging.info('get_resolved_timetable_page...')
 
@@ -375,7 +375,7 @@ def get_resolved_timetable_page(timetable_page):
     timetable_page = TimetablePage(response)
     if len(timetable_page.links_check_availability):
         timetable_page = get_resolved_timetable_page(timetable_page)
-    
+
     return timetable_page
 
 
@@ -384,7 +384,7 @@ def show_resolved_yourtimetable_page(timetable_page):
 
     timetable_page = get_resolved_timetable_page(timetable_page)
     open_browser(timetable_page.url)
-            
+
 
 def main():
     log_level = logging.INFO

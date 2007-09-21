@@ -19,7 +19,7 @@ travelData = dbt.testTravelData
 
 def _(s):
     return s
-    
+
 def error(window):
     error_dialog = gtk.MessageDialog(window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _("#######"))
     error_dialog.set_title(_("Error"))
@@ -34,7 +34,7 @@ def invoke_later(target):
 class PropertyEntry(gtk.Entry):
     def __init__(self, name, value, layout=None):
         gtk.Entry.__init__(self)
-        
+
         self.hbox = gtk.HBox()
         self.label = gtk.Label(name)
         self.label.set_alignment(0, 0.5)
@@ -69,7 +69,7 @@ def get_stationliststore():
 class Base:
     def __init__(self):
         self.timetable = None
-            
+
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_title('dbt')
         self.window.set_resizable(True)
@@ -82,7 +82,7 @@ class Base:
         clienthbox = gtk.HBox()
         # ... contains a:
         settingsvbox = gtk.VBox()
-            
+
         # setup start & destination
         settingsvbox.pack_start(gtk.Label(str=_("Start & Destination")), False, False, 2)
         self.fromentry = PropertyEntry(_("From:"), travelData.get_start(), settingsvbox)
@@ -182,19 +182,19 @@ class Base:
                 self.desttimeentry.get_text(),
                 bahncard = self.card_combo.get_active(),
                 )
-    
+
         self.lvtimetabledata.clear()
         self.statusbar.push(self.statusbar.get_context_id(""), "Run query...")
-    
+
         result = dbt.request_timetable_page(travelData)
 
         self.statusbar.push(self.statusbar.get_context_id(""), "Resolve query...")
 
         result = dbt.get_resolved_timetable_page(result)
-        
+
         for c in result.connections:
             self.lvtimetabledata.append([str(c)])
-            
+
         self.timetable = result.connections
 
         while self.timetable[-1].arr_time < travelData.arr_time:
@@ -205,13 +205,13 @@ class Base:
             self.statusbar.push(self.statusbar.get_context_id(""), "Resolve query...")
 
             result = dbt.request_timetable_page(travelData)
-            
+
             self.timetable.extend(result.connections)
 
             result = dbt.get_resolved_timetable_page(result)
             for c in result.connections:
                 self.lvtimetabledata.append([str(c)])
-        
+
         self.statusbar.push(self.statusbar.get_context_id(""), "")
 
 
@@ -219,8 +219,8 @@ class Base:
         if self.timetable:
             dbt.open_browser(self.timetable[-1].url0)
 
-        
-        
+
+
 def main():
     gtk.gdk.threads_init()
 
