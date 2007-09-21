@@ -130,12 +130,23 @@ class Base:
         ttlabel.set_text(_("Timetable"))
         timetableScrollWindow = gtk.ScrolledWindow()
         timetableScrollWindow.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.timetableBuffer = gtk.TextBuffer()
-        timetableView = gtk.TextView(self.timetableBuffer)
-        timetableView.set_editable(False)
-        timetableView.set_wrap_mode(gtk.WRAP_WORD)
-        timetableScrollWindow.add_with_viewport(timetableView)
+
+        self.lvtimetable = gtk.TreeView()
+        self.lvtimetable.set_headers_visible(False)
+        self.lvtimetable.set_rules_hint(True)
+        self.lvtimetable.set_reorderable(False)
+        self.lvtimetable.set_enable_search(True)
+        timetableScrollWindow.add_with_viewport(self.lvtimetable)
         clienthbox.pack_start(timetableScrollWindow, True, True, 3)
+
+        self.lvtimetabledata = gtk.ListStore(str)
+        self.lvtimetable.set_model(self.lvtimetabledata)
+
+    	self.lvtimetablecell = gtk.CellRendererText()
+    	self.lvtimetablecolumn = gtk.TreeViewColumn()
+    	self.lvtimetablecolumn.pack_start(self.lvtimetablecell, True)
+    	self.lvtimetablecolumn.set_attributes(self.lvtimetablecell, text=0)
+    	self.lvtimetable.append_column(self.lvtimetablecolumn)
 
         # layout client area containing settings and timetable
         mainvbox.pack_start(clienthbox, True, True, 2)
@@ -159,7 +170,7 @@ class Base:
 
 
     def request_timetable(self, action=None):
-    	invoke_later(target=self.request_timetable_async)
+        invoke_later(target=self.request_timetable_async)
 
     def request_timetable_async(self):
         travelData = dbt.TravelData(
@@ -172,7 +183,7 @@ class Base:
                 bahncard = self.card_combo.get_active(),
                 )
     
-        self.timetableBuffer.set_text('')
+        self.lvtimetabledata.clear()
         self.statusbar.push(self.statusbar.get_context_id(""), "Run query...")
     
         result = dbt.request_timetable_page(travelData)
@@ -182,7 +193,7 @@ class Base:
         result = dbt.get_resolved_timetable_page(result)
         
         for c in result.connections:
-            self.timetableBuffer.insert_at_cursor('\n%s\n' % str(c))
+            self.lvtimetabledata.append([str(c)])
             
         self.timetable = result.connections
 
@@ -197,10 +208,9 @@ class Base:
             
             self.timetable.extend(result.connections)
 
-            self.timetableBuffer.insert_at_cursor('...\n')
             result = dbt.get_resolved_timetable_page(result)
             for c in result.connections:
-                self.timetableBuffer.insert_at_cursor('\n%s\n' % str(c))
+                self.lvtimetabledata.append([str(c)])
         
         self.statusbar.push(self.statusbar.get_context_id(""), "")
 
@@ -208,7 +218,7 @@ class Base:
     def show_timetable_in_browser(self, action=None):
         if self.timetable:
             dbt.open_browser(self.timetable[-1].url0)
-        
+
         
         
 def main():
