@@ -165,7 +165,6 @@ class Base:
 
         # final main window setup
         self.window.set_size_request(600, -1)
-
         self.window.show_all()
 
 
@@ -182,14 +181,12 @@ class Base:
                 self.desttimeentry.get_text(),
                 bahncard = self.card_combo.get_active(),
                 )
-
         self.lvtimetabledata.clear()
-        self.statusbar.push(self.statusbar.get_context_id(""), "Run query...")
 
+        self.statusbar.push(self.statusbar.get_context_id(""), "Run query...")
         result = dbt.request_timetable_page(travelData)
 
         self.statusbar.push(self.statusbar.get_context_id(""), "Resolve query...")
-
         result = dbt.get_resolved_timetable_page(result)
 
         for c in result.connections:
@@ -199,15 +196,11 @@ class Base:
 
         while self.timetable[-1].arr_time < travelData.arr_time:
             self.statusbar.push(self.statusbar.get_context_id(""), "Run query...")
-
             travelData.dep_time = self.timetable[-1].dep_time
 
             self.statusbar.push(self.statusbar.get_context_id(""), "Resolve query...")
-
             result = dbt.request_timetable_page(travelData)
-
             self.timetable.extend(result.connections)
-
             result = dbt.get_resolved_timetable_page(result)
             for c in result.connections:
                 self.lvtimetabledata.append([str(c)])
@@ -223,9 +216,7 @@ class Base:
 
 def main():
     gtk.gdk.threads_init()
-
     Base()
-
     gtk.main()
 
 if __name__ == "__main__":
