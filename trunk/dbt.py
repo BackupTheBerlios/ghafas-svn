@@ -161,6 +161,26 @@ class Connection:
         self.url1 = None
         self.url2 = None
 
+    def fields(self):
+        return [self._markup(), self.price_n, self.price_s]
+
+    def _markup(self):
+        time_f = '<span foreground="blue"><b>%s</b></span>'
+        return (
+            '<small>%s - %s, %s, %sx</small>\n' +
+            '%s %s - %s %s <small>(%s)</small>'
+            ) % (
+            self.st_dep,
+            self.st_arr,
+            self.trains,
+            self.changes,
+            format_time('%d.%m.%y', self.dep_time),
+            time_f % format_time('%H:%M', self.dep_time),
+            format_time('%d.%m.%y', self.arr_time),
+            time_f % format_time('%H:%M', self.arr_time),
+            self.duration,
+            )
+
     def __str__(self):
         return '%-20s %s  %s\n%-20s %s   %5s %-2s  %6s  %6s' % (
             self.st_dep,
