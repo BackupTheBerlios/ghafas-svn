@@ -75,20 +75,20 @@ def format_time(f, t):
         return time.strftime(f, time.localtime(t))
 
 
-class Price:
-    def __init__(self, price=None, unknown=False):
-        if price:
+class Fare:
+    def __init__(self, fare=None, unknown=False):
+        if fare:
             # FIXME: test for string type
-            price = float(price.replace(',', '.'))
+            fare = float(price.replace(',', '.'))
 
-        self.price = price
+        self.fare = price
         self.unknown = unknown # unknown availability
 
     def __str__(self):
         if self.unknown == True:
             return '?'
-        if self.price:
-            return '%6.2f' % (self.price)
+        if self.fare:
+            return '%6.2f' % (self.fare)
         return '-.- '
 
 
@@ -154,15 +154,15 @@ class Connection:
         self.changes = changes
         self.trains = trains
 
-        self.price_n = Price()
-        self.price_s = Price()
+        self.fare_n = Fare()
+        self.fare_s = Fare()
 
         self.url0 = None
         self.url1 = None
         self.url2 = None
 
     def fields(self):
-        return [self, self.price_n, self.price_s]
+        return [self, self.fare_n, self.price_s]
 
     def markup(self):
         time_f = '<span foreground="blue"><b>%s</b></span>'
@@ -189,7 +189,7 @@ class Connection:
             self.st_arr,
             format_time('%d.%m.%y %H:%M', self.arr_time),
             self.duration, self.changes,
-            self.price_n, self.price_s,
+            self.fare_n, self.price_s,
             )
 
 
@@ -291,8 +291,8 @@ class TimetablePage:
                 )
             conn = [i.strip() for i in conn]
             conn = Connection(*conn)
-            conn.price_n = self.parse_price(colums[7])
-            conn.price_s = self.parse_price(colums[8])
+            conn.fare_n = self.parse_price(colums[7])
+            conn.fare_s = self.parse_price(colums[8])
             conn.url0 = self.url
 
             self.connections.append(conn)
@@ -300,15 +300,15 @@ class TimetablePage:
     def __str__(self):
         return '\n\n'.join([str(c) for c in self.connections])
 
-    def parse_price(self, content):
+    def parse_fare(self, content):
         for incident in content.findAll('a'):
             if incident.contents[0] == MARK_LINK_AVAILABILTY:
-                return Price(unknown=True)
+                return Fare(unknown=True)
 
         m = re_eur.search(str(content))
         if m:
-            return Price(m.group(1))
-        return Price()
+            return Fare(m.group(1))
+        return Fare()
 
     def follow_link_later(self):
         logging.info('follow link <Spaeter>...')
