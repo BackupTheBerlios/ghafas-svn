@@ -195,14 +195,21 @@ class Connection:
             )
 
 
+class HtmlPage:
+    def __init__(self, url):
+        self.response = urlopen(url)
+        self.content = self.response.read()
+        self.soup = BeautifulSoup(self.content)
+
+
 class UnexpectedPage:
     def __init__(self, url):
         self.url = url
 
 
 class FindConnectionPage:
-    def __init__(self):
-        response = urlopen(BAHN_QUERY_URL)
+    def __init__(self, url):
+        response = urlopen(url)
         forms = ClientForm.ParseResponse(response)
 
         for form in forms:
@@ -225,19 +232,16 @@ class FindConnectionPage:
 
     def submit(self):
         logging.info('submit form...')
-        response = self.form.click('start')
-        return urlopen(response)
+        return self.form.click('start')
 
 
 
-class TimetablePage:
-    def __init__(self, response):
-        self.url = response.geturl()
+class TimetablePage(HtmlPage):
+    def __init__(self, url):
+        HtmlPage.__init__(self, url)
         self.links_check_availability = []
         self.link_later = None
         self.connections = []
-
-        self.soup = BeautifulSoup(response.read())
 
         for incident in self.soup('span'):
             try:
@@ -248,7 +252,7 @@ class TimetablePage:
                 self.ok = incident.contents[0] == '2'
 
         if not self.ok:
-            raise UnexpectedPage(self.url)
+            raise UnexpectedPage(self.response.geturl())
 
         for incident in self.soup('a'):
             if incident.contents[0] == MARK_LINK_LATER:
@@ -294,7 +298,7 @@ class TimetablePage:
             conn = Connection(*conn)
             conn.fare_n = self.parse_fare(colums[7])
             conn.fare_s = self.parse_fare(colums[8])
-            conn.url = self.url
+            conn.url = self.response.geturl()
 
             self.connections.append(conn)
 
@@ -315,17 +319,14 @@ class TimetablePage:
 
     def follow_link_later(self):
         logging.info('follow link <Spaeter>...')
-        # return self.url + self.link_later
-        return urlopen(BAHN_BASE_URL + self.link_later)
+        return BAHN_BASE_URL + self.link_later
 
 
 
-class AvailabilityPage:
-    def __init__(self, response):
-        self.url = response.geturl()
+class AvailabilityPage(HtmlPage):
+    def __init__(self, url):
+        HtmlPage.__init__(self, url)
         self.link_back = None
-
-        self.soup = BeautifulSoup(response.read())
 
         for incident in self.soup('span'):
             try:
@@ -346,7 +347,7 @@ class AvailabilityPage:
 
     def follow_link_back(self):
         logging.info('follow link <Zurueck>...')
-        return urlopen(self.link_back)
+        return self.link_back
 
 
 
@@ -356,14 +357,14 @@ class AvailabilityPage:
 def request_timetable_page(travelData, complete=True):
     logging.info('request_timetable_page...')
 
-    find_page = FindConnectionPage()
+    find_page = FindConnectionPage(BAHN_QUERY_URL)
     find_page.fill_form(travelData)
 
     timetable_page = TimetablePage(find_page.submit())
     print timetable_page
 
     if not timetable_page.ok:
-        open_browser_and_exit(timetable_page.url)
+        open_browser_and_exit(timetable_page.response.geturl())
 
     if complete:
         while timetable_page.connections[-1].arr_time < travelData.arr_time:
@@ -392,10 +393,8 @@ def get_resolved_timetable_page(timetable_page):
 
     first_link = timetable_page.links_check_availability[0]
 
-    page = AvailabilityPage(urlopen(first_link))
-    response = page.follow_link_back()
-
-    timetable_page = TimetablePage(response)
+    page = AvailabilityPage(first_link)
+    timetable_page = TimetablePage(page.follow_link_back())
     if len(timetable_page.links_check_availability):
         timetable_page = get_resolved_timetable_page(timetable_page)
 
@@ -406,7 +405,7 @@ def show_resolved_yourtimetable_page(timetable_page):
     logging.info('show_resolved_yourtimetable_page...')
 
     timetable_page = get_resolved_timetable_page(timetable_page)
-    open_browser(timetable_page.url)
+    open_browser(timetable_page.response.geturl())
 
 
 def main():
@@ -431,7 +430,7 @@ def main():
 
         #show_all_availability_pages(request_timetable_page(travelData))
         #page = request_timetable_page(travelData, complete=False)
-        #open_browser(page.url)
+        #open_browser(page.response.geturl())
 
     except UnexpectedPage, e:
         logging.error('UnexpectedPage')
