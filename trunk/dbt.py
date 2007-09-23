@@ -25,6 +25,8 @@ MARK_LINK_BOOKING = u'Zur&nbsp;Buchung'
 MARK_LINK_BACK = u'Zur&#252;ck'
 MARK_TEXT_FROM = u'ab'
 
+BAHN_BASE_URL = 'http://reiseauskunft.bahn.de'
+BAHN_QUERY_URL = BAHN_BASE_URL + "/bin/query.exe/d"
 
 re_eur = re.compile(r'([0-9]+,[0-9]+)&nbsp;EUR')
 
@@ -200,7 +202,7 @@ class UnexpectedPage:
 
 class FindConnectionPage:
     def __init__(self):
-        response = urlopen("http://reiseauskunft.bahn.de/bin/query.exe/d")
+        response = urlopen(BAHN_QUERY_URL)
         forms = ClientForm.ParseResponse(response)
 
         for form in forms:
@@ -314,7 +316,7 @@ class TimetablePage:
     def follow_link_later(self):
         logging.info('follow link <Spaeter>...')
         # return self.url + self.link_later
-        return urlopen('http://reiseauskunft.bahn.de' + self.link_later)
+        return urlopen(BAHN_BASE_URL + self.link_later)
 
 
 
