@@ -66,6 +66,14 @@ def get_stationliststore():
     return stationliststore
 
 
+def set_markup_from_connection(tree_column, cell, model, iter, idx):
+    obj = model.get_value(iter, idx)
+    cell.set_property("markup", obj.markup())
+
+def set_text_from_pyobject(tree_column, cell, model, iter, idx):
+    obj = model.get_value(iter, idx)
+    cell.set_property("text", str(obj))
+
 class Base:
     def __init__(self):
         self.timetable = None
@@ -139,27 +147,27 @@ class Base:
         timetableScrollWindow.add_with_viewport(self.lvtimetable)
         clienthbox.pack_start(timetableScrollWindow, True, True, 3)
 
-        self.lvtimetabledata = gtk.ListStore(str, str, str)
+        self.lvtimetabledata = gtk.ListStore(gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT)
         self.lvtimetable.set_model(self.lvtimetabledata)
 
-    	self.lvtimetablecolumn0 = gtk.TreeViewColumn()
-    	self.lvtimetablecell0 = gtk.CellRendererText()
-    	self.lvtimetablecolumn0.pack_start(self.lvtimetablecell0, True)
-    	self.lvtimetablecolumn0.set_attributes(self.lvtimetablecell0, markup=0)
+        self.lvtimetablecolumn0 = gtk.TreeViewColumn()
+        self.lvtimetablecell0 = gtk.CellRendererText()
+        self.lvtimetablecolumn0.pack_start(self.lvtimetablecell0, True)
+        self.lvtimetablecolumn0.set_cell_data_func(self.lvtimetablecell0, set_markup_from_connection, 0)
         self.lvtimetable.append_column(self.lvtimetablecolumn0)
-    	
-    	self.lvtimetablecolumn1 = gtk.TreeViewColumn()
+        
+        self.lvtimetablecolumn1 = gtk.TreeViewColumn()
         self.lvtimetablecell1 = gtk.CellRendererText()
-    	self.lvtimetablecolumn1.pack_start(self.lvtimetablecell1, True)
-    	self.lvtimetablecolumn1.set_attributes(self.lvtimetablecell1, text=1)
+        self.lvtimetablecolumn1.pack_start(self.lvtimetablecell1, True)
+        self.lvtimetablecolumn1.set_cell_data_func(self.lvtimetablecell1, set_text_from_pyobject, 1)
         self.lvtimetable.append_column(self.lvtimetablecolumn1)
-    	
-    	self.lvtimetablecolumn2 = gtk.TreeViewColumn()
+        
+        self.lvtimetablecolumn2 = gtk.TreeViewColumn()
         self.lvtimetablecell2 = gtk.CellRendererText()
-    	self.lvtimetablecolumn2.pack_start(self.lvtimetablecell2, True)
-    	self.lvtimetablecolumn2.set_attributes(self.lvtimetablecell2, text=2)
+        self.lvtimetablecolumn2.pack_start(self.lvtimetablecell2, True)
+        self.lvtimetablecolumn2.set_cell_data_func(self.lvtimetablecell2, set_text_from_pyobject, 2)
         self.lvtimetable.append_column(self.lvtimetablecolumn2)
-    	
+
         # layout client area containing settings and timetable
         mainvbox.pack_start(clienthbox, True, True, 2)
 
@@ -178,7 +186,6 @@ class Base:
         # final main window setup
         self.window.set_size_request(600, -1)
         self.window.show_all()
-
 
     def request_timetable(self, action=None):
         invoke_later(target=self.request_timetable_async)

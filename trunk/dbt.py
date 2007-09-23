@@ -162,9 +162,9 @@ class Connection:
         self.url2 = None
 
     def fields(self):
-        return [self._markup(), self.price_n, self.price_s]
+        return [self, self.price_n, self.price_s]
 
-    def _markup(self):
+    def markup(self):
         time_f = '<span foreground="blue"><b>%s</b></span>'
         return (
             '<small>%s - %s, %s, %sx</small>\n' +
