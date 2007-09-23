@@ -9,6 +9,7 @@ import re
 import time
 import sys
 import urllib2
+import StringIO
 
 sitepackages = os.path.join(os.path.dirname(__file__), 'site-packages')
 sys.path.insert(0, sitepackages)
@@ -201,20 +202,26 @@ class HtmlPage:
         self.content = self.response.read()
         self.soup = BeautifulSoup(self.content)
 
+    def get_stream(self):
+        return StringIO.StringIO(self.content)
+
+    def get_forms(self):
+        file = StringIO.StringIO(self.content)
+        return ClientForm.ParseFile(file, self.response.geturl())
+
 
 class UnexpectedPage:
     def __init__(self, url):
         self.url = url
 
 
-class FindConnectionPage:
+class FindConnectionPage(HtmlPage):
     def __init__(self, url):
-        response = urlopen(url)
-        forms = ClientForm.ParseResponse(response)
+        HtmlPage.__init__(self, url)
 
+        forms = self.get_forms()
         for form in forms:
             logging.debug('form:\n' + str(form))
-
         self.form = forms[1]
 
         logging.debug('selected form:\n' + str(self.form))
