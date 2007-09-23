@@ -79,9 +79,9 @@ class Fare:
     def __init__(self, fare=None, unknown=False):
         if fare:
             # FIXME: test for string type
-            fare = float(price.replace(',', '.'))
+            fare = float(fare.replace(',', '.'))
 
-        self.fare = price
+        self.fare = fare
         self.unknown = unknown # unknown availability
 
     def __str__(self):
@@ -162,7 +162,7 @@ class Connection:
         self.url2 = None
 
     def fields(self):
-        return [self, self.fare_n, self.price_s]
+        return [self, self.fare_n, self.fare_s]
 
     def markup(self):
         time_f = '<span foreground="blue"><b>%s</b></span>'
@@ -189,7 +189,7 @@ class Connection:
             self.st_arr,
             format_time('%d.%m.%y %H:%M', self.arr_time),
             self.duration, self.changes,
-            self.fare_n, self.price_s,
+            self.fare_n, self.fare_s,
             )
 
 
@@ -291,8 +291,8 @@ class TimetablePage:
                 )
             conn = [i.strip() for i in conn]
             conn = Connection(*conn)
-            conn.fare_n = self.parse_price(colums[7])
-            conn.fare_s = self.parse_price(colums[8])
+            conn.fare_n = self.parse_fare(colums[7])
+            conn.fare_s = self.parse_fare(colums[8])
             conn.url0 = self.url
 
             self.connections.append(conn)
