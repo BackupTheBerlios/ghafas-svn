@@ -113,12 +113,19 @@ class Base:
         settingsvbox.pack_start(gtk.Label(str=_("Options")), False, False, 2)
         optionsvbox = gtk.HBox()
         optionsvbox.pack_start(gtk.Label(str=_("BahnCard")), False, False, 2)
-
         self.card_combo = gtk.combo_box_new_text()
         for bc in dbt.bahncards:
             self.card_combo.append_text(bc)
         self.card_combo.set_active(travelData.bahncard)
         optionsvbox.pack_start(self.card_combo, False, False, 5)
+
+        optionsvbox = gtk.HBox()
+        optionsvbox.pack_start(gtk.Label(str=_("Class")), False, False, 2)
+        self.clazz_combo = gtk.combo_box_new_text()
+        for cl in dbt.clazzes:
+            self.clazz_combo.append_text(cl)
+        self.clazz_combo.set_active(travelData.clazz)
+        optionsvbox.pack_start(self.clazz_combo, False, False, 5)
 
         settingsvbox.pack_start(optionsvbox, False, False, 2)
 
@@ -215,6 +222,7 @@ class Base:
                 self.destdateentry.get_text(),
                 self.desttimeentry.get_text(),
                 bahncard = self.card_combo.get_active(),
+                clazz = self.clazz_combo.get_active(),
                 )
         self.lvtimetabledata.clear()
 

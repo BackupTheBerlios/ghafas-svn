@@ -40,6 +40,11 @@ bahncards = [
         _("BC50, 1st class")
         ]
 
+clazzes = [
+        _("1st"),
+        _("2nd"),
+        ]
+
 
 
 def init_logger(level):
@@ -98,7 +103,11 @@ class Fare:
 
 
 class TravelData:
-    def __init__(self, fr0m, to, dep_date, dep_time, arr_date=None, arr_time=None, bahncard=0):
+    def __init__(
+            self,
+            fr0m, to, dep_date, dep_time, arr_date=None, arr_time=None,
+            bahncard=0, clazz=1
+            ):
         self.fr0m = fr0m
         self.to = to
         self.dep_time = parse_time(dep_date, dep_time)
@@ -108,6 +117,7 @@ class TravelData:
             arr_time = dep_time
         self.arr_time = parse_time(arr_date, arr_time)
         self.bahncard = bahncard
+        self.clazz = clazz
 
     def get_start(self):
         return self.fr0m
@@ -234,7 +244,7 @@ class FindConnectionPage(HtmlPage):
         # it's a BC 50, 2. Kl
         self.form['REQ0Tariff_TravellerReductionClass.1'] = [str(travelData.bahncard+1)]
         # 2. Kl
-        self.form['REQ0Tariff_Class'] = ['2']
+        self.form['REQ0Tariff_Class'] = [str(travelData.clazz+1)]
 
 
     def submit(self):
