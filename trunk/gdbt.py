@@ -133,14 +133,13 @@ class Base:
         # finish settings vbox
         clienthbox.pack_start(settingsvbox, False, False, 3)
 
-        # setup timetable; just a simple text dump
+        # setup timetable
         ttlabel = gtk.Label()
         ttlabel.set_text(_("Timetable"))
         timetableScrollWindow = gtk.ScrolledWindow()
         timetableScrollWindow.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
 
         self.lvtimetable = gtk.TreeView()
-        self.lvtimetable.set_headers_visible(False)
         self.lvtimetable.set_rules_hint(True)
         self.lvtimetable.set_reorderable(False)
         self.lvtimetable.set_enable_search(True)
@@ -151,18 +150,21 @@ class Base:
         self.lvtimetable.set_model(self.lvtimetabledata)
 
         self.lvtimetablecolumn0 = gtk.TreeViewColumn()
+        self.lvtimetablecolumn0.set_title(_('Connection'))
         self.lvtimetablecell0 = gtk.CellRendererText()
         self.lvtimetablecolumn0.pack_start(self.lvtimetablecell0, True)
         self.lvtimetablecolumn0.set_cell_data_func(self.lvtimetablecell0, set_markup_from_connection, 0)
         self.lvtimetable.append_column(self.lvtimetablecolumn0)
         
         self.lvtimetablecolumn1 = gtk.TreeViewColumn()
+        self.lvtimetablecolumn1.set_title(_('Normal fare'))
         self.lvtimetablecell1 = gtk.CellRendererText()
         self.lvtimetablecolumn1.pack_start(self.lvtimetablecell1, True)
         self.lvtimetablecolumn1.set_cell_data_func(self.lvtimetablecell1, set_text_from_pyobject, 1)
         self.lvtimetable.append_column(self.lvtimetablecolumn1)
         
         self.lvtimetablecolumn2 = gtk.TreeViewColumn()
+        self.lvtimetablecolumn2.set_title(_('Savings fare'))
         self.lvtimetablecell2 = gtk.CellRendererText()
         self.lvtimetablecolumn2.pack_start(self.lvtimetablecell2, True)
         self.lvtimetablecolumn2.set_cell_data_func(self.lvtimetablecell2, set_text_from_pyobject, 2)
