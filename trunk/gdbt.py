@@ -191,7 +191,6 @@ class Base:
         self.window.show_all()
 
     def on_connection_activated(self, treeview, path, column=0):
-        print treeview, path, column
         model = treeview.get_model()
         row_iter = model.get_iter(path)
         obj = model.get_value(row_iter, treeview.get_columns().index(column))
