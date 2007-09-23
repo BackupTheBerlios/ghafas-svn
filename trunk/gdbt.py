@@ -184,10 +184,19 @@ class Base:
         # Connect to signals
         self.prevbutton.connect('clicked', self.request_timetable)
         self.showinbrowser.connect('clicked', self.show_timetable_in_browser)
+    	self.lvtimetable.connect('row_activated', self.on_connection_activated)
 
         # final main window setup
         self.window.set_size_request(600, -1)
         self.window.show_all()
+
+    def on_connection_activated(self, treeview, path, column=0):
+        print treeview, path, column
+        model = treeview.get_model()
+        row_iter = model.get_iter(path)
+        obj = model.get_value(row_iter, treeview.get_columns().index(column))
+        if obj and obj.url:
+            dbt.open_browser(obj.url)
 
     def request_timetable(self, action=None):
         invoke_later(target=self.request_timetable_async)
