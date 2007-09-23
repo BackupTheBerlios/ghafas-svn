@@ -198,7 +198,13 @@ class Base:
             dbt.open_browser(obj.url)
 
     def on_request_timetable(self, action=None):
-        invoke_later(target=self.request_timetable_async)
+        invoke_later(target=self.request_timetable_async_checked)
+
+    def request_timetable_async_checked(self):
+        try:
+            self.request_timetable_async()
+        except dbt.UnexpectedPage, e:
+            dbt.open_browser(e.url)
 
     def request_timetable_async(self):
         travelData = dbt.TravelData(
