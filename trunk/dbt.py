@@ -21,6 +21,7 @@ def _(s):
 
 MARK_LINK_LATER = 'Sp&#228;ter'
 MARK_LINK_AVAILABILTY = u'Verf&#252;gbarkeit pr&#252;fen'
+MARK_LINK_BOOKING = u'Zur&nbsp;Buchung'
 MARK_LINK_BACK = u'Zur&#252;ck'
 MARK_TEXT_FROM = u'ab'
 
@@ -76,13 +77,14 @@ def format_time(f, t):
 
 
 class Fare:
-    def __init__(self, fare=None, unknown=False):
+    def __init__(self, fare=None, unknown=False, url=None):
         if fare:
             # FIXME: test for string type
             fare = float(fare.replace(',', '.'))
 
         self.fare = fare
         self.unknown = unknown # unknown availability
+        self.url = url
 
     def __str__(self):
         if self.unknown == True:
@@ -157,9 +159,7 @@ class Connection:
         self.fare_n = Fare()
         self.fare_s = Fare()
 
-        self.url0 = None
-        self.url1 = None
-        self.url2 = None
+        self.url = None
 
     def fields(self):
         return [self, self.fare_n, self.fare_s]
@@ -293,7 +293,7 @@ class TimetablePage:
             conn = Connection(*conn)
             conn.fare_n = self.parse_fare(colums[7])
             conn.fare_s = self.parse_fare(colums[8])
-            conn.url0 = self.url
+            conn.url = self.url
 
             self.connections.append(conn)
 
@@ -301,13 +301,16 @@ class TimetablePage:
         return '\n\n'.join([str(c) for c in self.connections])
 
     def parse_fare(self, content):
+        url = None
         for incident in content.findAll('a'):
             if incident.contents[0] == MARK_LINK_AVAILABILTY:
                 return Fare(unknown=True)
-
+            print incident.contents
+            if incident.contents[0] == MARK_LINK_BOOKING:
+                url = incident['href']
         m = re_eur.search(str(content))
         if m:
-            return Fare(m.group(1))
+            return Fare(m.group(1), url=url)
         return Fare()
 
     def follow_link_later(self):
