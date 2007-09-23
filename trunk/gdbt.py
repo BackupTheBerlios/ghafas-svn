@@ -182,8 +182,8 @@ class Base:
         self.window.add(mainhbox)
 
         # Connect to signals
-        self.prevbutton.connect('clicked', self.request_timetable)
-        self.showinbrowser.connect('clicked', self.show_timetable_in_browser)
+        self.prevbutton.connect('clicked', self.on_request_timetable)
+        self.showinbrowser.connect('clicked', self.on_show_timetable_in_browser)
     	self.lvtimetable.connect('row_activated', self.on_connection_activated)
 
         # final main window setup
@@ -198,7 +198,7 @@ class Base:
         if obj and obj.url:
             dbt.open_browser(obj.url)
 
-    def request_timetable(self, action=None):
+    def on_request_timetable(self, action=None):
         invoke_later(target=self.request_timetable_async)
 
     def request_timetable_async(self):
@@ -238,7 +238,7 @@ class Base:
         self.statusbar.push(self.statusbar.get_context_id(""), "")
 
 
-    def show_timetable_in_browser(self, action=None):
+    def on_show_timetable_in_browser(self, action=None):
         if self.timetable:
             dbt.open_browser(self.timetable[-1].url0)
 
