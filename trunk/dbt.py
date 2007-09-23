@@ -290,7 +290,7 @@ class TimetablePage:
                 # trains
                 colums[6].a.contents[-1],
                 )
-            conn = [i.strip() for i in conn]
+            conn = [urllib2.unquote(i.strip()) for i in conn]
             conn = Connection(*conn)
             conn.fare_n = self.parse_fare(colums[7])
             conn.fare_s = self.parse_fare(colums[8])
