@@ -317,8 +317,8 @@ class TimetablePage(HtmlPage):
             return Fare(m.group(1), url=url)
         return Fare()
 
-    def follow_link_later(self):
-        logging.info('follow link <Spaeter>...')
+    def get_link_later(self):
+        logging.info('get_link_later...')
         return BAHN_BASE_URL + self.link_later
 
 
@@ -345,8 +345,8 @@ class AvailabilityPage(HtmlPage):
                     self.link_back = incident['href']
 
 
-    def follow_link_back(self):
-        logging.info('follow link <Zurueck>...')
+    def get_link_back(self):
+        logging.info('get_link_back...')
         return self.link_back
 
 
@@ -370,7 +370,7 @@ def request_timetable_page(travelData, complete=True):
         while timetable_page.connections[-1].arr_time < travelData.arr_time:
             if not timetable_page.link_later:
                 break
-            response = timetable_page.follow_link_later()
+            response = timetable_page.get_link_later()
             timetable_page = TimetablePage(response)
             print timetable_page
 
@@ -394,7 +394,7 @@ def get_resolved_timetable_page(timetable_page):
     first_link = timetable_page.links_check_availability[0]
 
     page = AvailabilityPage(first_link)
-    timetable_page = TimetablePage(page.follow_link_back())
+    timetable_page = TimetablePage(page.get_link_back())
     if len(timetable_page.links_check_availability):
         timetable_page = get_resolved_timetable_page(timetable_page)
 
