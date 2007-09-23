@@ -265,7 +265,6 @@ class TimetablePage:
                     self.links_check_availability.append(link)
 
             colums = row.findAll('td', recursive=False)
-            #print '---', colums
             if len(colums) < 2 or colums[2].contents[0] != MARK_TEXT_FROM:
                 continue
 
@@ -305,7 +304,6 @@ class TimetablePage:
         for incident in content.findAll('a'):
             if incident.contents[0] == MARK_LINK_AVAILABILTY:
                 return Fare(unknown=True)
-            print incident.contents
             if incident.contents[0] == MARK_LINK_BOOKING:
                 url = incident['href']
         m = re_eur.search(str(content))
