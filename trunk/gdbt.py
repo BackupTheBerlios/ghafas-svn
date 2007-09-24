@@ -17,8 +17,6 @@ import dbt
 install_path = os.path.dirname(__file__)
 travelData = dbt.testTravelData
 
-def _(s):
-    return s
 
 def error(window):
     error_dialog = gtk.MessageDialog(window, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, _("#######"))

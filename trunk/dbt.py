@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.5
 
 import getopt
+import gettext
 import logging
 import os
 import os.path
@@ -17,8 +18,14 @@ sys.path.insert(0, sitepackages)
 import ClientForm
 from BeautifulSoup import BeautifulSoup
 
-def _(s):
-    return s
+def init_gettext():
+    try:
+        gettext.install('dbt', os.path.join(__file__.split('/lib')[0], 'share', 'locale'), unicode=1)
+    except:
+        gettext.install('dbt', '/usr/share/locale', unicode=1)
+
+init_gettext()
+
 
 MARK_LINK_LATER = u'Sp&#228;ter'
 MARK_LINK_AVAILABILTY = u'Verf&#252;gbarkeit pr&#252;fen'
@@ -53,6 +60,8 @@ def init_logger(level):
 
     logging.basicConfig(level=level, format=format, stream=sys.stderr)
     #filename='/tmp/myapp.log', filemode='w'
+
+
 
 def tuples2dict(ts):
     d = {}
@@ -231,7 +240,6 @@ def convert_encoding(s, src='utf-8', dst='iso-8859-1'):
 class FindConnectionPage(HtmlPage):
     def __init__(self, url):
         HtmlPage.__init__(self, url)
-
         forms = self.get_forms()
         for form in forms:
             logging.debug('form:\n' + str(form))
