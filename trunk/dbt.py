@@ -20,7 +20,7 @@ from BeautifulSoup import BeautifulSoup
 def _(s):
     return s
 
-MARK_LINK_LATER = 'Sp&#228;ter'
+MARK_LINK_LATER = u'Sp&#228;ter'
 MARK_LINK_AVAILABILTY = u'Verf&#252;gbarkeit pr&#252;fen'
 MARK_LINK_BOOKING = u'Zur&nbsp;Buchung'
 MARK_LINK_BACK = u'Zur&#252;ck'
@@ -225,6 +225,9 @@ class UnexpectedPage:
         self.url = url
 
 
+def convert_encoding(s, src='utf-8', dst='iso-8859-1'):
+    return s.decode(src).encode(dst)
+
 class FindConnectionPage(HtmlPage):
     def __init__(self, url):
         HtmlPage.__init__(self, url)
@@ -237,8 +240,8 @@ class FindConnectionPage(HtmlPage):
         logging.debug('selected form:\n' + str(self.form))
 
     def fill_form(self, travelData):
-        self.form['REQ0JourneyStopsSG'] = travelData.fr0m
-        self.form['REQ0JourneyStopsZG'] = travelData.to
+        self.form['REQ0JourneyStopsSG'] = convert_encoding(travelData.fr0m)
+        self.form['REQ0JourneyStopsZG'] = convert_encoding(travelData.to)
         self.form['REQ0JourneyDate'] = travelData.get_departure_date()
         self.form['REQ0JourneyTime'] = travelData.get_departure_time()
         # it's a BC 50, 2. Kl
