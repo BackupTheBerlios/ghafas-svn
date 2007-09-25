@@ -15,6 +15,7 @@ import tsclient
 
 
 install_path = os.path.dirname(__file__)
+
 travelData = tsclient.testTravelData
 
 
@@ -72,6 +73,7 @@ def set_markup_from_connection(tree_column, cell, model, iter, idx):
 def set_text_from_pyobject(tree_column, cell, model, iter, idx):
     obj = model.get_value(iter, idx)
     cell.set_property("text", str(obj))
+
 
 class Base:
     def __init__(self):
