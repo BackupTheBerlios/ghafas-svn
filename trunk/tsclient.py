@@ -379,9 +379,6 @@ class AvailabilityPage(HtmlPage):
 
 
 
-
-################################################################################
-
 def request_timetable_page(travelData, complete=True):
     logging.info('request_timetable_page...')
 
@@ -389,7 +386,7 @@ def request_timetable_page(travelData, complete=True):
     find_page.fill_form(travelData)
 
     timetable_page = TimetablePage(find_page.submit())
-    print timetable_page
+    logging.info(timetable_page)
 
     if not timetable_page.ok:
         open_browser_and_exit(timetable_page.response.geturl())
@@ -436,6 +433,7 @@ def show_resolved_yourtimetable_page(timetable_page):
     open_browser(timetable_page.response.geturl())
 
 
+# command line interface starts here:
 def main():
     log_level = logging.INFO
 
@@ -464,7 +462,6 @@ def main():
         logging.error('UnexpectedPage')
         open_browser(e.url)
 
-################################################################################
 
 if __name__ == "__main__":
     main()
