@@ -40,7 +40,6 @@ Darmstadt Hbf
 Frankfurt (Main) Hbf
 Frankfurt (Main) Südbf
 Frankfurt (Main) Flughafen Fernbf
-Frankfurt (Main) Flughafen Regionalbf
 Fulda Bf
 Hanau Hbf
 Kassel-Wilhelmshöhe
@@ -78,9 +77,9 @@ Köln/Bonn Flughafen
 Minden (Westf) Bf
 Münster (Westf) Hbf 
 Siegburg/Bonn Bf
-Solingen Hbf<br />ehem. Solingen-Ohligs Bf
+Solingen Hbf
 Warburg (Westf) Bf
-Wuppertal Hbf<br />ehem. Wuppertal-Elberfeld Bf
+Wuppertal Hbf
 Bingen Hbf
 Cochem (Mosel) Bf
 Homburg (Saar) Hbf
