@@ -60,7 +60,8 @@ def get_stationliststore():
         stationliststore = gtk.ListStore(gobject.TYPE_STRING)
         f = open(os.path.join(install_path, 'stations.txt'), 'r')
         for line in f.readlines():
-            stationliststore.append([line.strip()])
+            if not line.startswith('#'):
+                stationliststore.append([line.strip()])
     return stationliststore
 
 

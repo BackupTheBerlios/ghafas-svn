@@ -1,3 +1,6 @@
+# Taken from:
+# http://de.wikipedia.org/wiki/Liste_der_InterCityExpress-Bahnhöfe
+#
 Baden-Baden Bf
 Bruchsal Bf
 Freiburg (Breisgau) Hbf
