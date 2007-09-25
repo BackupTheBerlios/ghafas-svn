@@ -7,15 +7,15 @@ try:
     import gtk
     import gobject
 except ImportError, (strerror):
-    print >>sys.stderr, "%s.  Please make sure you have this library installed into a directory in Python's path or in the same directory as Sonata.\n" % strerror
+    print >>sys.stderr, "%s.  Please make sure you have this library installed into a directory in Python's path or in the same directory as GnaKB.\n" % strerror
     sys.exit(1)
 
 import threading
-import dbt
+import tsclient
 
 
 install_path = os.path.dirname(__file__)
-travelData = dbt.testTravelData
+travelData = tsclient.testTravelData
 
 
 def error(window):
@@ -77,7 +77,7 @@ class Base:
         self.timetable = None
 
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.window.set_title('dbt')
+        self.window.set_title('GnaKB')
         self.window.set_resizable(True)
 
         # main window layout
@@ -113,7 +113,7 @@ class Base:
         optionsvbox = gtk.HBox()
         optionsvbox.pack_start(gtk.Label(str=_("BahnCard")), False, False, 2)
         self.card_combo = gtk.combo_box_new_text()
-        for bc in dbt.bahncards:
+        for bc in tsclient.bahncards:
             self.card_combo.append_text(bc)
         self.card_combo.set_active(travelData.bahncard)
         optionsvbox.pack_start(self.card_combo, False, False, 5)
@@ -122,7 +122,7 @@ class Base:
         optionsvbox = gtk.HBox()
         optionsvbox.pack_start(gtk.Label(str=_("Class")), False, False, 2)
         self.clazz_combo = gtk.combo_box_new_text()
-        for cl in dbt.clazzes:
+        for cl in tsclient.clazzes:
             self.clazz_combo.append_text(cl)
         self.clazz_combo.set_active(travelData.clazz)
         optionsvbox.pack_start(self.clazz_combo, False, False, 5)
@@ -201,7 +201,7 @@ class Base:
         row_iter = model.get_iter(path)
         obj = model.get_value(row_iter, treeview.get_columns().index(column))
         if obj and obj.url:
-            dbt.open_browser(obj.url)
+            tsclient.open_browser(obj.url)
 
     def on_request_timetable(self, action=None):
         invoke_later(target=self.request_timetable_async_checked)
@@ -209,11 +209,11 @@ class Base:
     def request_timetable_async_checked(self):
         try:
             self.request_timetable_async()
-        except dbt.UnexpectedPage, e:
-            dbt.open_browser(e.url)
+        except tsclient.UnexpectedPage, e:
+            tsclient.open_browser(e.url)
 
     def request_timetable_async(self):
-        travelData = dbt.TravelData(
+        travelData = tsclient.TravelData(
                 self.fromentry.get_text(),
                 self.toentry.get_text(),
                 self.depdateentry.get_text(),
@@ -226,10 +226,10 @@ class Base:
         self.lvtimetabledata.clear()
 
         self.statusbar.push(self.statusbar.get_context_id(""), "Run query...")
-        result = dbt.request_timetable_page(travelData)
+        result = tsclient.request_timetable_page(travelData)
 
         self.statusbar.push(self.statusbar.get_context_id(""), "Resolve query...")
-        result = dbt.get_resolved_timetable_page(result)
+        result = tsclient.get_resolved_timetable_page(result)
 
         for c in result.connections:
             self.lvtimetabledata.append(c.fields())
@@ -241,9 +241,9 @@ class Base:
             travelData.dep_time = self.timetable[-1].dep_time
 
             self.statusbar.push(self.statusbar.get_context_id(""), "Resolve query...")
-            result = dbt.request_timetable_page(travelData)
+            result = tsclient.request_timetable_page(travelData)
             self.timetable.extend(result.connections)
-            result = dbt.get_resolved_timetable_page(result)
+            result = tsclient.get_resolved_timetable_page(result)
             for c in result.connections:
                 self.lvtimetabledata.append(c.fields())
 
@@ -252,7 +252,7 @@ class Base:
 
     def on_show_timetable_in_browser(self, action=None):
         if self.timetable:
-            dbt.open_browser(self.timetable[-1].url)
+            tsclient.open_browser(self.timetable[-1].url)
 
 
 

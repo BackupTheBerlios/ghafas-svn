@@ -20,9 +20,9 @@ from BeautifulSoup import BeautifulSoup
 
 def init_gettext():
     try:
-        gettext.install('dbt', os.path.join(__file__.split('/lib')[0], 'share', 'locale'), unicode=1)
+        gettext.install('gnakb', os.path.join(__file__.split('/lib')[0], 'share', 'locale'), unicode=1)
     except:
-        gettext.install('dbt', '/usr/share/locale', unicode=1)
+        gettext.install('gnakb', '/usr/share/locale', unicode=1)
 
 init_gettext()
 
