@@ -1,7 +1,9 @@
 GnaKB, a GTK+ client to query train connections & fares
 Copyright 2007 tomfuks <xxxxxxxxxxxx>
 
-Parts of the GUI are based on that of Sonata.
+Parts of the GUI code are taken from Sonata.
+The client makes heavy use of ClientForm and BeautifulSoup.
+
 
 REQUIREMENTS:
 	(Required) PyGTK 2.6.0 or newer
