@@ -39,9 +39,9 @@ except ImportError, (strerror):
     sys.exit(1)
 
 import threading
-import tsclient
+import kbclient
 
-travelData = tsclient.testTravelData
+travelData = kbclient.testTravelData
 
 
 def error(window):
@@ -146,7 +146,7 @@ class Base:
         optionsvbox = gtk.HBox()
         optionsvbox.pack_start(gtk.Label(str=_("BahnCard")), False, False, 2)
         self.card_combo = gtk.combo_box_new_text()
-        for bc in tsclient.bahncards:
+        for bc in kbclient.bahncards:
             self.card_combo.append_text(bc)
         self.card_combo.set_active(travelData.bahncard)
         optionsvbox.pack_start(self.card_combo, False, False, 5)
@@ -155,7 +155,7 @@ class Base:
         optionsvbox = gtk.HBox()
         optionsvbox.pack_start(gtk.Label(str=_("Class")), False, False, 2)
         self.clazz_combo = gtk.combo_box_new_text()
-        for cl in tsclient.clazzes:
+        for cl in kbclient.clazzes:
             self.clazz_combo.append_text(cl)
         self.clazz_combo.set_active(travelData.clazz)
         optionsvbox.pack_start(self.clazz_combo, False, False, 5)
@@ -234,7 +234,7 @@ class Base:
         row_iter = model.get_iter(path)
         obj = model.get_value(row_iter, treeview.get_columns().index(column))
         if obj and obj.url:
-            tsclient.open_browser(obj.url)
+            kbclient.open_browser(obj.url)
 
     def on_request_timetable(self, action=None):
         invoke_later(target=self.request_timetable_async_checked)
@@ -242,11 +242,11 @@ class Base:
     def request_timetable_async_checked(self):
         try:
             self.request_timetable_async()
-        except tsclient.UnexpectedPage, e:
-            tsclient.open_browser(e.url)
+        except kbclient.UnexpectedPage, e:
+            kbclient.open_browser(e.url)
 
     def request_timetable_async(self):
-        travelData = tsclient.TravelData(
+        travelData = kbclient.TravelData(
                 self.fromentry.get_text(),
                 self.toentry.get_text(),
                 self.depdateentry.get_text(),
@@ -259,10 +259,10 @@ class Base:
         self.lvtimetabledata.clear()
 
         self.statusbar.push(self.statusbar.get_context_id(""), "Run query...")
-        result = tsclient.request_timetable_page(travelData)
+        result = kbclient.request_timetable_page(travelData)
 
         self.statusbar.push(self.statusbar.get_context_id(""), "Resolve query...")
-        result = tsclient.get_resolved_timetable_page(result)
+        result = kbclient.get_resolved_timetable_page(result)
 
         for c in result.connections:
             self.lvtimetabledata.append(c.fields())
@@ -274,9 +274,9 @@ class Base:
             travelData.dep_time = self.timetable[-1].dep_time
 
             self.statusbar.push(self.statusbar.get_context_id(""), "Resolve query...")
-            result = tsclient.request_timetable_page(travelData)
+            result = kbclient.request_timetable_page(travelData)
             self.timetable.extend(result.connections)
-            result = tsclient.get_resolved_timetable_page(result)
+            result = kbclient.get_resolved_timetable_page(result)
             for c in result.connections:
                 self.lvtimetabledata.append(c.fields())
 
@@ -285,7 +285,7 @@ class Base:
 
     def on_show_timetable_in_browser(self, action=None):
         if self.timetable:
-            tsclient.open_browser(self.timetable[-1].url)
+            kbclient.open_browser(self.timetable[-1].url)
 
 
 
