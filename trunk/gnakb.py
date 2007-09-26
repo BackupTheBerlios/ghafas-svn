@@ -41,9 +41,6 @@ except ImportError, (strerror):
 import threading
 import tsclient
 
-
-install_path = os.path.dirname(__file__)
-
 travelData = tsclient.testTravelData
 
 
@@ -87,10 +84,15 @@ def get_stationliststore():
     global stationliststore
     if not stationliststore:
         stationliststore = gtk.ListStore(gobject.TYPE_STRING)
-        f = open(os.path.join(install_path, 'stations.txt'), 'r')
-        for line in f.readlines():
-            if not line.startswith('#'):
-                stationliststore.append([line.strip()])
+        sfn = 'stations.txt'
+        sfp = os.path.join(os.path.dirname(__file__), sfn)
+        if not os.path.exists(sfp):
+            sfp = os.path.join(sys.prefix, 'share', 'gnakb', sfn)
+        sf = open(sfp, 'r')
+        for line in sf.readlines():
+            line = line.strip()
+            if not (line.startswith('#') or len(line) == 0):
+                stationliststore.append([line])
     return stationliststore
 
 

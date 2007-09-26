@@ -31,12 +31,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 import sys
 import os.path
 
-path = os.path.dirname(sys.argv[0])
-app = os.path.basename(sys.argv[0])
-
-if os.path.exists('/usr/bin/open-x11'):
-    os.system('PATH=%s:$PATH /usr/bin/open-x11 %s.py' % (path, app))
-else:
-    os.system('%s.py' % sys.argv[0])
+apppath = sys.argv[0]
 
 
+if os.path.exists(apppath + '.py'):
+    path = os.path.dirname(apppath)
+    app = os.path.basename(apppath) + '.py'
+    if os.path.exists('/usr/bin/open-x11'):
+        err = os.system('PATH=%s:$PATH /usr/bin/open-x11 %s' % (path, app))
+    else:
+        err = os.system(apppath + '.py')
+    sys.exit(err)
+
+if os.path.exists('/usr/bin/open'):
+    os.system('open -a X11')
+
+import gnakb
+
+gnakb.main()

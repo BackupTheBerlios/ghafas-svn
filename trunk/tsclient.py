@@ -40,8 +40,8 @@ import sys
 import urllib2
 import StringIO
 
-sitepackages = os.path.join(os.path.dirname(__file__), 'site-packages')
-sys.path.insert(0, sitepackages)
+gnakblib_path = os.path.join(os.path.dirname(__file__), 'gnakblib')
+sys.path.insert(0, gnakblib_path)
 
 import ClientForm
 from BeautifulSoup import BeautifulSoup
