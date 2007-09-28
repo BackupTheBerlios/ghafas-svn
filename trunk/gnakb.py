@@ -124,6 +124,8 @@ class Base:
     def __init__(self):
         self.timetable = None
 
+        gtk.gdk.threads_init()
+
         # add some icons:
         self.iconfactory = gtk.IconFactory()
         sonataset1 = gtk.IconSet()
@@ -317,13 +319,12 @@ class Base:
             kbclient.open_browser(self.timetable[-1].url)
 
 
+    def main(self):
+        gtk.main()
 
-def main():
-    gtk.gdk.threads_init()
-    Base()
-    gtk.main()
+
 
 if __name__ == "__main__":
-    main()
+    Base().main()
 
 

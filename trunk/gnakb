@@ -46,6 +46,9 @@ if os.path.exists(apppath + '.py'):
 if os.path.exists('/usr/bin/open'):
     os.system('open -a X11')
 
+
 import gnakb
 
-gnakb.main()
+gnakb.Base().main()
+
+
