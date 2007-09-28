@@ -55,7 +55,13 @@ def invoke_later(target):
     thread.setDaemon(True)
     thread.start()
 
-def find_path(filename):
+def find_path(paths, filename):
+    for path in paths:
+        if os.path.exists(path):
+            return os.path.abspath(path)
+    return None
+
+def find_pixmaps_path(filename):
     paths = [
     	(sys.prefix, 'share', 'pixmaps', filename),
     	(os.path.split(__file__)[0], filename),
@@ -64,10 +70,16 @@ def find_path(filename):
      	(__file__.split('/lib')[0], 'share', 'pixmaps', filename),
         ]
     paths = [os.path.join(*path) for path in paths]
-    for path in paths:
-        if os.path.exists(path):
-            return os.path.abspath(path)
-    return None
+    return find_path(paths, filename)
+ 
+def find_stations_path(filename):
+    paths = [
+    	(sys.prefix, 'share', 'gnakb', 'stations', filename),
+    	(os.path.split(__file__)[0], filename),
+    	(os.path.split(__file__)[0], 'stations', filename),
+        ]
+    paths = [os.path.join(*path) for path in paths]
+    return find_path(paths, filename)
  
 
 class PropertyEntry(gtk.Entry):
@@ -99,11 +111,7 @@ def get_stationliststore():
     global stationliststore
     if not stationliststore:
         stationliststore = gtk.ListStore(gobject.TYPE_STRING)
-        sfn = 'stations.txt'
-        sfp = os.path.join(os.path.dirname(__file__), sfn)
-        if not os.path.exists(sfp):
-            sfp = os.path.join(sys.prefix, 'share', 'gnakb', sfn)
-        sf = open(sfp, 'r')
+        sf = open(find_stations_path('ice-only.txt'), 'r')
         for line in sf.readlines():
             line = line.strip()
             if not (line.startswith('#') or len(line) == 0):
@@ -129,7 +137,7 @@ class Base:
         # add some icons:
         self.iconfactory = gtk.IconFactory()
         sonataset1 = gtk.IconSet()
-        filename1 = [find_path('gnakb.png')]
+        filename1 = [find_pixmaps_path('gnakb.png')]
         icons1 = [gtk.IconSource() for i in filename1]
         for i, iconsource in enumerate(icons1):
             iconsource.set_filename(filename1[i])
