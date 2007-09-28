@@ -55,6 +55,21 @@ def invoke_later(target):
     thread.setDaemon(True)
     thread.start()
 
+def find_path(filename):
+    paths = [
+    	(sys.prefix, 'share', 'pixmaps', filename),
+    	(os.path.split(__file__)[0], filename),
+    	(os.path.split(__file__)[0], 'pixmaps', filename),
+     	(os.path.split(__file__)[0], 'share', filename),
+     	(__file__.split('/lib')[0], 'share', 'pixmaps', filename),
+        ]
+    paths = [os.path.join(*path) for path in paths]
+    for path in paths:
+        if os.path.exists(path):
+            return os.path.abspath(path)
+    return None
+ 
+
 class PropertyEntry(gtk.Entry):
     def __init__(self, name, value, layout=None):
         gtk.Entry.__init__(self)
@@ -108,6 +123,17 @@ def set_text_from_pyobject(tree_column, cell, model, iter, idx):
 class Base:
     def __init__(self):
         self.timetable = None
+
+        # add some icons:
+        self.iconfactory = gtk.IconFactory()
+        sonataset1 = gtk.IconSet()
+        filename1 = [find_path('gnakb.png')]
+        icons1 = [gtk.IconSource() for i in filename1]
+        for i, iconsource in enumerate(icons1):
+            iconsource.set_filename(filename1[i])
+            sonataset1.add_source(iconsource)
+        self.iconfactory.add('sonata', sonataset1)
+        self.iconfactory.add_default()
 
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_title('GnaKB')
@@ -223,7 +249,10 @@ class Base:
         # Connect to signals
         self.prevbutton.connect('clicked', self.on_request_timetable)
         self.showinbrowser.connect('clicked', self.on_show_timetable_in_browser)
-    	self.lvtimetable.connect('row_activated', self.on_connection_activated)
+        self.lvtimetable.connect('row_activated', self.on_connection_activated)
+
+        icon = self.window.render_icon('gnakb', gtk.ICON_SIZE_DIALOG)
+        self.window.set_icon(icon)
 
         # final main window setup
         self.window.set_size_request(600, -1)

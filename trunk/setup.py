@@ -31,6 +31,6 @@ setup(name='GnaKB',
         scripts = ['gnakb'],
         data_files=[('share/gnakb', ['README', 'CHANGELOG', 'TODO', 'stations.txt']),
                     #('share/applications', ['gnakb.desktop']),
-                    #('share/pixmaps', ['pixmaps/gnakb.png', 'pixmaps/gnakb_large.png', 'pixmaps/gnakbcd.png', 'pixmaps/gnakbcd_large.png']),
+                    ('share/pixmaps', ['pixmaps/gnakb.png']),
                     ],
         )
