@@ -1,81 +1,109 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) 2007 tomfuks <xxxxxxxxxxxx>
-# This file is distributed under the same license as the GnaKB package.
-# tomfuks <xxxxxxxxxxxx>, 2007.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GnaKB 0.1\n"
-"Report-Msgid-Bugs-To: tomfuks <xxxxxxxxxxxx>\n"
-"POT-Creation-Date: 2007-09-30 19:38+0200\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-09-30 20:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: tomfuks <xxxxxxxxxxxx>\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gnakb.py:48
+#: gnakb.py:63
+msgid "No reduction"
+msgstr ""
+
+#: gnakb.py:64
+msgid "BC25, 2nd class"
+msgstr ""
+
+#: gnakb.py:65
+msgid "BC25, 1st class"
+msgstr ""
+
+#: gnakb.py:66
+msgid "BC50, 2nd class"
+msgstr ""
+
+#: gnakb.py:67
+msgid "BC50, 1st class"
+msgstr ""
+
+#: gnakb.py:71
+msgid "1st"
+msgstr ""
+
+#: gnakb.py:72
+msgid "2nd"
+msgstr ""
+
+#: gnakb.py:79
 msgid "#######"
 msgstr ""
 
-#: gnakb.py:49
+#: gnakb.py:80
 msgid "Error"
-msgstr "Fehler"
+msgstr ""
 
-#: gnakb.py:162
+#: gnakb.py:195
 msgid "Start & Destination"
-msgstr "Start & Ziel"
+msgstr ""
 
-#: gnakb.py:163
+#: gnakb.py:196
 msgid "From:"
-msgstr "Von:"
+msgstr ""
 
-#: gnakb.py:164
+#: gnakb.py:197
 msgid "To:"
-msgstr "Nach"
+msgstr ""
 
-#: gnakb.py:170
+#: gnakb.py:203
 msgid "Departure (earliest)"
-msgstr "Abfahrt (frühestens)"
+msgstr ""
 
-#: gnakb.py:171 gnakb.py:176
+#: gnakb.py:204 gnakb.py:209
 msgid "Time:"
-msgstr "Zeit:"
+msgstr ""
 
-#: gnakb.py:172 gnakb.py:177
+#: gnakb.py:205 gnakb.py:210
 msgid "Date:"
-msgstr "Datum"
+msgstr ""
 
-#: gnakb.py:175
+#: gnakb.py:208
 msgid "Arrival (latest)"
-msgstr "Ankunft (spätestens)"
-
-#: gnakb.py:180
-msgid "Options"
-msgstr "Optionen"
-
-#: gnakb.py:183
-msgid "BahnCard"
-msgstr "BahnCard"
-
-#: gnakb.py:192
-msgid "Class"
-msgstr "Klasse"
+msgstr ""
 
 #: gnakb.py:213
+msgid "Options"
+msgstr ""
+
+#: gnakb.py:216
+msgid "BahnCard"
+msgstr ""
+
+#: gnakb.py:225
+msgid "Class"
+msgstr ""
+
+#: gnakb.py:246
 msgid "Timetable"
-msgstr "#Timetable#"
+msgstr ""
 
-#: gnakb.py:228
+#: gnakb.py:261
 msgid "Connection"
-msgstr "Verbindungen"
+msgstr ""
 
-#: gnakb.py:235
+#: gnakb.py:268
 msgid "Normal fare"
-msgstr "Normalpreis"
+msgstr ""
 
-#: gnakb.py:242
+#: gnakb.py:275
 msgid "Savings fare"
-msgstr "Sparpreis"
+msgstr ""
