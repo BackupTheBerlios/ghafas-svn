@@ -1,0 +1,12 @@
+
+[Desktop Entry]
+Name=GnaKB
+Comment=A GTK+ client to query train connections & fares
+Exec=gnakb
+Terminal=false
+Type=Application
+Icon=gnakb
+Categories=GTK;Application;
+StartupNotify=true
+Version=1.0
+Encoding=UTF-8
