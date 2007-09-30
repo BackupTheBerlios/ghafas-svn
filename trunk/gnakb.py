@@ -165,7 +165,7 @@ class Base:
 
         gtk.gdk.threads_init()
 
-        kbclient.init_gettext('gnakb')
+        init_gettext('gnakb')
 
         # add some icons:
         self.iconfactory = gtk.IconFactory()
