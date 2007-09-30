@@ -38,8 +38,39 @@ except ImportError, (strerror):
     print >>sys.stderr, "%s.  Please make sure you have this library installed into a directory in Python's path or in the same directory as GnaKB.\n" % strerror
     sys.exit(1)
 
+import gettext
 import threading
 import kbclient
+
+
+def init_gettext(domain):
+    paths = [
+        os.path.join(os.path.dirname(__file__), 'locale'),
+        os.path.join(__file__.split('/lib')[0], 'share', 'locale'),
+        '/usr/share/locale',
+        ]
+    for path in paths:
+        try:
+            gettext.install(domain, path, unicode=1)
+            break
+        except:
+            pass
+        
+init_gettext('gnakb')
+
+
+bahncards = [
+        _("No reduction"),
+        _("BC25, 2nd class"),
+        _("BC25, 1st class"),
+        _("BC50, 2nd class"),
+        _("BC50, 1st class")
+        ]
+
+clazzes = [
+        _("1st"),
+        _("2nd"),
+        ]
 
 travelData = kbclient.testTravelData
 
@@ -134,6 +165,8 @@ class Base:
 
         gtk.gdk.threads_init()
 
+        kbclient.init_gettext('gnakb')
+
         # add some icons:
         self.iconfactory = gtk.IconFactory()
         sonataset1 = gtk.IconSet()
@@ -182,7 +215,7 @@ class Base:
         optionsvbox = gtk.HBox()
         optionsvbox.pack_start(gtk.Label(str=_("BahnCard")), False, False, 2)
         self.card_combo = gtk.combo_box_new_text()
-        for bc in kbclient.bahncards:
+        for bc in bahncards:
             self.card_combo.append_text(bc)
         self.card_combo.set_active(travelData.bahncard)
         optionsvbox.pack_start(self.card_combo, False, False, 5)
@@ -191,7 +224,7 @@ class Base:
         optionsvbox = gtk.HBox()
         optionsvbox.pack_start(gtk.Label(str=_("Class")), False, False, 2)
         self.clazz_combo = gtk.combo_box_new_text()
-        for cl in kbclient.clazzes:
+        for cl in clazzes:
             self.clazz_combo.append_text(cl)
         self.clazz_combo.set_active(travelData.clazz)
         optionsvbox.pack_start(self.clazz_combo, False, False, 5)

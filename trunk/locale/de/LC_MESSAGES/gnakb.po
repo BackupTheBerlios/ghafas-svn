@@ -1,0 +1,81 @@
+# German translations for PACKAGE package.
+# Copyright (C) 2007 tomfuks <xxxxxxxxxxxx>
+# This file is distributed under the same license as the GnaKB package.
+# tomfuks <xxxxxxxxxxxx>, 2007.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: tomfuks <xxxxxxxxxxxx>\n"
+"POT-Creation-Date: 2007-09-30 19:38+0200\n"
+"PO-Revision-Date: 2007-09-30 19:56+0200\n"
+"Last-Translator: tomfuks              <>\n"
+"Language-Team: German <de@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: gnakb.py:48
+msgid "#######"
+msgstr ""
+
+#: gnakb.py:49
+msgid "Error"
+msgstr "Fehler"
+
+#: gnakb.py:162
+msgid "Start & Destination"
+msgstr "Start & Ziel"
+
+#: gnakb.py:163
+msgid "From:"
+msgstr "Von:"
+
+#: gnakb.py:164
+msgid "To:"
+msgstr "Nach:"
+
+#: gnakb.py:170
+msgid "Departure (earliest)"
+msgstr "Abfahrt (frühestens)"
+
+#: gnakb.py:171 gnakb.py:176
+msgid "Time:"
+msgstr "Zeit"
+
+#: gnakb.py:172 gnakb.py:177
+msgid "Date:"
+msgstr "Datum"
+
+#: gnakb.py:175
+msgid "Arrival (latest)"
+msgstr "Ankunft (apätestens)"
+
+#: gnakb.py:180
+msgid "Options"
+msgstr "Optionen"
+
+#: gnakb.py:183
+msgid "BahnCard"
+msgstr "BahnCard"
+
+#: gnakb.py:192
+msgid "Class"
+msgstr "Klasse"
+
+#: gnakb.py:213
+msgid "Timetable"
+msgstr "Timetable###"
+
+#: gnakb.py:228
+msgid "Connection"
+msgstr "Verbindung"
+
+#: gnakb.py:235
+msgid "Normal fare"
+msgstr "Normalpreis"
+
+#: gnakb.py:242
+msgid "Savings fare"
+msgstr "Sparpreis"

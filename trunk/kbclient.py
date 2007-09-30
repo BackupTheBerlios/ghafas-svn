@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 import getopt
-import gettext
 import logging
 import os
 import os.path
@@ -46,14 +45,6 @@ sys.path.insert(0, gnakblib_path)
 import ClientForm
 from BeautifulSoup import BeautifulSoup
 
-def init_gettext():
-    try:
-        gettext.install('gnakb', os.path.join(__file__.split('/lib')[0], 'share', 'locale'), unicode=1)
-    except:
-        gettext.install('gnakb', '/usr/share/locale', unicode=1)
-
-init_gettext()
-
 
 MARK_LINK_LATER = u'Sp&#228;ter'
 MARK_LINK_AVAILABILTY = u'Verf&#252;gbarkeit pr&#252;fen'
@@ -65,20 +56,6 @@ BAHN_BASE_URL = 'http://reiseauskunft.bahn.de'
 BAHN_QUERY_URL = BAHN_BASE_URL + "/bin/query.exe/d"
 
 re_eur = re.compile(r'([0-9]+,[0-9]+)&nbsp;EUR')
-
-
-bahncards = [
-        _("No reduction"),
-        _("BC25, 2nd class"),
-        _("BC25, 1st class"),
-        _("BC50, 2nd class"),
-        _("BC50, 1st class")
-        ]
-
-clazzes = [
-        _("1st"),
-        _("2nd"),
-        ]
 
 
 
