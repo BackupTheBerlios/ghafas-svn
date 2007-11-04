@@ -321,40 +321,43 @@ class TimetablePage(HtmlPage):
                 continue
 
             arrivalrow = row
-                
-            departure_cols = departurerow.findAll('td', recursive=False)
-            arrival_cols = arrivalrow.findAll('td', recursive=False)
-            
-            conn = (
-                # st_dep
-                departure_cols[0].a.contents[0],
-                # st_arr
-                arrival_cols[0].a.contents[0],
-                # dt_dep
-                departure_cols[1].contents[0].split()[1],
-                # tm_dep
-                departure_cols[3].contents[0],
-                # dt_arr
-                arrival_cols[1].contents[0].split()[1],
-                # tm_arr
-                arrival_cols[3].contents[0],
-                # duration
-                departure_cols[4].string,
-                # changes
-                departure_cols[5].string,
-                # trains
-                departure_cols[6].a.contents[-1],
-                )
-            conn = [urllib2.unquote(i.strip()) for i in conn]
-            conn = Connection(*conn)
-            conn.fare_n = self.parse_fare(departure_cols[7])
-            conn.fare_s = self.parse_fare(departure_cols[8])
-            conn.url = self.response.geturl()
 
+            conn = self.parse_connection(departurerow, arrivalrow)
             self.connections.append(conn)
 
             departurerow = None
             arrivalrow = None
+
+    def parse_connection(self, departure_row, arrival_row):                
+        departure_cols = departure_row.findAll('td', recursive=False)
+        arrival_cols = arrival_row.findAll('td', recursive=False)
+        
+        conn = (
+            # st_dep
+            departure_cols[0].a.contents[0],
+            # st_arr
+            arrival_cols[0].a.contents[0],
+            # dt_dep
+            departure_cols[1].contents[0].split()[1],
+            # tm_dep
+            departure_cols[3].contents[0],
+            # dt_arr
+            arrival_cols[1].contents[0].split()[1],
+            # tm_arr
+            arrival_cols[3].contents[0],
+            # duration
+            departure_cols[4].string,
+            # changes
+            departure_cols[5].string,
+            # trains
+            departure_cols[6].a.contents[-1],
+            )
+        conn = [urllib2.unquote(i.strip()) for i in conn]
+        conn = Connection(*conn)
+        conn.fare_n = self.parse_fare(departure_cols[7])
+        conn.fare_s = self.parse_fare(departure_cols[8])
+        conn.url = self.response.geturl()
+        return conn
 
     def __str__(self):
         return '\n\n'.join([str(c) for c in self.connections])
