@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
 
 
+import datetime
 import getopt
 import logging
 import os
@@ -95,7 +96,7 @@ def parse_time(d, t):
     return time.mktime(time.strptime('%s %s' % (d, t), '%d.%m.%Y %H:%M'))
 
 def format_time(f, t):
-        return time.strftime(f, time.localtime(t))
+    return time.strftime(f, time.localtime(t))
 
 
 class Fare:
@@ -153,11 +154,11 @@ class TravelData:
 
 
 testTravelData = TravelData(
-        'Frankfurt am Main',
-        'Berlin Hbf',
-        '30.11.2007',
+        'Berlin',
+        'Hamburg',
+        (datetime.date.today()+datetime.timedelta(14)).strftime("%d.%m.%Y"),
         '08:00',
-        '30.11.2007',
+        (datetime.date.today()+datetime.timedelta(14)).strftime("%d.%m.%Y"),
         '14:00',
         bahncard = 3
         )
