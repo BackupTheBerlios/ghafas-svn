@@ -321,18 +321,9 @@ class TimetablePage(HtmlPage):
                 continue
 
             arrivalrow = row
-
-            conn = self.parse_connection(departurerow, arrivalrow)
-
-            self.connections.append(conn)
-
-            departurerow = None
-            arrivalrow = None
-
-        def parse_connection(self, departure_row, arrival_row):
-
-            departure_cols = departure_row.findAll('td', recursive=False)
-            arrival_cols = arrival_row.findAll('td', recursive=False)
+                
+            departure_cols = departurerow.findAll('td', recursive=False)
+            arrival_cols = arrivalrow.findAll('td', recursive=False)
             
             conn = (
                 # st_dep
@@ -360,6 +351,10 @@ class TimetablePage(HtmlPage):
             conn.fare_s = self.parse_fare(departure_cols[8])
             conn.url = self.response.geturl()
 
+            self.connections.append(conn)
+
+            departurerow = None
+            arrivalrow = None
 
     def __str__(self):
         return '\n\n'.join([str(c) for c in self.connections])
