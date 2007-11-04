@@ -155,9 +155,9 @@ class TravelData:
 testTravelData = TravelData(
         'Frankfurt am Main',
         'Berlin Hbf',
-        '30.10.2007',
+        '30.11.2007',
         '08:00',
-        '30.10.2007',
+        '30.11.2007',
         '14:00',
         bahncard = 3
         )
@@ -297,43 +297,64 @@ class TimetablePage(HtmlPage):
                 attrs={'class':'result', 'cellspacing':'0'}
                 )
         table = table[0]
+        departurerow = None
         for row in table.findAll('tr', recursive=False):
             for incident in row.findAll('a'):
                 if incident.contents[0] == MARK_LINK_AVAILABILTY:
                     link = incident['href']
                     self.links_check_availability.append(link)
 
-            colums = row.findAll('td', recursive=False)
-            if len(colums) < 2 or colums[2].contents[0] != MARK_TEXT_FROM:
+            #colums = row.findAll('td', recursive=False)
+            #if len(colums) < 2 or colums[2].contents[0] != MARK_TEXT_FROM:
+            #    continue
+            
+            try:
+                row_class = row['class']
+            except KeyError:
+                continue
+            
+            if not (row_class.startswith('light') or row_class.startswith('dark')):
                 continue
 
+            if row.td['class'].find('departurerow') != -1:
+                departurerow = row
+                continue
+
+            arrivalrow = row
+                
+            departure_cols = departurerow.findAll('td', recursive=False)
+            arrival_cols = arrivalrow.findAll('td', recursive=False)
+            
             conn = (
                 # st_dep
-                colums[0].a.contents[0],
+                departure_cols[0].a.contents[0],
                 # st_arr
-                colums[0].a.contents[2],
+                arrival_cols[0].a.contents[0],
                 # dt_dep
-                colums[1].contents[0].split()[1],
+                departure_cols[1].contents[0].split()[1],
                 # tm_dep
-                colums[3].contents[0],
+                departure_cols[3].contents[0],
                 # dt_arr
-                colums[1].contents[2].split()[1],
+                arrival_cols[1].contents[0].split()[1],
                 # tm_arr
-                colums[3].contents[2],
+                arrival_cols[3].contents[0],
                 # duration
-                colums[4].string,
+                departure_cols[4].string,
                 # changes
-                colums[5].string,
+                departure_cols[5].string,
                 # trains
-                colums[6].a.contents[-1],
+                departure_cols[6].a.contents[-1],
                 )
             conn = [urllib2.unquote(i.strip()) for i in conn]
             conn = Connection(*conn)
-            conn.fare_n = self.parse_fare(colums[7])
-            conn.fare_s = self.parse_fare(colums[8])
+            conn.fare_n = self.parse_fare(departure_cols[7])
+            conn.fare_s = self.parse_fare(departure_cols[8])
             conn.url = self.response.geturl()
 
             self.connections.append(conn)
+
+            departurerow = None
+            arrivalrow = None
 
     def __str__(self):
         return '\n\n'.join([str(c) for c in self.connections])
