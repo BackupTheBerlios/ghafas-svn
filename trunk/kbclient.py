@@ -279,6 +279,12 @@ class TimetablePage(HtmlPage):
         for form in forms:
             logging.debug('form:\n' + str(form))
         self.form = forms[0]
+        
+        try:
+            self.form['immediateAvail=ON&action']
+            self.has_availability_button = True
+        except:
+            self.has_availability_button = False 
 
         self.links_check_availability = []
         self.link_later = None
@@ -382,10 +388,10 @@ class TimetablePage(HtmlPage):
             if incident.contents[0] == MARK_LINK_BOOKING:
                 url = incident['href']
 
-        m = re_eur.search(content.contents[0])
-        if m:
-            return Fare(m.group(1), url=url)
-        m = re_eur.search(str(content.a))
+        m = re_eur.search(str(content.contents[0]))
+        if not m and content.a:
+            m = re_eur.search(str(content.a.contents[0]))
+
         if m:
             return Fare(m.group(1), url=url)
         return Fare()
@@ -433,7 +439,8 @@ def request_timetable_page(travelData, complete=True):
     timetable_page = TimetablePage(find_page.submit())
     logging.info(timetable_page)
 
-    timetable_page = TimetablePage(timetable_page.submit())
+    if timetable_page.has_availability_button:
+        timetable_page = TimetablePage(timetable_page.submit())
 
     if not timetable_page.ok:
         open_browser_and_exit(timetable_page.response.geturl())
