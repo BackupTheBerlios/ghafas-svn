@@ -48,7 +48,8 @@ from BeautifulSoup import BeautifulSoup
 
 
 MARK_LINK_LATER = u'Sp&#228;ter'
-MARK_LINK_AVAILABILTY = u'Verf&#252;gbarkeit pr&#252;fen'
+MARK_LINK_CHECK_AVAILABILTY = u'Verf&#252;gbarkeit pr&#252;fen'
+MARK_BUTTON_SHOW_AVAILABILTY = u'Verf&#252;gbarkeit f&#252;r alle anzeigen'
 MARK_LINK_BOOKING = u'Zur&nbsp;Buchung'
 MARK_LINK_BACK = u'Zur&#252;ck'
 MARK_TEXT_FROM = u'ab'
@@ -273,6 +274,12 @@ class FindConnectionPage(HtmlPage):
 class TimetablePage(HtmlPage):
     def __init__(self, url):
         HtmlPage.__init__(self, url)
+
+        forms = self.get_forms()
+        for form in forms:
+            logging.debug('form:\n' + str(form))
+        self.form = forms[0]
+
         self.links_check_availability = []
         self.link_later = None
         self.connections = []
@@ -301,7 +308,7 @@ class TimetablePage(HtmlPage):
         departurerow = None
         for row in table.findAll('tr', recursive=False):
             for incident in row.findAll('a'):
-                if incident.contents[0] == MARK_LINK_AVAILABILTY:
+                if incident.contents[0] == MARK_LINK_CHECK_AVAILABILTY:
                     link = incident['href']
                     self.links_check_availability.append(link)
 
@@ -328,6 +335,9 @@ class TimetablePage(HtmlPage):
 
             departurerow = None
             arrivalrow = None
+
+    def __str__(self):
+        return '\n\n'.join([str(c) for c in self.connections])
 
     def parse_connection(self, departure_row, arrival_row):                
         departure_cols = departure_row.findAll('td', recursive=False)
@@ -360,13 +370,14 @@ class TimetablePage(HtmlPage):
         conn.url = self.response.geturl()
         return conn
 
-    def __str__(self):
-        return '\n\n'.join([str(c) for c in self.connections])
+    def submit(self):
+        logging.info('submit form...')
+        return self.form.click('immediateAvail=ON&action')
 
     def parse_fare(self, content):
         url = None
         for incident in content.findAll('a'):
-            if incident.contents[0] == MARK_LINK_AVAILABILTY:
+            if incident.contents[0] == MARK_LINK_CHECK_AVAILABILTY:
                 return Fare(unknown=True)
             if incident.contents[0] == MARK_LINK_BOOKING:
                 url = incident['href']
@@ -422,6 +433,8 @@ def request_timetable_page(travelData, complete=True):
     timetable_page = TimetablePage(find_page.submit())
     logging.info(timetable_page)
 
+    timetable_page = TimetablePage(timetable_page.submit())
+
     if not timetable_page.ok:
         open_browser_and_exit(timetable_page.response.geturl())
 
@@ -446,16 +459,6 @@ def show_all_availability_pages(timetable_page):
 
 def get_resolved_timetable_page(timetable_page):
     logging.info('get_resolved_timetable_page...')
-
-    if len(timetable_page.links_check_availability) == 0:
-        return timetable_page
-
-    first_link = timetable_page.links_check_availability[0]
-
-    page = AvailabilityPage(first_link)
-    timetable_page = TimetablePage(page.get_link_back())
-    if len(timetable_page.links_check_availability):
-        timetable_page = get_resolved_timetable_page(timetable_page)
 
     return timetable_page
 
