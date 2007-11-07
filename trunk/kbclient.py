@@ -370,7 +370,11 @@ class TimetablePage(HtmlPage):
                 return Fare(unknown=True)
             if incident.contents[0] == MARK_LINK_BOOKING:
                 url = incident['href']
-        m = re_eur.search(str(content))
+
+        m = re_eur.search(content.contents[0])
+        if m:
+            return Fare(m.group(1), url=url)
+        m = re_eur.search(str(content.a))
         if m:
             return Fare(m.group(1), url=url)
         return Fare()
