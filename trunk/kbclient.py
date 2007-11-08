@@ -275,16 +275,8 @@ class TimetablePage(HtmlPage):
     def __init__(self, url):
         HtmlPage.__init__(self, url)
 
-        forms = self.get_forms()
-        for form in forms:
-            logging.debug('form:\n' + str(form))
-        self.form = forms[0]
-        
-        try:
-            self.form['immediateAvail=ON&action']
-            self.has_availability_button = True
-        except:
-            self.has_availability_button = False 
+        self.form = self.get_forms()[0]
+        logging.debug('form:\n' + str(self.form))
 
         self.links_check_availability = []
         self.link_later = None
@@ -376,6 +368,13 @@ class TimetablePage(HtmlPage):
         conn.url = self.response.geturl()
         return conn
 
+    def has_availability_button(self):
+        try:
+            self.form['immediateAvail=ON&action']
+        except:
+            return False
+        return True
+
     def submit(self):
         logging.info('submit form...')
         return self.form.click('immediateAvail=ON&action')
@@ -439,7 +438,7 @@ def request_timetable_page(travelData, complete=True):
     timetable_page = TimetablePage(find_page.submit())
     logging.info(timetable_page)
 
-    if timetable_page.has_availability_button:
+    if timetable_page.has_availability_button():
         timetable_page = TimetablePage(timetable_page.submit())
 
     if not timetable_page.ok:
