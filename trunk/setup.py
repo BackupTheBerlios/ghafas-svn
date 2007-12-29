@@ -14,7 +14,7 @@ setup(name='GHAFAS',
         version='0.1',
         description='GHAFAS, a GTK+ client to query train connections & fares.',
         author='tomfuks',
-        author_email='xxxxxxxxxxxx',
+        author_email='xxxxxxxxxxxxxxxx',
         url='http://ghafas.berlios.de',
         classifiers=[
             'Development Status :: 4 - Beta',

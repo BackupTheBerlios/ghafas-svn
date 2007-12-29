@@ -1,5 +1,5 @@
 GHAFAS, a GTK+ client to query train connections & fares
-Copyright 2007 tomfuks <xxxxxxxxxxxx>
+Copyright 2007 tomfuks <xxxxxxxxxxxxxxxx>
 
 Parts of the GUI code are taken from Sonata.
 The client makes heavy use of ClientForm and BeautifulSoup.
