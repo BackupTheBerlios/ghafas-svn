@@ -1,11 +1,10 @@
-
 [Desktop Entry]
-Name=GnaKB
+Name=GHAFAS
 Comment=A GTK+ client to query train connections & fares
-Exec=gnakb
+Exec=ghafas
 Terminal=false
 Type=Application
-Icon=gnakb
+Icon=ghafas
 Categories=GTK;Application;
 StartupNotify=true
 Version=1.0

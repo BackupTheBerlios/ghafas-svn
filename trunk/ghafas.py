@@ -7,10 +7,10 @@
 __version__ = "0.1"
 
 __license__ = """
-GnaKB, a GTK+ client to query train connections & fares
+GHAFAS, a GTK+ client to query train connections & fares
 Copyright 2007 tomfuks <xxxxxxxxxxxx>
 
-This file is part of GnaKB.
+This file is part of GHAFAS.
 
 Sonata is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -35,12 +35,12 @@ try:
     import gtk
     import gobject
 except ImportError, (strerror):
-    print >>sys.stderr, "%s.  Please make sure you have this library installed into a directory in Python's path or in the same directory as GnaKB.\n" % strerror
+    print >>sys.stderr, "%s.  Please make sure you have this library installed into a directory in Python's path or in the same directory as GHAFAS.\n" % strerror
     sys.exit(1)
 
 import gettext
 import threading
-import kbclient
+import ghafasclient
 
 
 def init_gettext(domain):
@@ -56,7 +56,7 @@ def init_gettext(domain):
         except:
             pass
         
-init_gettext('gnakb')
+init_gettext('ghafas')
 
 
 bahncards = [
@@ -72,7 +72,7 @@ clazzes = [
         _("2nd"),
         ]
 
-travelData = kbclient.testTravelData
+travelData = ghafasclient.testTravelData
 
 
 def error(window):
@@ -105,7 +105,7 @@ def find_pixmaps_path(filename):
  
 def find_stations_path(filename):
     paths = [
-    	(sys.prefix, 'share', 'gnakb', 'stations', filename),
+    	(sys.prefix, 'share', 'ghafas', 'stations', filename),
     	(os.path.split(__file__)[0], filename),
     	(os.path.split(__file__)[0], 'stations', filename),
         ]
@@ -165,12 +165,12 @@ class Base:
 
         gtk.gdk.threads_init()
 
-        init_gettext('gnakb')
+        init_gettext('ghafas')
 
         # add some icons:
         self.iconfactory = gtk.IconFactory()
         sonataset1 = gtk.IconSet()
-        filename1 = [find_pixmaps_path('gnakb.png')]
+        filename1 = [find_pixmaps_path('ghafas.png')]
         icons1 = [gtk.IconSource() for i in filename1]
         for i, iconsource in enumerate(icons1):
             iconsource.set_filename(filename1[i])
@@ -179,7 +179,7 @@ class Base:
         self.iconfactory.add_default()
 
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.window.set_title('GnaKB')
+        self.window.set_title('GHAFAS')
         self.window.set_resizable(True)
 
         # main window layout
@@ -294,7 +294,7 @@ class Base:
         self.showinbrowser.connect('clicked', self.on_show_timetable_in_browser)
         self.lvtimetable.connect('row_activated', self.on_connection_activated)
 
-        icon = self.window.render_icon('gnakb', gtk.ICON_SIZE_DIALOG)
+        icon = self.window.render_icon('ghafas', gtk.ICON_SIZE_DIALOG)
         self.window.set_icon(icon)
 
         # final main window setup
@@ -306,7 +306,7 @@ class Base:
         row_iter = model.get_iter(path)
         obj = model.get_value(row_iter, treeview.get_columns().index(column))
         if obj and obj.url:
-            kbclient.open_browser(obj.url)
+            ghafasclient.open_browser(obj.url)
 
     def on_request_timetable(self, action=None):
         invoke_later(target=self.request_timetable_async_checked)
@@ -314,11 +314,11 @@ class Base:
     def request_timetable_async_checked(self):
         try:
             self.request_timetable_async()
-        except kbclient.UnexpectedPage, e:
-            kbclient.open_browser(e.url)
+        except ghafasclient.UnexpectedPage, e:
+            ghafasclient.open_browser(e.url)
 
     def request_timetable_async(self):
-        travelData = kbclient.TravelData(
+        travelData = ghafasclient.TravelData(
                 self.fromentry.get_text(),
                 self.toentry.get_text(),
                 self.depdateentry.get_text(),
@@ -331,10 +331,10 @@ class Base:
         self.lvtimetabledata.clear()
 
         self.statusbar.push(self.statusbar.get_context_id(""), "Run query...")
-        result = kbclient.request_timetable_page(travelData)
+        result = ghafasclient.request_timetable_page(travelData)
 
         self.statusbar.push(self.statusbar.get_context_id(""), "Resolve query...")
-        result = kbclient.get_resolved_timetable_page(result)
+        result = ghafasclient.get_resolved_timetable_page(result)
 
         for c in result.connections:
             self.lvtimetabledata.append(c.fields())
@@ -346,9 +346,9 @@ class Base:
             travelData.dep_time = self.timetable[-1].dep_time
 
             self.statusbar.push(self.statusbar.get_context_id(""), "Resolve query...")
-            result = kbclient.request_timetable_page(travelData)
+            result = ghafasclient.request_timetable_page(travelData)
             self.timetable.extend(result.connections)
-            result = kbclient.get_resolved_timetable_page(result)
+            result = ghafasclient.get_resolved_timetable_page(result)
             for c in result.connections:
                 self.lvtimetabledata.append(c.fields())
 
@@ -357,7 +357,7 @@ class Base:
 
     def on_show_timetable_in_browser(self, action=None):
         if self.timetable:
-            kbclient.open_browser(self.timetable[-1].url)
+            ghafasclient.open_browser(self.timetable[-1].url)
 
 
     def main(self):

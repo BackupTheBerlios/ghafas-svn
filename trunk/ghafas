@@ -7,10 +7,10 @@
 __version__ = "0.1"
 
 __license__ = """
-GnaKB, a GTK+ client to query train connections & fares
+GHAFAS, a GTK+ client to query train connections & fares
 Copyright 2007 tomfuks <xxxxxxxxxxxx>
 
-This file is part of GnaKB.
+This file is part of GHAFAS.
 
 Sonata is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -47,8 +47,8 @@ if os.path.exists('/usr/bin/open'):
     os.system('open -a X11')
 
 
-import gnakb
+import ghafas
 
-gnakb.Base().main()
+ghafas.Base().main()
 
 

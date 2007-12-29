@@ -1,4 +1,4 @@
-GnaKB, a GTK+ client to query train connections & fares
+GHAFAS, a GTK+ client to query train connections & fares
 Copyright 2007 tomfuks <xxxxxxxxxxxx>
 
 Parts of the GUI code are taken from Sonata.

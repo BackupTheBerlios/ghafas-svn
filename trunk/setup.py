@@ -10,12 +10,12 @@ from distutils.core import setup, Extension
 def capture(cmd):
     return os.popen(cmd).read().strip()
 
-setup(name='GnaKB',
+setup(name='GHAFAS',
         version='0.1',
-        description='GnaKB, a GTK+ client to query train connections & fares.',
+        description='GHAFAS, a GTK+ client to query train connections & fares.',
         author='tomfuks',
         author_email='xxxxxxxxxxxx',
-        url='http://gnakb.berlios.de',
+        url='http://ghafas.berlios.de',
         classifiers=[
             'Development Status :: 4 - Beta',
             'Environment :: X11 Applications',
@@ -26,13 +26,13 @@ setup(name='GnaKB',
             'Programming Language :: Python',
             'Topic :: Office/Business :: Utilities',
             ],
-        py_modules = ['gnakb', 'kbclient', 'gnakblib/BeautifulSoup', 'gnakblib/ClientForm', 'gnakblib/sgmllib'],
+        py_modules = ['ghafas', 'ghafasclient', 'ghafaslib/BeautifulSoup', 'ghafaslib/ClientForm', 'ghafaslib/sgmllib'],
         ext_modules=[],
-        scripts = ['gnakb'],
+        scripts = ['ghafas'],
         data_files=[
-                    ('share/gnakb', ['README', 'CHANGELOG', 'TODO']),
-                    ('share/gnakb/stations', ['stations/ice-only.txt', ]),
-                    #('share/applications', ['gnakb.desktop']),
-                    ('share/pixmaps', ['pixmaps/gnakb.png']),
+                    ('share/ghafas', ['README', 'CHANGELOG', 'TODO']),
+                    ('share/ghafas/stations', ['stations/ice-only.txt', ]),
+                    #('share/applications', ['ghafas.desktop']),
+                    ('share/pixmaps', ['pixmaps/ghafas.png']),
                     ],
         )
