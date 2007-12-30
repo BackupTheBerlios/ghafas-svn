@@ -318,10 +318,13 @@ class Base:
         invoke_later(target=self.request_timetable_async_checked)
 
     def request_timetable_async_checked(self):
+        self.querybutton.set_sensitive(False)
         try:
             self.request_timetable_async()
         except ghafasclient.UnexpectedPage, e:
             ghafasclient.open_browser(e.url)
+        finally:
+            self.querybutton.set_sensitive(True)
 
     def request_timetable_async(self):
         travelData = ghafasclient.TravelData(
