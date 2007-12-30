@@ -232,8 +232,8 @@ class Base:
         settingsvbox.pack_start(optionsvbox, False, False, 2)
 
         # setup button to start request for timetable
-        self.prevbutton = gtk.Button("Go", None, True)
-        settingsvbox.pack_start(self.prevbutton, False, False, 2)
+        self.querybutton = gtk.Button("Go", None, True)
+        settingsvbox.pack_start(self.querybutton, False, False, 2)
 
         # setup button to start request for timetable
         self.showinbrowser = gtk.Button("Show in Browser", None, True)
@@ -291,7 +291,7 @@ class Base:
         self.window.add(mainhbox)
 
         # Connect to signals
-        self.prevbutton.connect('clicked', self.on_request_timetable)
+        self.querybutton.connect('clicked', self.on_request_timetable)
         self.showinbrowser.connect('clicked', self.on_show_timetable_in_browser)
         self.lvtimetable.connect('row_activated', self.on_connection_activated)
 
