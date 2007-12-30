@@ -94,20 +94,20 @@ def find_path(paths, filename):
 
 def find_pixmaps_path(filename):
     paths = [
-    	(sys.prefix, 'share', 'pixmaps', filename),
-    	(os.path.split(__file__)[0], filename),
-    	(os.path.split(__file__)[0], 'pixmaps', filename),
-     	(os.path.split(__file__)[0], 'share', filename),
-     	(__file__.split('/lib')[0], 'share', 'pixmaps', filename),
+        (sys.prefix, 'share', 'pixmaps', filename),
+        (os.path.split(__file__)[0], filename),
+        (os.path.split(__file__)[0], 'pixmaps', filename),
+         (os.path.split(__file__)[0], 'share', filename),
+         (__file__.split('/lib')[0], 'share', 'pixmaps', filename),
         ]
     paths = [os.path.join(*path) for path in paths]
     return find_path(paths, filename)
  
 def find_stations_path(filename):
     paths = [
-    	(sys.prefix, 'share', 'ghafas', 'stations', filename),
-    	(os.path.split(__file__)[0], filename),
-    	(os.path.split(__file__)[0], 'stations', filename),
+        (sys.prefix, 'share', 'ghafas', 'stations', filename),
+        (os.path.split(__file__)[0], filename),
+        (os.path.split(__file__)[0], 'stations', filename),
         ]
     paths = [os.path.join(*path) for path in paths]
     return find_path(paths, filename)
@@ -181,6 +181,7 @@ class Base:
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_title('GHAFAS')
         self.window.set_resizable(True)
+        self.window.connect('delete_event', self.on_delete_event)
 
         # main window layout
         mainhbox = gtk.HBox()
@@ -300,6 +301,11 @@ class Base:
         # final main window setup
         self.window.set_size_request(600, -1)
         self.window.show_all()
+
+    # This one makes sure the program exits when the window is closed
+    def on_delete_event(self, widget, unused):
+        sys.exit()
+        return False
 
     def on_connection_activated(self, treeview, path, column=0):
         model = treeview.get_model()
