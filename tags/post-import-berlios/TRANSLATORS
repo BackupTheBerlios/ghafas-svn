@@ -1,0 +1,12 @@
+Extract a message template from source code:
+
+  xgettext -j -o locale/messages.pot ghafas.py
+
+Genrate a localized message file:
+
+  msginit --locale=de --input=locale/messages.pot --output=locale/de/LC_MESSAGES/ghafas.po
+
+Compile localized messages:
+
+  msgfmt -o locale/de/LC_MESSAGES/ghafas.mo locale/de/LC_MESSAGES/ghafas.po
+

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=GHAFAS
+Comment=A GTK+ client to query train connections & fares
+Exec=ghafas
+Terminal=false
+Type=Application
+Icon=ghafas
+Categories=GTK;Application;
+StartupNotify=true
+Version=1.0
+Encoding=UTF-8

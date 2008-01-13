@@ -1,0 +1,144 @@
+# Taken from:
+# http://de.wikipedia.org/wiki/Liste_der_InterCityExpress-Bahnhöfe
+#
+Baden-Baden Bf
+Bruchsal Bf
+Freiburg (Breisgau) Hbf
+Heidelberg Hbf
+Horb Bf
+Karlsruhe Hbf
+Mannheim Hbf
+Offenburg Bf
+Rottweil Bf
+Singen (Hohentwiel) Bf
+Stuttgart Hbf
+Tuttlingen Bf
+Ulm Hbf
+Vaihingen (Enz) Bf
+Aschaffenburg Hbf
+Augsburg Hbf
+Bamberg Bf
+Erlangen Hbf
+Ingolstadt Hbf
+Lichtenfels
+Lichtenfels Hbf
+München Hbf
+München-Pasing
+München Ostbf
+Nürnberg Hbf
+Passau Hbf
+Plattling Bf
+Regensburg Hbf
+Würzburg Hbf
+Berlin Hbf
+Berlin Ostbf
+Berlin Gesundbrunnen
+Berlin-Spandau
+Berlin Südkreuz
+Oranienburg Bf
+Wittenberge Bf
+Bad Hersfeld Bf
+Bebra Bf
+Darmstadt Hbf
+Frankfurt (Main) Hbf
+Frankfurt (Main) Südbf
+Frankfurt (Main) Flughafen Fernbf
+Fulda Bf
+Hanau Hbf
+Kassel-Wilhelmshöhe
+Limburg Süd
+Wiesbaden Hbf
+Ludwigslust Bf
+Neustrelitz Bf
+Rostock Hbf
+Waren (Müritz) Bf
+Braunschweig Hbf
+Bremen Hbf
+Göttingen Bf
+Hannover Hbf
+Hildesheim Hbf
+Oldenburg (Oldb) Hbf
+Osnabrück Hbf
+Wolfsburg Bf
+Aachen Hbf
+Bielefeld Hbf
+Bochum Hbf
+Bonn Hbf
+Dortmund Hbf
+Düsseldorf Hbf
+Düsseldorf Flughafen Fernbf
+Duisburg Hbf
+Essen Hbf
+Gelsenkirchen Hbf
+Gütersloh Hbf
+Hagen Hbf
+Hamm (Westf) Bf
+Herford Bf
+Köln Hbf
+Köln Messe/Deutz
+Köln/Bonn Flughafen
+Minden (Westf) Bf
+Münster (Westf) Hbf 
+Siegburg/Bonn Bf
+Solingen Hbf
+Warburg (Westf) Bf
+Wuppertal Hbf
+Bingen Hbf
+Cochem (Mosel) Bf
+Homburg (Saar) Hbf
+Kaiserslautern Hbf
+Koblenz Hbf
+Mainz Hbf
+Montabaur Bf
+Neustadt (Weinstr) Hbf
+Saarbrücken Hbf
+Trier Hbf
+Wittlich Hbf
+Dresden-Neustadt
+Leipzig Hbf
+Riesa Bf
+Bitterfeld Bf
+Halle (Saale) Hbf
+Köthen Bf
+Lutherstadt Wittenberg Bf
+Magdeburg Hbf
+Naumburg (Saale) Hbf
+Stendal Bf
+Hamburg Hbf
+Hamburg-Altona
+Hamburg Dammtor
+Hamburg-Harburg
+Kiel Hbf
+Neumünster Bf
+Eisenach Bf
+Erfurt Hbf
+Gotha Bf
+Jena Paradies
+Saalfeld (Saale) Bf
+Weimar Bf
+Amsterdam C
+Arnhem S
+Bruxelles
+Bruxelles-Midi
+Liège
+Liège-Guillemins
+Utrecht C
+Forbach
+Gare Forbach
+Lorraine ICE/TGV
+Meuse TGV
+Paris Est
+Innsbruck Hbf
+Kufstein
+Landeck
+Linz Hbf
+Salzburg Hbf
+St. Pölten Hbf
+Wels Hbf
+Wien Westbf
+Wörgl Hbf
+Basel Bad Bf
+Basel SBB
+Interlaken Ost
+Interlaken West
+Zürich HB
