@@ -12,18 +12,18 @@ Copyright 2007 tomfuks <casualcoding@gmail.com>
 
 This file is part of GHAFAS.
 
-Sonata is free software; you can redistribute it and/or modify
+GHAFAS is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 
-Sonata is distributed in the hope that it will be useful,
+GHAFAS is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Sonata; if not, write to the Free Software
+along with GHAFAS; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
 
@@ -169,13 +169,13 @@ class Base:
 
         # add some icons:
         self.iconfactory = gtk.IconFactory()
-        sonataset1 = gtk.IconSet()
+        ghafasset1 = gtk.IconSet()
         filename1 = [find_pixmaps_path('ghafas.png')]
         icons1 = [gtk.IconSource() for i in filename1]
         for i, iconsource in enumerate(icons1):
             iconsource.set_filename(filename1[i])
-            sonataset1.add_source(iconsource)
-        self.iconfactory.add('sonata', sonataset1)
+            ghafasset1.add_source(iconsource)
+        self.iconfactory.add('ghafas', ghafasset1)
         self.iconfactory.add_default()
 
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
