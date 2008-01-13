@@ -8,7 +8,7 @@ __version__ = "0.1"
 
 __license__ = """
 GHAFAS, a GTK+ client to query train connections & fares
-Copyright 2007 tomfuks <xxxxxxxxxxxxxxxx>
+Copyright 2007 tomfuks <casualcoding@gmail.com>
 
 This file is part of GHAFAS.
 
