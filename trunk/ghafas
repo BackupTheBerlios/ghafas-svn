@@ -35,17 +35,8 @@ apppath = sys.argv[0]
 
 
 if os.path.exists(apppath + '.py'):
-    path = os.path.dirname(apppath)
-    app = os.path.basename(apppath) + '.py'
-    if os.path.exists('/usr/bin/open-x11'):
-        err = os.system('PATH=%s:$PATH /usr/bin/open-x11 %s' % (path, app))
-    else:
-        err = os.system(apppath + '.py')
+    err = os.system(apppath + '.py')
     sys.exit(err)
-
-if os.path.exists('/usr/bin/open'):
-    os.system('open -a X11')
-
 
 import ghafas
 
