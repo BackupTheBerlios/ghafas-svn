@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.5
+﻿#!/usr/bin/env python2.5
 
 # coding=utf-8
 # $HeadURL$
@@ -30,6 +30,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 import sys
 import os.path
+
+import pygtk
+pygtk.require('2.0')
 
 try:
     import gtk
@@ -162,8 +165,6 @@ def set_text_from_pyobject(tree_column, cell, model, iter, idx):
 class Base:
     def __init__(self):
         self.timetable = None
-
-        gtk.gdk.threads_init()
 
         init_gettext('ghafas')
 
@@ -369,12 +370,11 @@ class Base:
             ghafasclient.open_browser(self.timetable[-1].url)
 
 
-    def main(self):
-        gtk.main()
-
-
 
 if __name__ == "__main__":
-    Base().main()
-
+    gtk.gdk.threads_init()
+    Base()
+    gtk.gdk.threads_enter()
+    gtk.main()
+    gtk.gdk.threads_leave()
 
