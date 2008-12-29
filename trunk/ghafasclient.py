@@ -49,7 +49,7 @@ from BeautifulSoup import BeautifulSoup
 
 MARK_LINK_LATER = u'Sp&#228;ter'
 MARK_LINK_CHECK_AVAILABILTY = u'Verf&#252;gbarkeit pr&#252;fen'
-MARK_BUTTON_SHOW_AVAILABILTY = u'Verf&#252;gbarkeit f&#252;r alle anzeigen'
+MARK_BUTTON_SHOW_AVAILABILTY = u'Alle pr&#252;fen'
 MARK_LINK_BOOKING = u'Zur&nbsp;Buchung'
 MARK_LINK_BACK = u'Zur&#252;ck'
 MARK_TEXT_FROM = u'ab'
@@ -90,7 +90,10 @@ def open_browser_and_exit(link):
     sys.exit(1)
 
 def urlopen(url):
-    logging.debug('open url: %s' % url)
+    if isinstance(url, urllib2.Request):
+        s = url.get_full_url()
+    else: s = url
+    logging.debug('open url: %s' % s)
     return urllib2.urlopen(url)
 
 def parse_time(d, t):
@@ -250,20 +253,19 @@ class FindConnectionPage(HtmlPage):
         forms = self.get_forms()
         for form in forms:
             logging.debug('form:\n' + str(form))
-        self.form = forms[1]
+        self.form = forms[3]
 
         logging.debug('selected form:\n' + str(self.form))
 
     def fill_form(self, travelData):
-        self.form['REQ0JourneyStopsSG'] = convert_encoding(travelData.fr0m)
-        self.form['REQ0JourneyStopsZG'] = convert_encoding(travelData.to)
+        self.form['REQ0JourneyStopsS0G'] = convert_encoding(travelData.fr0m)
+        self.form['REQ0JourneyStopsZ0G'] = convert_encoding(travelData.to)
         self.form['REQ0JourneyDate'] = travelData.get_departure_date()
         self.form['REQ0JourneyTime'] = travelData.get_departure_time()
         # it's a BC 50, 2. Kl
         self.form['REQ0Tariff_TravellerReductionClass.1'] = [str(travelData.bahncard+1)]
         # 2. Kl
         self.form['REQ0Tariff_Class'] = [str(travelData.clazz+1)]
-
 
     def submit(self):
         logging.info('submit form...')
@@ -275,7 +277,7 @@ class TimetablePage(HtmlPage):
     def __init__(self, url):
         HtmlPage.__init__(self, url)
 
-        self.form = self.get_forms()[0]
+        self.form = self.get_forms()[2]
         logging.debug('form:\n' + str(self.form))
 
         self.links_check_availability = []
@@ -290,11 +292,13 @@ class TimetablePage(HtmlPage):
             if tag_class == 'progress_digit_active':
                 self.ok = incident.contents[0] == '2'
 
+        self.ok = True
+        
         if not self.ok:
             raise UnexpectedPage(self.response.geturl())
 
         for incident in self.soup('a'):
-            if incident.contents[0] == MARK_LINK_LATER:
+            if incident.contents and incident.contents[0] == MARK_LINK_LATER:
                 if not self.link_later:
                     self.link_later = incident['href']
 
@@ -306,7 +310,7 @@ class TimetablePage(HtmlPage):
         departurerow = None
         for row in table.findAll('tr', recursive=False):
             for incident in row.findAll('a'):
-                if incident.contents[0] == MARK_LINK_CHECK_AVAILABILTY:
+                if incident.contents and incident.contents[0] == MARK_LINK_CHECK_AVAILABILTY:
                     link = incident['href']
                     self.links_check_availability.append(link)
 
@@ -318,15 +322,14 @@ class TimetablePage(HtmlPage):
                 row_class = row['class']
             except KeyError:
                 continue
-            
-            if not (row_class.startswith('light') or row_class.startswith('dark')):
-                continue
 
-            if row.td['class'].find('departurerow') != -1:
+            if row_class == ' firstrow':
                 departurerow = row
                 continue
-
-            arrivalrow = row
+            elif row_class == ' last':
+                arrivalrow = row
+            else:
+                continue
 
             conn = self.parse_connection(departurerow, arrivalrow)
             self.connections.append(conn)
@@ -343,9 +346,9 @@ class TimetablePage(HtmlPage):
         
         conn = (
             # st_dep
-            departure_cols[0].a.contents[0],
+            departure_cols[0].contents[0],
             # st_arr
-            arrival_cols[0].a.contents[0],
+            arrival_cols[0].contents[0],
             # dt_dep
             departure_cols[1].contents[0].split()[1],
             # tm_dep
