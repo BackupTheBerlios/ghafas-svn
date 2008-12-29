@@ -49,7 +49,7 @@ from BeautifulSoup import BeautifulSoup
 
 MARK_LINK_LATER = u'Sp&#228;ter'
 MARK_LINK_CHECK_AVAILABILTY = u'Verf&#252;gbarkeit pr&#252;fen'
-MARK_BUTTON_SHOW_AVAILABILTY = u'Alle pr&#252;fen'
+MARK_LINK_CHECK_ALL_AVAIL = u'Alle pr&#252;fen'
 MARK_LINK_BOOKING = u'Zur&nbsp;Buchung'
 MARK_LINK_BACK = u'Zur&#252;ck'
 MARK_TEXT_FROM = u'ab'
@@ -287,6 +287,7 @@ class TimetablePage(HtmlPage):
         logging.debug('form:\n' + str(self.form))
 
         self.links_check_availability = []
+        self.link_check_all_avail = None
         self.link_later = None
         self.connections = []
 
@@ -316,6 +317,8 @@ class TimetablePage(HtmlPage):
         departurerow = None
         for row in table.findAll('tr', recursive=False):
             for incident in row.findAll('a'):
+                if incident.contents and incident.contents[0].find(MARK_LINK_CHECK_ALL_AVAIL) != -1:
+                    self.link_check_all_avail = incident['href']
                 if incident.contents and incident.contents[0] == MARK_LINK_CHECK_AVAILABILTY:
                     link = incident['href']
                     self.links_check_availability.append(link)
@@ -376,13 +379,6 @@ class TimetablePage(HtmlPage):
         conn.fare_s = self.parse_fare(departure_cols[8])
         conn.url = self.response.geturl()
         return conn
-
-    def has_availability_button(self):
-        try:
-            self.form['immediateAvail=ON&action']
-        except:
-            return False
-        return True
 
     def submit(self):
         logging.info('submit form...')
@@ -447,8 +443,8 @@ def request_timetable_page(travelData, complete=True):
     timetable_page = TimetablePage(find_page.submit())
     logging.info(timetable_page)
 
-    if timetable_page.has_availability_button():
-        timetable_page = TimetablePage(timetable_page.submit())
+    if timetable_page.link_check_all_avail:
+        timetable_page = TimetablePage(timetable_page.link_check_all_avail)
 
     if not timetable_page.ok:
         open_browser_and_exit(timetable_page.response.geturl())
