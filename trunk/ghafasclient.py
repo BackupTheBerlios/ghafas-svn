@@ -83,7 +83,13 @@ def sleep():
 
 def open_browser(link):
     logging.info('open link in browser: %s' % link)
-    os.system('open "%s"' % link)
+    xdgopen = '/usr/bin/xdg-open'
+    if os.path.exists(xdgopen):
+        cmd = xdgopen
+    else:
+        # mac os x
+        cmd = 'open'
+    os.system('%s "%s"' % (cmd, link))
 
 def open_browser_and_exit(link):
     open_browser(link)
