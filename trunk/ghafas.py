@@ -370,11 +370,15 @@ class Base:
             ghafasclient.open_browser(self.timetable[-1].url)
 
 
-
-if __name__ == "__main__":
+def main():
     gtk.gdk.threads_init()
     Base()
     gtk.gdk.threads_enter()
     gtk.main()
     gtk.gdk.threads_leave()
+
+
+if __name__ == "__main__":
+    main()
+
 

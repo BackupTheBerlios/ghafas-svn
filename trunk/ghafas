@@ -28,18 +28,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
 
 
-import sys
-import os.path
+try:
+    import ghafas
+    ghafas.main()
 
-apppath = sys.argv[0]
+except ImportError:
+    # Module ghafas not found; try to run it as a script.
 
+    import sys
+    import os.path
 
-if os.path.exists(apppath + '.py'):
-    err = os.system(apppath + '.py')
-    sys.exit(err)
+    apppath = sys.argv[0]
 
-import ghafas
-
-ghafas.Base().main()
+    if os.path.exists(apppath + '.py'):
+        err = os.system('python2.5 %s.py' % apppath)
+        sys.exit(err)
 
 
