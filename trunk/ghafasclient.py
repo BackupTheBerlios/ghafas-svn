@@ -375,8 +375,8 @@ class TimetablePage(HtmlPage):
             )
         conn = [urllib2.unquote(i.strip()) for i in conn]
         conn = Connection(*conn)
-        conn.fare_n = self.parse_fare(departure_cols[7])
-        conn.fare_s = self.parse_fare(departure_cols[8])
+        conn.fare_s = self.parse_fare(departure_cols[7])
+        conn.fare_n = self.parse_fare(departure_cols[8])
         conn.url = self.response.geturl()
         return conn
 
