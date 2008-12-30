@@ -317,7 +317,7 @@ class TimetablePage(HtmlPage):
         departurerow = None
         for row in table.findAll('tr', recursive=False):
             for incident in row.findAll('a'):
-                if incident.contents and incident.contents[0].find(MARK_LINK_CHECK_ALL_AVAIL) != -1:
+                if incident.contents and MARK_LINK_CHECK_ALL_AVAIL in incident.contents[0]:
                     self.link_check_all_avail = incident['href']
                 if incident.contents and incident.contents[0] == MARK_LINK_CHECK_AVAILABILTY:
                     link = incident['href']
