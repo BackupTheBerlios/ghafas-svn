@@ -165,7 +165,7 @@ class TravelData:
         return format_time('%d.%m.%Y', self.arr_time)
 
 
-testTravelData = TravelData(
+testTravelData0 = TravelData(
         'Berlin',
         'Hamburg',
         (datetime.date.today()+datetime.timedelta(14)).strftime("%d.%m.%Y"),
@@ -173,6 +173,18 @@ testTravelData = TravelData(
         (datetime.date.today()+datetime.timedelta(14)).strftime("%d.%m.%Y"),
         '14:00',
         bahncard = 3
+        )
+
+# test dataset with mismatching bahncard/class.
+testTravelData1 = TravelData(
+        'Berlin',
+        'Hamburg',
+        (datetime.date.today()+datetime.timedelta(14)).strftime("%d.%m.%Y"),
+        '08:00',
+        (datetime.date.today()+datetime.timedelta(14)).strftime("%d.%m.%Y"),
+        '14:00',
+        bahncard = 3,
+        clazz = 0
         )
 
 
@@ -505,7 +517,7 @@ def main():
     init_logger(log_level)
 
     if len(args) == 0:
-        travelData = testTravelData
+        travelData = testTravelData0
     else:
         travelData = TravelData(*args)
 
