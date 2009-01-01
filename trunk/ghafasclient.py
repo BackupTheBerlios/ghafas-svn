@@ -290,6 +290,10 @@ def convert_encoding(s, src='utf-8', dst='iso-8859-1'):
 class FindConnectionPage(HtmlPage):
     def __init__(self, url):
         HtmlPage.__init__(self, url)
+
+        if self.progress_pos <> 'Suche':
+            raise UnexpectedPage(self.progress_pos, self.response.geturl())
+
         forms = self.get_forms()
         for form in forms:
             logging.debug('form:\n' + str(form))
