@@ -435,28 +435,18 @@ class TimetablePage(HtmlPage):
         return BAHN_BASE_URL + self.link_later
 
 
-
 class AvailabilityPage(HtmlPage):
     def __init__(self, url):
         HtmlPage.__init__(self, url)
         self.link_back = None
 
-        for incident in self.soup('span'):
-            try:
-                tag_class = incident['class']
-            except KeyError:
-                continue
-            if tag_class == 'progress_digit_active':
-                self.ok = incident.contents[0] == '3'
-
-        #if not self.ok:
-        #    raise UnexpectedPage(self.url)
+        if self.progress_pos <> 'Auswahl':
+            raise UnexpectedPage(self.progress_pos, self.response.geturl())
 
         for incident in self.soup('a'):
             if incident.contents[0] == MARK_LINK_BACK:
                 if not self.link_back:
                     self.link_back = incident['href']
-
 
     def get_link_back(self):
         logging.info('get_link_back...')
