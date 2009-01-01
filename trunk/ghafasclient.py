@@ -39,6 +39,7 @@ import time
 import sys
 import urllib2
 import StringIO
+import tempfile
 
 ghafaslib_path = os.path.join(os.path.dirname(__file__), 'ghafaslib')
 sys.path.insert(0, ghafaslib_path)
@@ -59,6 +60,7 @@ BAHN_QUERY_URL = BAHN_BASE_URL + "/bin/query.exe/d"
 
 re_eur = re.compile(r'([0-9]+,[0-9]+)&nbsp;EUR')
 
+archive_pages = False
 
 
 def init_logger(level):
@@ -236,6 +238,11 @@ class HtmlPage:
         self.response = urlopen(url)
         self.content = self.response.read()
         self.soup = BeautifulSoup(self.content)
+        if archive_pages:
+            fd, self.content_file = tempfile.mkstemp(prefix='gh-', suffix='.html', text=True)
+            logging.info('write page to %s' % self.content_file)
+            os.write(fd, self.content)
+            os.close(fd)
 
     def get_stream(self):
         return StringIO.StringIO(self.content)
@@ -486,11 +493,14 @@ def show_resolved_yourtimetable_page(timetable_page):
 def main():
     log_level = logging.INFO
 
-    opts, args = getopt.getopt(sys.argv[1:], 'd', [])
+    opts, args = getopt.getopt(sys.argv[1:], 'da', [])
 
     for o, v in opts:
         if o == '-d':
             log_level = logging.DEBUG
+        if o == '-a':
+            global archive_pages
+            archive_pages = True
 
     init_logger(log_level)
 
