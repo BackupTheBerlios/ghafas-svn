@@ -250,15 +250,6 @@ class HtmlPage:
         self.response = urlopen(url)
         self.content = self.response.read()
         self.soup = BeautifulSoup(self.content)
-
-        progress_list = self.soup.find(
-                'ul', attrs = {'class' : re.compile('process-list')}
-                )
-        progress_pos = progress_list.find(
-                'li', attrs = {'class' : re.compile('active')}
-                )
-        self.progress_pos = progress_pos.span.contents[0]
-
         if archive_pages:
             fd, self.content_file = tempfile.mkstemp(prefix='gh-', suffix='.html', text=True)
             logging.info('write page to %s' % self.content_file)
@@ -271,7 +262,6 @@ class HtmlPage:
     def get_forms(self):
         file = StringIO.StringIO(self.content)
         return ClientForm.ParseFile(file, self.response.geturl())
-
 
 
 class UnexpectedPage:
@@ -326,7 +316,14 @@ class TimetablePage(HtmlPage):
         self.form = self.get_forms()[2]
         logging.debug('form:\n' + str(self.form))
 
-        if self.progress_pos <> 'Auswahl':
+        progress_list = self.soup.find(
+                'ul', attrs = {'class' : re.compile('process-list')}
+                )
+        progress_pos = progress_list.find(
+                'li', attrs = {'class' : re.compile('active')}
+                )
+        progress_pos = progress_pos.span.contents[0]
+        if progress_pos <> 'Auswahl':
             raise UnexpectedPage(progress_pos, self.response.geturl())
 
         table = self.soup.find(
