@@ -133,7 +133,7 @@ class TravelData:
     def __init__(
             self,
             fr0m, to, dep_date, dep_time, arr_date=None, arr_time=None,
-            bahncard=0, clazz=1
+            bahncard=0, clazz=2
             ):
         self.fr0m = fr0m
         self.to = to
@@ -184,7 +184,7 @@ testTravelData1 = TravelData(
         (datetime.date.today()+datetime.timedelta(14)).strftime("%d.%m.%Y"),
         '14:00',
         bahncard = 3,
-        clazz = 0
+        clazz = 1
         )
 
 
@@ -309,7 +309,7 @@ class FindConnectionPage(HtmlPage):
         # it's a BC 50, 2. Kl
         self.form['REQ0Tariff_TravellerReductionClass.1'] = [str(travelData.bahncard+1)]
         # 2. Kl
-        self.form['REQ0Tariff_Class'] = [str(travelData.clazz+1)]
+        self.form['REQ0Tariff_Class'] = [str(travelData.clazz)]
 
     def submit(self):
         logging.info('submit form...')

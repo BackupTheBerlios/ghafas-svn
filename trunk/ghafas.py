@@ -75,7 +75,7 @@ clazzes = [
         _("2nd"),
         ]
 
-travelData = ghafasclient.testTravelData
+travelData = ghafasclient.testTravelData0
 
 
 def error(window):
@@ -228,7 +228,7 @@ class Base:
         self.clazz_combo = gtk.combo_box_new_text()
         for cl in clazzes:
             self.clazz_combo.append_text(cl)
-        self.clazz_combo.set_active(travelData.clazz)
+        self.clazz_combo.set_active(travelData.clazz - 1)
         optionsvbox.pack_start(self.clazz_combo, False, False, 5)
         settingsvbox.pack_start(optionsvbox, False, False, 2)
 
@@ -336,7 +336,7 @@ class Base:
                 self.destdateentry.get_text(),
                 self.desttimeentry.get_text(),
                 bahncard = self.card_combo.get_active(),
-                clazz = self.clazz_combo.get_active(),
+                clazz = self.clazz_combo.get_active() + 1,
                 )
         self.lvtimetabledata.clear()
 
