@@ -281,15 +281,16 @@ class FindConnectionPage(HtmlPage):
 
 class TimetablePage(HtmlPage):
     def __init__(self, url):
+        logging.debug('open time table')
         HtmlPage.__init__(self, url)
-
-        self.form = self.get_forms()[2]
-        logging.debug('form:\n' + str(self.form))
-
+   
         self.links_check_availability = []
         self.link_check_all_avail = None
         self.link_later = None
         self.connections = []
+
+        self.form = self.get_forms()[2]
+        logging.debug('form:\n' + str(self.form))
 
         for incident in self.soup('span'):
             try:
