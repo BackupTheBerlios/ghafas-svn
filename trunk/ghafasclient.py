@@ -110,6 +110,9 @@ def parse_time(d, t):
 def format_time(f, t):
     return time.strftime(f, time.localtime(t))
 
+def convert_encoding(s, src='utf-8', dst='iso-8859-1'):
+    return s.decode(src).encode(dst)
+
 
 class Fare:
     def __init__(self, fare=None, unknown=False, url=None):
@@ -245,6 +248,15 @@ class Connection:
             )
 
 
+class UnexpectedPage:
+    def __init__(self, page = 'Unknown', url = None):
+        self.page = page
+        self.url = url
+
+    def __str__(self):
+        return 'UnexpectedPage: %s' % self.page
+
+
 class HtmlPage:
     def __init__(self, url):
         self.response = urlopen(url)
@@ -271,20 +283,6 @@ class HtmlPage:
     def get_forms(self):
         file = StringIO.StringIO(self.content)
         return ClientForm.ParseFile(file, self.response.geturl())
-
-
-
-class UnexpectedPage:
-    def __init__(self, page = 'Unknown', url = None):
-        self.page = page
-        self.url = url
-
-    def __str__(self):
-        return 'UnexpectedPage: %s' % self.page
-
-
-def convert_encoding(s, src='utf-8', dst='iso-8859-1'):
-    return s.decode(src).encode(dst)
 
 
 class FindConnectionPage(HtmlPage):
