@@ -265,12 +265,17 @@ class HtmlPage:
 
 
 class UnexpectedPage:
-    def __init__(self, url):
+    def __init__(self, page = 'Unknown', url = None):
+        self.page = page
         self.url = url
+
+    def __str__(self):
+        return 'UnexpectedPage: %s' % self.page
 
 
 def convert_encoding(s, src='utf-8', dst='iso-8859-1'):
     return s.decode(src).encode(dst)
+
 
 class FindConnectionPage(HtmlPage):
     def __init__(self, url):
@@ -297,12 +302,12 @@ class FindConnectionPage(HtmlPage):
         return self.form.click('start')
 
 
-
 class TimetablePage(HtmlPage):
     def __init__(self, url):
         logging.debug('open time table')
         HtmlPage.__init__(self, url)
    
+        self.ok = False
         self.links_check_availability = []
         self.link_check_all_avail = None
         self.link_later = None
@@ -311,29 +316,31 @@ class TimetablePage(HtmlPage):
         self.form = self.get_forms()[2]
         logging.debug('form:\n' + str(self.form))
 
-        for incident in self.soup('span'):
-            try:
-                tag_class = incident['class']
-            except KeyError:
-                continue
-            if tag_class == 'progress_digit_active':
-                self.ok = incident.contents[0] == '2'
+        progress_list = self.soup.find(
+                'ul', attrs = {'class' : re.compile('process-list')}
+                )
+        progress_pos = progress_list.find(
+                'li', attrs = {'class' : re.compile('active')}
+                )
+        progress_pos = progress_pos.span.contents[0]
+        if progress_pos <> 'Auswahl':
+            raise UnexpectedPage(progress_pos, self.response.geturl())
+
+        table = self.soup.find(
+                'table',
+                attrs={'class':'result', 'cellspacing':'0'}
+                )
+
+        if not table:
+            raise UnexpectedPage(url = self.response.geturl())
 
         self.ok = True
-        
-        if not self.ok:
-            raise UnexpectedPage(self.response.geturl())
 
         for incident in self.soup('a'):
             if incident.contents and incident.contents[0] == MARK_LINK_LATER:
                 if not self.link_later:
                     self.link_later = incident['href']
 
-        table = self.soup.findAll(
-                'table',
-                attrs={'class':'result', 'cellspacing':'0'}
-                )
-        table = table[0]
         departurerow = None
         for row in table.findAll('tr', recursive=False):
             for incident in row.findAll('a'):
@@ -517,7 +524,7 @@ def main():
     init_logger(log_level)
 
     if len(args) == 0:
-        travelData = testTravelData0
+        travelData = testTravelData1
     else:
         travelData = TravelData(*args)
 
@@ -530,7 +537,7 @@ def main():
         #open_browser(page.response.geturl())
 
     except UnexpectedPage, e:
-        logging.error('UnexpectedPage')
+        logging.error(e)
         open_browser(e.url)
 
 
