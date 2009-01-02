@@ -463,7 +463,15 @@ def request_timetable_page(travelData, complete=True):
     find_page.fill_form(travelData)
     find_page_result = find_page.submit()
 
-    timetable_page = TimetablePage(find_page_result)
+    try:
+        timetable_page = TimetablePage(find_page_result)
+    except UnexpectedPage, e:
+        # Handle the case where the request page is shown again
+        # to display a warning regarding bahncard/class mismatch.
+        # Be ignorant about it and feed it in again.
+        # FIXME: make it more general
+        find_page_result = FindConnectionPage(find_page_result).submit()
+        timetable_page = TimetablePage(find_page_result)
 
     logging.info(timetable_page)
 
