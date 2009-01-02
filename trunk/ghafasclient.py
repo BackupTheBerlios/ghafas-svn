@@ -461,8 +461,10 @@ def request_timetable_page(travelData, complete=True):
 
     find_page = FindConnectionPage(BAHN_QUERY_URL)
     find_page.fill_form(travelData)
+    find_page_result = find_page.submit()
 
-    timetable_page = TimetablePage(find_page.submit())
+    timetable_page = TimetablePage(find_page_result)
+
     logging.info(timetable_page)
 
     if timetable_page.link_check_all_avail:
