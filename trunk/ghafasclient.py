@@ -387,7 +387,7 @@ class TimetablePage(HtmlPage):
         
         conn = (
             # st_dep
-            departure_cols[0].contents[0],
+            departure_cols[0].contents[3].contents[0],
             # st_arr
             arrival_cols[0].contents[0],
             # dt_dep
