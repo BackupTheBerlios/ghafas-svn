@@ -405,7 +405,7 @@ class TimetablePage(HtmlPage):
             # trains
             departure_cols[6].a.contents[-1],
             )
-        conn = [urllib2.unquote(i.strip()) for i in conn]
+        conn = [urllib2.unquote(i.replace('&nbsp;', '').strip()) for i in conn]
         conn = Connection(*conn)
         conn.fare_s = self.parse_fare(departure_cols[7])
         conn.fare_n = self.parse_fare(departure_cols[8])
