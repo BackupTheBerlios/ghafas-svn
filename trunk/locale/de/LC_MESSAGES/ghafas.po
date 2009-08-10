@@ -78,7 +78,7 @@ msgstr "Datum"
 
 #: gnakb.py:208
 msgid "Arrival (latest)"
-msgstr "Ankunft (apätestens)"
+msgstr "Ankunft (spätestens)"
 
 #: gnakb.py:213
 msgid "Options"
