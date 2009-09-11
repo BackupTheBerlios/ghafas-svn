@@ -529,6 +529,7 @@ def main():
     init_logger(log_level)
 
     if len(args) == 0:
+        logging.info('No travel data given - using test data')
         travelData = testTravelData1
     else:
         travelData = TravelData(*args)
