@@ -517,7 +517,7 @@ def show_resolved_yourtimetable_page(timetable_page):
 def main():
     log_level = logging.INFO
 
-    opts, args = getopt.getopt(sys.argv[1:], 'da', [])
+    opts, args = getopt.getopt(sys.argv[1:], 'adq', [])
 
     for o, v in opts:
         if o == '-d':
@@ -525,6 +525,8 @@ def main():
         if o == '-a':
             global archive_pages
             archive_pages = True
+        if o == '-q':
+            log_level = logging.WARN
 
     init_logger(log_level)
 
