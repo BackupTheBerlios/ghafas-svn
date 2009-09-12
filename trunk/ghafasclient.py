@@ -487,7 +487,7 @@ def request_timetable_page(travelData, complete=True):
                 break
             response = timetable_page.get_link_later()
             timetable_page = TimetablePage(response)
-            print timetable_page
+            logging.info(timetable_page)
 
     return timetable_page
 
@@ -537,12 +537,32 @@ def main():
         travelData = TravelData(*args)
 
     try:
+        logging.info("Run query...")
         result = request_timetable_page(travelData)
-        show_resolved_yourtimetable_page(result)
+        #show_resolved_yourtimetable_page(result)
 
-        #show_all_availability_pages(request_timetable_page(travelData))
-        #page = request_timetable_page(travelData, complete=False)
-        #open_browser(page.response.geturl())
+        logging.info("Resolve query...")
+        result = get_resolved_timetable_page(result)
+
+        for c in result.connections:
+            print ';'.join([str(i) for i in c.fields()])
+
+        timetable = result.connections
+
+        while timetable[-1].arr_time < travelData.arr_time:
+            logging.info("Run query...")
+            travelData.dep_time = timetable[-1].dep_time
+
+            logging.info("Resolve query...")
+            result = request_timetable_page(travelData)
+            #show_resolved_yourtimetable_page(result)
+            
+            timetable.extend(result.connections)
+            result = get_resolved_timetable_page(result)
+            
+            for c in result.connections:
+                print ';'.join([str(i) for i in c.fields()])
+
 
     except UnexpectedPage, e:
         logging.error(e)
