@@ -124,6 +124,9 @@ class Fare:
         self.unknown = unknown # unknown availability
         self.url = url
 
+    def __repr__(self):
+        return str(self).strip()
+
     def __str__(self):
         if self.unknown == True:
             return '?'
@@ -235,6 +238,17 @@ class Connection:
             time_f % format_time('%H:%M', self.arr_time),
             self.duration,
             )
+
+    def __repr__(self):
+        return ';'.join((
+            self.st_dep,
+            format_time('%d.%m.%y %H:%M', self.dep_time),
+            self.trains,
+            self.st_arr,
+            format_time('%d.%m.%y %H:%M', self.arr_time),
+            self.duration, self.changes,
+            repr(self.fare_n), repr(self.fare_s),
+            ))
 
     def __str__(self):
         return '%-20s %s  %s\n%-20s %s   %5s %-2s  %6s  %6s' % (
@@ -545,7 +559,7 @@ def main():
         result = get_resolved_timetable_page(result)
 
         for c in result.connections:
-            print ';'.join([str(i) for i in c.fields()])
+            print ';'.join([repr(i) for i in c.fields()])
 
         timetable = result.connections
 
@@ -561,7 +575,7 @@ def main():
             result = get_resolved_timetable_page(result)
             
             for c in result.connections:
-                print ';'.join([str(i) for i in c.fields()])
+                print ';'.join([repr(i) for i in c.fields()])
 
 
     except UnexpectedPage, e:
