@@ -581,6 +581,8 @@ def main():
     except UnexpectedPage, e:
         logging.error(e)
         open_browser(e.url)
+    except KeyboardInterrupt:
+        sys.exit('Keyboard interrupt')
 
 
 if __name__ == '__main__':
