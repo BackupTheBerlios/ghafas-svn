@@ -4,7 +4,7 @@
 # $HeadURL$
 # $Id$
 
-__version__ = "0.1"
+__version__ = '0.1'
 
 __license__ = """
 GHAFAS, a GTK+ client to query train connections & fares
@@ -56,7 +56,7 @@ MARK_LINK_BACK = u'Zur&#252;ck'
 MARK_TEXT_FROM = u'ab'
 
 BAHN_BASE_URL = 'http://reiseauskunft.bahn.de'
-BAHN_QUERY_URL = BAHN_BASE_URL + "/bin/query.exe/d"
+BAHN_QUERY_URL = BAHN_BASE_URL + '/bin/query.exe/d'
 
 re_eur = re.compile(r'([0-9]+,[0-9]+)&nbsp;EUR')
 
@@ -171,9 +171,9 @@ class TravelData:
 testTravelData0 = TravelData(
         'Berlin',
         'Hamburg',
-        (datetime.date.today()+datetime.timedelta(14)).strftime("%d.%m.%Y"),
+        (datetime.date.today()+datetime.timedelta(14)).strftime('%d.%m.%Y'),
         '08:00',
-        (datetime.date.today()+datetime.timedelta(14)).strftime("%d.%m.%Y"),
+        (datetime.date.today()+datetime.timedelta(14)).strftime(''),
         '14:00',
         bahncard = 3
         )
@@ -182,9 +182,9 @@ testTravelData0 = TravelData(
 testTravelData1 = TravelData(
         'Berlin',
         'Hamburg',
-        (datetime.date.today()+datetime.timedelta(14)).strftime("%d.%m.%Y"),
+        (datetime.date.today()+datetime.timedelta(14)).strftime('%d.%m.%Y'),
         '08:00',
-        (datetime.date.today()+datetime.timedelta(14)).strftime("%d.%m.%Y"),
+        (datetime.date.today()+datetime.timedelta(14)).strftime('%d.%m.%Y'),
         '14:00',
         bahncard = 3,
         clazz = 1
@@ -537,11 +537,11 @@ def main():
         travelData = TravelData(*args)
 
     try:
-        logging.info("Run query...")
+        logging.info('Run query...')
         result = request_timetable_page(travelData)
         #show_resolved_yourtimetable_page(result)
 
-        logging.info("Resolve query...")
+        logging.info('Resolve query...')
         result = get_resolved_timetable_page(result)
 
         for c in result.connections:
@@ -550,10 +550,10 @@ def main():
         timetable = result.connections
 
         while timetable[-1].arr_time < travelData.arr_time:
-            logging.info("Run query...")
+            logging.info('Run query...')
             travelData.dep_time = timetable[-1].dep_time
 
-            logging.info("Resolve query...")
+            logging.info('Resolve query...')
             result = request_timetable_page(travelData)
             #show_resolved_yourtimetable_page(result)
             
@@ -569,7 +569,7 @@ def main():
         open_browser(e.url)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
 
 
