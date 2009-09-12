@@ -212,7 +212,7 @@ class Connection:
 
         self.duration = duration
         self.changes = changes
-        self.trains = trains
+        self.trains = [s.strip() for s in trains.split(',')]
 
         self.fare_n = Fare()
         self.fare_s = Fare()
@@ -230,7 +230,7 @@ class Connection:
             ) % (
             self.st_dep,
             self.st_arr,
-            self.trains,
+            ','.join(self.trains),
             self.changes,
             format_time('%d.%m.%y', self.dep_time),
             time_f % format_time('%H:%M', self.dep_time),
@@ -243,7 +243,7 @@ class Connection:
         return ';'.join((
             self.st_dep,
             format_time('%d.%m.%y %H:%M', self.dep_time),
-            self.trains,
+            ','.join(self.trains),
             self.st_arr,
             format_time('%d.%m.%y %H:%M', self.arr_time),
             self.duration, self.changes,
@@ -254,7 +254,7 @@ class Connection:
         return '%-20s %s  %s\n%-20s %s   %5s %-2s  %6s  %6s' % (
             self.st_dep,
             format_time('%d.%m.%y %H:%M', self.dep_time),
-            self.trains,
+            ','.join(self.trains),
             self.st_arr,
             format_time('%d.%m.%y %H:%M', self.arr_time),
             self.duration, self.changes,
