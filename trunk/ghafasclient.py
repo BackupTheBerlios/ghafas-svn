@@ -428,8 +428,12 @@ class TimetablePage(HtmlPage):
             )
         conn = [urllib2.unquote(i.replace('&nbsp;', '').strip()) for i in conn]
         conn = Connection(*conn)
-        conn.fare_s = self.parse_fare(departure_cols[7])
-        conn.fare_n = self.parse_fare(departure_cols[8])
+        
+        farePep = departure_row.find('td', attrs = {'class' : re.compile('farePep')})
+        fareStd = departure_row.find('td', attrs = {'class' : re.compile('fareStd')})
+        
+        conn.fare_s = self.parse_fare(farePep)
+        conn.fare_n = self.parse_fare(fareStd)
         conn.url = self.response.geturl()
         return conn
 
@@ -438,6 +442,8 @@ class TimetablePage(HtmlPage):
         return self.form.click('immediateAvail=ON&action')
 
     def parse_fare(self, content):
+        if not content: return Fare()
+
         url = None
         for incident in content.findAll('a'):
             if incident.contents[0] == MARK_LINK_CHECK_AVAILABILTY:
