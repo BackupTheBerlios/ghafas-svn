@@ -219,6 +219,11 @@ class Connection:
 
         self.url = None
 
+    def __cmp__(self, other):
+        r = cmp(self.dep_time, other.dep_time)
+        if r: return r
+        return cmp(self.arr_time, other.arr_time) 
+        
     def fields(self):
         return [self, self.fare_n, self.fare_s]
 
@@ -391,6 +396,8 @@ class TimetablePage(HtmlPage):
 
             departurerow = None
             arrivalrow = None
+
+        self.connections.sort()
 
     def __str__(self):
         return '\n\n'.join([str(c) for c in self.connections])
