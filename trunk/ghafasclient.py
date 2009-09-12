@@ -520,12 +520,12 @@ def main():
     opts, args = getopt.getopt(sys.argv[1:], 'adq', [])
 
     for o, v in opts:
-        if o == '-d':
-            log_level = logging.DEBUG
         if o == '-a':
             global archive_pages
             archive_pages = True
-        if o == '-q':
+        elif o == '-d':
+            log_level = logging.DEBUG
+        elif o == '-q':
             log_level = logging.WARN
 
     init_logger(log_level)
