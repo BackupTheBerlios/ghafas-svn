@@ -578,10 +578,17 @@ def main():
             result = request_timetable_page(travelData)
             #show_resolved_yourtimetable_page(result)
             
-            timetable.extend(result.connections)
+            try:
+                pos = result.connections.index(timetable[-1]) + 1
+            except ValueError:
+                pos = 0
+                
+            conn = result.connections[pos:]
+            
+            timetable.extend(conn)
             result = get_resolved_timetable_page(result)
             
-            for c in result.connections:
+            for c in conn:
                 print repr(c)
 
 
