@@ -559,7 +559,7 @@ def main():
         result = get_resolved_timetable_page(result)
 
         for c in result.connections:
-            print ';'.join([repr(i) for i in c.fields()])
+            print repr(c)
 
         timetable = result.connections
 
@@ -575,7 +575,7 @@ def main():
             result = get_resolved_timetable_page(result)
             
             for c in result.connections:
-                print ';'.join([repr(i) for i in c.fields()])
+                print repr(c)
 
 
     except UnexpectedPage, e:
