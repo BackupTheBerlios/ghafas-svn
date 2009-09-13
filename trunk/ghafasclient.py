@@ -551,6 +551,41 @@ def show_resolved_yourtimetable_page(timetable_page):
     open_browser(timetable_page.response.geturl())
 
 
+def query(travelData):
+    logging.info('Run query...')
+    result = request_timetable_page(travelData)
+    #show_resolved_yourtimetable_page(result)
+
+    logging.info('Resolve query...')
+    result = get_resolved_timetable_page(result)
+
+    for c in result.connections:
+        print repr(c)
+
+    timetable = result.connections
+
+    while timetable[-1].arr_time < travelData.arr_time:
+        logging.info('Run query...')
+        travelData.dep_time = timetable[-1].dep_time
+
+        logging.info('Resolve query...')
+        result = request_timetable_page(travelData)
+        #show_resolved_yourtimetable_page(result)
+        
+        try:
+            pos = result.connections.index(timetable[-1]) + 1
+        except ValueError:
+            pos = 0
+            
+        conn = result.connections[pos:]
+        
+        timetable.extend(conn)
+        result = get_resolved_timetable_page(result)
+        
+        for c in conn:
+            print repr(c)
+
+
 # command line interface starts here:
 def main():
     log_level = logging.INFO
@@ -575,40 +610,7 @@ def main():
         travelData = TravelData(*args)
 
     try:
-        logging.info('Run query...')
-        result = request_timetable_page(travelData)
-        #show_resolved_yourtimetable_page(result)
-
-        logging.info('Resolve query...')
-        result = get_resolved_timetable_page(result)
-
-        for c in result.connections:
-            print repr(c)
-
-        timetable = result.connections
-
-        while timetable[-1].arr_time < travelData.arr_time:
-            logging.info('Run query...')
-            travelData.dep_time = timetable[-1].dep_time
-
-            logging.info('Resolve query...')
-            result = request_timetable_page(travelData)
-            #show_resolved_yourtimetable_page(result)
-            
-            try:
-                pos = result.connections.index(timetable[-1]) + 1
-            except ValueError:
-                pos = 0
-                
-            conn = result.connections[pos:]
-            
-            timetable.extend(conn)
-            result = get_resolved_timetable_page(result)
-            
-            for c in conn:
-                print repr(c)
-
-
+        query(travelData)
     except UnexpectedPage, e:
         logging.error(e)
         open_browser(e.url)
