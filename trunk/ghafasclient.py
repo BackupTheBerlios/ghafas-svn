@@ -58,8 +58,6 @@ MARK_TEXT_FROM = u'ab'
 BAHN_BASE_URL = 'http://reiseauskunft.bahn.de'
 BAHN_QUERY_URL = BAHN_BASE_URL + '/bin/query.exe/d'
 
-re_eur = re.compile(r'([0-9]+,[0-9]+) EUR')
-
 archive_pages = False
 
 
@@ -115,7 +113,7 @@ def convert_encoding(s, src='utf-8', dst='iso-8859-1'):
 
 
 class Fare:
-    def __init__(self, fare=None, unknown=False, url=None):
+    def __init__(self, fare=None, unknown=False, url=None, clazz=2):
         if fare:
             # FIXME: test for string type
             fare = float(fare.replace(',', '.'))
@@ -123,15 +121,19 @@ class Fare:
         self.fare = fare
         self.unknown = unknown # unknown availability
         self.url = url
+        self.clazz = clazz
 
     def __repr__(self):
-        return str(self).strip()
+        return str(self)
 
     def __str__(self):
         if self.unknown == True:
             return '?'
         if self.fare:
-            return '%6.2f' % (self.fare)
+            f = '%.2f' % (self.fare)
+            if self.clazz == 1:
+                return '(%s)' % f
+            return f
         return '-.- '
 
 
@@ -335,6 +337,7 @@ class FindConnectionPage(HtmlPage):
 
 re_rarePep = re.compile('farePep')
 re_fareStd = re.compile('fareStd')
+re_eur = re.compile(r'([0-9]+,[0-9]+) EUR')
 
 class TimetablePage(HtmlPage):
 
@@ -459,7 +462,11 @@ class TimetablePage(HtmlPage):
         c = str(content.span).replace('&nbsp;', ' ')
         m = re_eur.search(c)
         if m:
-            return Fare(m.group(1), url=url)
+            if '1.Klasse' in c:
+                clazz = 1
+            else:
+                clazz = 2
+            return Fare(m.group(1), url=url, clazz=clazz)
         return Fare()
 
     def get_link_later(self):
