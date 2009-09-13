@@ -58,7 +58,7 @@ MARK_TEXT_FROM = u'ab'
 BAHN_BASE_URL = 'http://reiseauskunft.bahn.de'
 BAHN_QUERY_URL = BAHN_BASE_URL + '/bin/query.exe/d'
 
-re_eur = re.compile(r'([0-9]+,[0-9]+)&nbsp;EUR')
+re_eur = re.compile(r'([0-9]+,[0-9]+) EUR')
 
 archive_pages = False
 
@@ -438,6 +438,7 @@ class TimetablePage(HtmlPage):
         
         conn.fare_s = self.parse_fare(farePep)
         conn.fare_n = self.parse_fare(fareStd)
+        
         conn.url = self.response.geturl()
         return conn
 
@@ -455,10 +456,8 @@ class TimetablePage(HtmlPage):
             if incident.contents[0] == MARK_LINK_BOOKING:
                 url = incident['href']
 
-        m = re_eur.search(str(content.contents[0]))
-        if not m and content.a:
-            m = re_eur.search(str(content.a.contents[0]))
-
+        c = str(content.span).replace('&nbsp;', ' ')
+        m = re_eur.search(c)
         if m:
             return Fare(m.group(1), url=url)
         return Fare()
