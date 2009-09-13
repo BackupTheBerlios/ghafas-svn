@@ -551,12 +551,6 @@ def show_resolved_yourtimetable_page(timetable_page):
     open_browser(timetable_page.response.geturl())
 
 
-def _log_status(s):
-    logging.info(s)
-
-def _add_connection(c):
-    print repr(c)
-
 def query(travelData, f_add, f_log):
     f_log('Run query...')
     result = request_timetable_page(travelData)
@@ -591,8 +585,14 @@ def query(travelData, f_add, f_log):
         for c in conn:
             f_add(c)
 
+# ----------------- command line interface starts here ------------------------
 
-# command line interface starts here:
+def _log_status(s):
+    logging.info(s)
+
+def _add_connection(c):
+    print repr(c)
+
 def main():
     log_level = logging.INFO
 
