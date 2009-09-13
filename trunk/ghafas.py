@@ -340,27 +340,13 @@ class Base:
                 )
         self.lvtimetabledata.clear()
 
-        self.statusbar.push(self.statusbar.get_context_id(""), "Run query...")
-        result = ghafasclient.request_timetable_page(travelData)
+        def _log(s):
+            self.statusbar.push(self.statusbar.get_context_id(""), s)
 
-        self.statusbar.push(self.statusbar.get_context_id(""), "Resolve query...")
-        result = ghafasclient.get_resolved_timetable_page(result)
-
-        for c in result.connections:
+        def _add(c):
             self.lvtimetabledata.append(c.fields())
 
-        self.timetable = result.connections
-
-        while self.timetable[-1].arr_time < travelData.arr_time:
-            self.statusbar.push(self.statusbar.get_context_id(""), "Run query...")
-            travelData.dep_time = self.timetable[-1].dep_time
-
-            self.statusbar.push(self.statusbar.get_context_id(""), "Resolve query...")
-            result = ghafasclient.request_timetable_page(travelData)
-            self.timetable.extend(result.connections)
-            result = ghafasclient.get_resolved_timetable_page(result)
-            for c in result.connections:
-                self.lvtimetabledata.append(c.fields())
+        ghafasclient.query(travelData, _add, _log)
 
         self.statusbar.push(self.statusbar.get_context_id(""), "")
 
