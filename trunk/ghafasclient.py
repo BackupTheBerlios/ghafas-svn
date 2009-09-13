@@ -430,10 +430,11 @@ class TimetablePage(HtmlPage):
 
         url = None
         confirmed = True
+
         for incident in content.findAll('a'):
             if incident.contents[0] == MARK_LINK_CHECK_AVAILABILTY:
                 confirmed = False
-            elif incident.contents[0] == MARK_LINK_BOOKING:
+            elif incident.span and incident.span.contents[0] == MARK_LINK_BOOKING:
                 url = incident['href']
 
         c = str(content).replace('&nbsp;', ' ')
