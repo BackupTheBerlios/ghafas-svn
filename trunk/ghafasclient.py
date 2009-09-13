@@ -333,7 +333,11 @@ class FindConnectionPage(HtmlPage):
         return self.form.click('start')
 
 
+re_rarePep = re.compile('farePep')
+re_fareStd = re.compile('fareStd')
+
 class TimetablePage(HtmlPage):
+
     def __init__(self, url):
         logging.debug('open time table')
         HtmlPage.__init__(self, url)
@@ -429,8 +433,8 @@ class TimetablePage(HtmlPage):
         conn = [urllib2.unquote(i.replace('&nbsp;', '').strip()) for i in conn]
         conn = Connection(*conn)
         
-        farePep = departure_row.find('td', attrs = {'class' : re.compile('farePep')})
-        fareStd = departure_row.find('td', attrs = {'class' : re.compile('fareStd')})
+        farePep = departure_row.find('td', attrs = {'class' : re_rarePep})
+        fareStd = departure_row.find('td', attrs = {'class' : re_fareStd})
         
         conn.fare_s = self.parse_fare(farePep)
         conn.fare_n = self.parse_fare(fareStd)
