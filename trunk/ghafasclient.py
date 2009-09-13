@@ -113,13 +113,13 @@ def convert_encoding(s, src='utf-8', dst='iso-8859-1'):
 
 
 class Fare:
-    def __init__(self, fare=None, unknown=False, url=None, clazz=2):
+    def __init__(self, fare=None, confirmed=False, url=None, clazz=2):
         if fare:
             # FIXME: test for string type
             fare = float(fare.replace(',', '.'))
 
         self.fare = fare
-        self.unknown = unknown # unknown availability
+        self.confirmed = confirmed # confirmed availability
         self.url = url
         self.clazz = clazz
 
@@ -127,14 +127,14 @@ class Fare:
         return str(self)
 
     def __str__(self):
-        if self.unknown == True:
-            return '?'
+        s = ''
         if self.fare:
-            f = '%.2f' % (self.fare)
-            if self.clazz == 1:
-                return '(%s)' % f
-            return f
-        return '-.- '
+            s += '%.2f' % (self.fare)
+        if not self.confirmed:
+            s += '?'
+        if self.clazz == 1:
+            s += '*'
+        return s
 
 
 class TravelData:
@@ -453,21 +453,22 @@ class TimetablePage(HtmlPage):
         if not content: return Fare()
 
         url = None
+        confirmed = True
         for incident in content.findAll('a'):
             if incident.contents[0] == MARK_LINK_CHECK_AVAILABILTY:
-                return Fare(unknown=True)
-            if incident.contents[0] == MARK_LINK_BOOKING:
+                confirmed = False
+            elif incident.contents[0] == MARK_LINK_BOOKING:
                 url = incident['href']
 
-        c = str(content.span).replace('&nbsp;', ' ')
+        c = str(content).replace('&nbsp;', ' ')
         m = re_eur.search(c)
         if m:
             if '1.Klasse' in c:
                 clazz = 1
             else:
                 clazz = 2
-            return Fare(m.group(1), url=url, clazz=clazz)
-        return Fare()
+            return Fare(m.group(1), url=url, clazz=clazz, confirmed=confirmed)
+        return Fare(confirmed=confirmed)
 
     def get_link_later(self):
         logging.info('get_link_later...')
