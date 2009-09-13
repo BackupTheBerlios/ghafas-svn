@@ -173,30 +173,6 @@ class TravelData:
         return format_time('%d.%m.%Y', self.arr_time)
 
 
-testTravelData0 = TravelData(
-        'Berlin',
-        'Hamburg',
-        (datetime.date.today()+datetime.timedelta(14)).strftime('%d.%m.%Y'),
-        '08:00',
-        (datetime.date.today()+datetime.timedelta(14)).strftime(''),
-        '14:00',
-        bahncard = 3
-        )
-
-# test dataset with mismatching bahncard/class.
-testTravelData1 = TravelData(
-        'Berlin',
-        'Hamburg',
-        (datetime.date.today()+datetime.timedelta(14)).strftime('%d.%m.%Y'),
-        '08:00',
-        (datetime.date.today()+datetime.timedelta(14)).strftime('%d.%m.%Y'),
-        '14:00',
-        bahncard = 3,
-        clazz = 1
-        )
-
-
-
 class Connection:
     def __init__(self,
             st_dep, st_arr, dt_dep, tm_dep, dt_arr, tm_arr,
@@ -586,6 +562,29 @@ def query(travelData, f_add, f_log):
             f_add(c)
 
 # ----------------- command line interface starts here ------------------------
+
+testTravelData0 = TravelData(
+        'Berlin',
+        'Hamburg',
+        (datetime.date.today()+datetime.timedelta(14)).strftime('%d.%m.%Y'),
+        '08:00',
+        (datetime.date.today()+datetime.timedelta(14)).strftime(''),
+        '14:00',
+        bahncard = 3
+        )
+
+# test dataset with mismatching bahncard/class.
+testTravelData1 = TravelData(
+        'Berlin',
+        'Hamburg',
+        (datetime.date.today()+datetime.timedelta(14)).strftime('%d.%m.%Y'),
+        '08:00',
+        (datetime.date.today()+datetime.timedelta(14)).strftime('%d.%m.%Y'),
+        '14:00',
+        bahncard = 3,
+        clazz = 1
+        )
+
 
 def _log_status(s):
     logging.info(s)
