@@ -99,7 +99,7 @@ def urlopen(url):
     if isinstance(url, urllib2.Request):
         s = url.get_full_url()
     else: s = url
-    logging.debug('open url: %s' % s)
+    logging.debug('urlopen: open %s' % s)
     return urllib2.urlopen(url)
 
 def parse_time(d, t):
@@ -152,6 +152,7 @@ class TravelData:
             arr_time = dep_time
         self.arr_time = parse_time(arr_date, arr_time)
         self.bahncard = bahncard
+        self.age = 44
         self.clazz = clazz
 
     def get_start(self):
@@ -253,9 +254,10 @@ class UnexpectedPage:
     def __str__(self):
         return 'UnexpectedPage: %s' % self.page
 
-
 class HtmlPage:
     def __init__(self, url):
+        logging.debug('HtmlPage: %s' % url)
+
         self.response = urlopen(url)
         self.content = self.response.read()
         self.soup = BeautifulSoup(self.content)
@@ -270,7 +272,7 @@ class HtmlPage:
 
         if archive_pages:
             fd, self.content_file = tempfile.mkstemp(prefix='gh-', suffix='.html', text=True)
-            logging.info('write page to %s' % self.content_file)
+            logging.info('save page to %s' % self.content_file)
             os.write(fd, self.content)
             os.close(fd)
 
@@ -278,8 +280,13 @@ class HtmlPage:
         return StringIO.StringIO(self.content)
 
     def get_forms(self):
-        file = StringIO.StringIO(self.content)
-        return ClientForm.ParseFile(file, self.response.geturl())
+        return ClientForm.ParseFile(self.get_stream(), self.response.geturl())
+
+    def get_form(self, name):
+        for form in self.get_forms():
+            if form.name == name:
+                return form
+        raise RuntimeError('form %s not found' % name)
 
 
 class FindConnectionPage(HtmlPage):
@@ -289,14 +296,14 @@ class FindConnectionPage(HtmlPage):
         if self.progress_pos <> 'Suche':
             raise UnexpectedPage(self.progress_pos, self.response.geturl())
 
-        forms = self.get_forms()
-        for form in forms:
-            logging.debug('form:\n' + str(form))
-        self.form = forms[3]
+        #for form in self.get_forms():
+        #    logging.debug('form:\n' + str(form))
 
+        self.form = self.get_form('formular')
         logging.debug('selected form:\n' + str(self.form))
 
     def fill_form(self, travelData):
+        logging.info('fill form "%s"...' % self.form.name)
         self.form['REQ0JourneyStopsS0G'] = convert_encoding(travelData.fr0m)
         self.form['REQ0JourneyStopsZ0G'] = convert_encoding(travelData.to)
         self.form['REQ0JourneyDate'] = travelData.get_departure_date()
@@ -307,7 +314,7 @@ class FindConnectionPage(HtmlPage):
         self.form['REQ0Tariff_Class'] = [str(travelData.clazz)]
 
     def submit(self):
-        logging.info('submit form...')
+        logging.info('submit form "%s"...' % self.form.name)
         return self.form.click('start')
 
 
@@ -316,22 +323,28 @@ re_fareStd = re.compile('fareStd')
 re_eur = re.compile(r'([0-9]+,[0-9]+) EUR')
 
 class TimetablePage(HtmlPage):
-
     def __init__(self, url):
-        logging.debug('open time table')
+        logging.info('open time table page')
         HtmlPage.__init__(self, url)
    
         self.ok = False
+        self.age_required = False
         self.links_check_availability = []
         self.link_check_all_avail = None
         self.link_later = None
         self.connections = []
 
-        self.form = self.get_forms()[2]
-        logging.debug('form:\n' + str(self.form))
+        self.form = self.get_form('formular2')
+        logging.debug('selected form:\n' + str(self.form))
 
         if self.progress_pos <> 'Auswahl':
             raise UnexpectedPage(self.progress_pos, self.response.geturl())
+
+
+        control = self.form.find_control('REQ0Tariff_TravellerAge.1')
+        if not control.value and not control.readonly:
+            self.age_required = True
+            return
 
         table = self.soup.find(
                 'table',
@@ -385,6 +398,14 @@ class TimetablePage(HtmlPage):
     def __str__(self):
         return '\n\n'.join([str(c) for c in self.connections])
 
+    def fill_form(self, travelData):
+        logging.info('fill form "%s"...' % self.form.name)
+        self.form['REQ0Tariff_TravellerAge.1'] = str(travelData.age)
+
+    def submit(self):
+        logging.info('submit form "%s"...' % self.form.name)
+        return self.form.click('HWAI=~GLOBALAPPLICATION;&newTariff')
+
     def parse_connection(self, departure_row, arrival_row):                
         departure_cols = departure_row.findAll('td', recursive=False)
         arrival_cols = arrival_row.findAll('td', recursive=False)
@@ -421,10 +442,6 @@ class TimetablePage(HtmlPage):
         conn.url = self.response.geturl()
         return conn
 
-    def submit(self):
-        logging.info('submit form...')
-        return self.form.click('immediateAvail=ON&action')
-
     def parse_fare(self, content):
         if not content: return Fare()
 
@@ -448,7 +465,7 @@ class TimetablePage(HtmlPage):
         return Fare(confirmed=confirmed)
 
     def get_link_later(self):
-        logging.info('get_link_later...')
+        logging.debug('get_link_later...')
         return BAHN_BASE_URL + self.link_later
 
 
@@ -472,7 +489,7 @@ class AvailabilityPage(HtmlPage):
 
 
 def request_timetable_page(travelData, complete=True):
-    logging.info('request_timetable_page...')
+    logging.info('request timetable...')
 
     find_page = FindConnectionPage(BAHN_QUERY_URL)
     find_page.fill_form(travelData)
@@ -485,8 +502,14 @@ def request_timetable_page(travelData, complete=True):
         # to display a warning regarding bahncard/class mismatch.
         # Be ignorant about it and feed it in again.
         # FIXME: make it more general
+        logging.warning('bahncard/class mismatch')
         find_page_result = FindConnectionPage(find_page_result).submit()
         timetable_page = TimetablePage(find_page_result)
+
+    if timetable_page.age_required:
+        timetable_page.fill_form(travelData)
+        timetable_page_result = timetable_page.submit()
+        timetable_page = TimetablePage(timetable_page_result)
 
     logging.info(timetable_page)
 
@@ -500,6 +523,7 @@ def request_timetable_page(travelData, complete=True):
         while timetable_page.connections[-1].arr_time < travelData.arr_time:
             if not timetable_page.link_later:
                 break
+            logging.info('extend time table')
             response = timetable_page.get_link_later()
             timetable_page = TimetablePage(response)
             logging.info(timetable_page)
@@ -611,7 +635,7 @@ def main():
 
     if len(args) == 0:
         logging.info('No travel data given - using test data')
-        travelData = testTravelData1
+        travelData = testTravelData0
     else:
         travelData = TravelData(*args)
 
