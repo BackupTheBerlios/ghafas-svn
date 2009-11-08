@@ -219,7 +219,7 @@ class Base:
         self.card_combo = gtk.combo_box_new_text()
         for bc in bahncards:
             self.card_combo.append_text(bc)
-        self.card_combo.set_active(travelData.bahncard)
+        self.card_combo.set_active(travelData.travellers[0].bahncard)
         optionsvbox.pack_start(self.card_combo, False, False, 5)
         settingsvbox.pack_start(optionsvbox, False, False, 2)
 
@@ -328,6 +328,7 @@ class Base:
             self.querybutton.set_sensitive(True)
 
     def request_timetable_async(self):
+        travellers = [ghafasclient.Traveller('Homer', 43, self.card_combo.get_active())]
         travelData = ghafasclient.TravelData(
                 self.fromentry.get_text(),
                 self.toentry.get_text(),
@@ -335,7 +336,7 @@ class Base:
                 self.deptimeentry.get_text(),
                 self.destdateentry.get_text(),
                 self.desttimeentry.get_text(),
-                bahncard = self.card_combo.get_active(),
+                travellers = travellers,
                 clazz = self.clazz_combo.get_active() + 1,
                 )
         self.lvtimetabledata.clear()

@@ -136,12 +136,18 @@ class Fare:
             s += '*'
         return s
 
+class Traveller:
+    def __init__(self, alias='John Doe', age=43, bahncard=0):
+        self.alias = alias
+        self.age = age
+        self.bahncard = bahncard
+    
 
 class TravelData:
     def __init__(
             self,
             fr0m, to, dep_date, dep_time, arr_date=None, arr_time=None,
-            bahncard=0, clazz=2
+            travellers=None, clazz=2
             ):
         self.fr0m = fr0m
         self.to = to
@@ -151,8 +157,10 @@ class TravelData:
         if not arr_time:
             arr_time = dep_time
         self.arr_time = parse_time(arr_date, arr_time)
-        self.bahncard = bahncard
-        self.age = 44
+        if travellers:
+            self.travellers = travellers
+        else:
+            self.travellers = [Traveller()]
         self.clazz = clazz
 
     def get_start(self):
@@ -308,9 +316,7 @@ class FindConnectionPage(HtmlPage):
         self.form['REQ0JourneyStopsZ0G'] = convert_encoding(travelData.to)
         self.form['REQ0JourneyDate'] = travelData.get_departure_date()
         self.form['REQ0JourneyTime'] = travelData.get_departure_time()
-        # it's a BC 50, 2. Kl
-        self.form['REQ0Tariff_TravellerReductionClass.1'] = [str(travelData.bahncard+1)]
-        # 2. Kl
+        self.form['REQ0Tariff_TravellerReductionClass.1'] = [str(travelData.travellers[0].bahncard+1)]
         self.form['REQ0Tariff_Class'] = [str(travelData.clazz)]
 
     def submit(self):
@@ -400,7 +406,7 @@ class TimetablePage(HtmlPage):
 
     def fill_form(self, travelData):
         logging.info('fill form "%s"...' % self.form.name)
-        self.form['REQ0Tariff_TravellerAge.1'] = str(travelData.age)
+        self.form['REQ0Tariff_TravellerAge.1'] = str(travelData.travellers[0].age)
 
     def submit(self):
         logging.info('submit form "%s"...' % self.form.name)
@@ -588,6 +594,10 @@ def query(travelData, f_add, f_log):
 
 # ----------------- command line interface starts here ------------------------
 
+testTravellers = [
+        Traveller('Homer', age = 45, bahncard = 3)
+        ]
+
 testTravelData0 = TravelData(
         'Berlin',
         'Hamburg',
@@ -595,7 +605,7 @@ testTravelData0 = TravelData(
         '08:00',
         (datetime.date.today()+datetime.timedelta(14)).strftime(''),
         '14:00',
-        bahncard = 3
+        travellers = testTravellers
         )
 
 # test dataset with mismatching bahncard/class.
@@ -606,7 +616,7 @@ testTravelData1 = TravelData(
         '08:00',
         (datetime.date.today()+datetime.timedelta(14)).strftime('%d.%m.%Y'),
         '14:00',
-        bahncard = 3,
+        travellers = testTravellers,
         clazz = 1
         )
 
