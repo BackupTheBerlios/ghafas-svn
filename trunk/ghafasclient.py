@@ -263,10 +263,18 @@ class UnexpectedPage:
         return 'UnexpectedPage: %s' % self.page
 
 class HtmlPage:
-    def __init__(self, url):
-        logging.debug('HtmlPage: %s' % url)
+    def __init__(self, arg):
+        if isinstance(arg, HtmlPage):
+            self.url = arg.url
+            self.response = arg.response
+            self.content = arg.content
+            self.soup = arg.soup
+        else:
+            self.url = arg
+        
+        logging.debug('HtmlPage: %s' % self.url)
 
-        self.response = urlopen(url)
+        self.response = urlopen(self.url)
         self.content = self.response.read()
         self.soup = BeautifulSoup(self.content)
 
@@ -298,8 +306,8 @@ class HtmlPage:
 
 
 class FindConnectionPage(HtmlPage):
-    def __init__(self, url):
-        HtmlPage.__init__(self, url)
+    def __init__(self, arg):
+        HtmlPage.__init__(self, arg)
 
         if self.progress_pos <> 'Suche':
             raise UnexpectedPage(self.progress_pos, self.response.geturl())
@@ -329,9 +337,9 @@ re_fareStd = re.compile('fareStd')
 re_eur = re.compile(r'([0-9]+,[0-9]+) EUR')
 
 class TimetablePage(HtmlPage):
-    def __init__(self, url):
+    def __init__(self, arg):
         logging.info('open time table page')
-        HtmlPage.__init__(self, url)
+        HtmlPage.__init__(self, arg)
    
         self.ok = False
         self.age_required = False
@@ -476,8 +484,8 @@ class TimetablePage(HtmlPage):
 
 
 class AvailabilityPage(HtmlPage):
-    def __init__(self, url):
-        HtmlPage.__init__(self, url)
+    def __init__(self, arg):
+        HtmlPage.__init__(self, arg)
         self.link_back = None
 
         if self.progress_pos <> 'Auswahl':
