@@ -1,6 +1,6 @@
 #!/usr/bin/env python2.5
+# -*- coding: utf-8 -*-
 
-# coding=utf-8
 # $HeadURL$
 # $Id$
 
@@ -111,6 +111,11 @@ def format_time(f, t):
 def convert_encoding(s, src='utf-8', dst='iso-8859-1'):
     return s.decode(src).encode(dst)
 
+def enc_html2utf8(s):
+    conv = (('&#223;', u'ß'), ('&#228;', u'ä'), ('&#246;', u'ö'), ('&#252;', u'ü'), )
+    for a, b in conv:
+        s = s.replace(a, b)
+    return s
 
 class Fare:
     def __init__(self, fare=None, confirmed=False, url=None, clazz=2):
@@ -332,6 +337,25 @@ class FindConnectionPage(HtmlPage):
         return self.form.click('start')
 
 
+class FindConnectionPageUnclear(FindConnectionPage):
+    def __init__(self, arg):
+        FindConnectionPage.__init__(self, arg)
+
+    @classmethod
+    def check(cls, page):
+        # <select class="locInput locInput" name="REQ0JourneyStopsS0K" id="REQ0JourneyStopsS0K"
+        m = page.soup.find('select', attrs = {'name' : re.compile('REQ0JourneyStopsS0K')})
+        if not m:
+            return False
+        return True
+
+    def dump(self):
+        m = self.soup.find('select', attrs = {'name' : re.compile('REQ0JourneyStopsS0K')})
+        items = [i.contents[0] for i in m.findAll('option')]
+        items = [enc_html2utf8(s) for s in items]
+        print '\n'.join(items)
+
+
 re_rarePep = re.compile('farePep')
 re_fareStd = re.compile('fareStd')
 re_eur = re.compile(r'([0-9]+,[0-9]+) EUR')
@@ -348,7 +372,11 @@ class TimetablePage(HtmlPage):
         self.link_later = None
         self.connections = []
 
-        self.form = self.get_form('formular2')
+        try:
+            self.form = self.get_form('formular2')
+        except RuntimeError:
+            raise UnexpectedPage(self.progress_pos, self.response.geturl())
+        
         logging.debug('selected form:\n' + str(self.form))
 
         if self.progress_pos <> 'Auswahl':
@@ -509,9 +537,16 @@ def request_timetable_page(travelData, complete=True):
     find_page.fill_form(travelData)
     find_page_result = find_page.submit()
 
+    unknown_page = HtmlPage(find_page_result)
+
     try:
-        timetable_page = TimetablePage(find_page_result)
+        timetable_page = TimetablePage(unknown_page)
     except UnexpectedPage, e:
+        if FindConnectionPageUnclear.check(unknown_page):
+            fcpu = FindConnectionPageUnclear(unknown_page)
+            fcpu.dump()
+            sys.exit(-1)
+
         # Handle the case where the request page is shown again
         # to display a warning regarding bahncard/class mismatch.
         # Be ignorant about it and feed it in again.
@@ -619,6 +654,18 @@ testTravelData0 = TravelData(
 # test dataset with mismatching bahncard/class.
 testTravelData1 = TravelData(
         'Berlin',
+        'Hamburg',
+        (datetime.date.today()+datetime.timedelta(14)).strftime('%d.%m.%Y'),
+        '08:00',
+        (datetime.date.today()+datetime.timedelta(14)).strftime('%d.%m.%Y'),
+        '14:00',
+        travellers = testTravellers,
+        clazz = 1
+        )
+
+# test dataset with mismatching/unknown station name.
+testTravelData2 = TravelData(
+        'Fulda Bf',
         'Hamburg',
         (datetime.date.today()+datetime.timedelta(14)).strftime('%d.%m.%Y'),
         '08:00',
