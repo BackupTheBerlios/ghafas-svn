@@ -1,6 +1,6 @@
-﻿#!/usr/bin/env python2.5
+#!/usr/bin/env python2.5
+# -*- coding: utf-8 -*-
 
-# coding=utf-8
 # $HeadURL$
 # $Id$
 
