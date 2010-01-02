@@ -335,25 +335,40 @@ class FindConnectionPage(HtmlPage):
     def submit(self):
         logging.info('submit form "%s"...' % self.form.name)
         return self.form.click('start')
-
+    
 
 class FindConnectionPageUnclear(FindConnectionPage):
     def __init__(self, arg):
         FindConnectionPage.__init__(self, arg)
 
+        m = self.soup.find('select', attrs = {'name' : re.compile('REQ0JourneyStopsS0K')})
+        if m:
+            self.options_fr0m = [(i.string, i['value']) for i in m.findAll('option')]
+        else:
+            self.options_fr0m = None
+        m = self.soup.find('select', attrs = {'name' : re.compile('REQ0JourneyStopsZ0K')})
+        if m:
+            self.options_to = [(i.string, i['value']) for i in m.findAll('option')]
+        else:
+            self.options_to = None
+
     @classmethod
     def check(cls, page):
         # <select class="locInput locInput" name="REQ0JourneyStopsS0K" id="REQ0JourneyStopsS0K"
-        m = page.soup.find('select', attrs = {'name' : re.compile('REQ0JourneyStopsS0K')})
+        m = page.soup.find('select', attrs = {'name' : re.compile('REQ0JourneyStops(S|Z)0K')})
         if not m:
             return False
         return True
 
     def dump(self):
-        m = self.soup.find('select', attrs = {'name' : re.compile('REQ0JourneyStopsS0K')})
-        items = [i.contents[0] for i in m.findAll('option')]
-        items = [enc_html2utf8(s) for s in items]
-        print '\n'.join(items)
+        if self.options_fr0m:
+            logging.warn('Unknown or ambiguous departure station:')
+            s = ['  %-6s %s' % (k, enc_html2utf8(s)) for s, k in self.options_fr0m]
+            print '\n'.join(s)
+        if self.options_to:
+            logging.warn('Unknown or ambiguous destination station:')
+            s = ['  %-6s %s' % (k, enc_html2utf8(s)) for s, k in self.options_to]
+            print '\n'.join(s)
 
 
 re_rarePep = re.compile('farePep')
