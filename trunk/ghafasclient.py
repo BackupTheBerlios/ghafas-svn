@@ -103,7 +103,10 @@ def urlopen(url):
     return urllib2.urlopen(url)
 
 def parse_time(d, t):
-    return time.mktime(time.strptime('%s %s' % (d, t), '%d.%m.%Y %H:%M'))
+    try:
+        return time.mktime(time.strptime('%s %s' % (d, t), '%d.%m.%Y %H:%M'))
+    except ValueError:
+        return time.mktime(time.strptime('%s %s' % (d, t), '%d.%m.%y %H:%M'))
 
 def format_time(f, t):
     return time.strftime(f, time.localtime(t))
@@ -351,25 +354,36 @@ class FindConnectionPageUnclear(FindConnectionPage):
             self.options_to = [(i.string, i['value']) for i in m.findAll('option')]
         else:
             self.options_to = None
+        m = self.soup.find('div', attrs = {'id' : re.compile('timeErr0')})
+        if m:
+            self.wrong_time_format = True
+        else:
+            self.wrong_time_format = False
 
     @classmethod
     def check(cls, page):
         # <select class="locInput locInput" name="REQ0JourneyStopsS0K" id="REQ0JourneyStopsS0K"
         m = page.soup.find('select', attrs = {'name' : re.compile('REQ0JourneyStops(S|Z)0K')})
-        if not m:
-            return False
-        return True
+        if m:
+            return True
+        # <div id="timeErr0" class="errormsg clearfix ">...</div>
+        m = page.soup.find('div', attrs = {'id' : re.compile('timeErr0')})
+        if m:
+            return True
+        return False
 
     def dump(self):
         if self.options_fr0m:
-            logging.warn('Unknown or ambiguous departure station:')
+            logging.error('Unknown or ambiguous departure station:')
             s = ['  %-6s %s' % (k, enc_html2utf8(s)) for s, k in self.options_fr0m]
             print '\n'.join(s)
         if self.options_to:
-            logging.warn('Unknown or ambiguous destination station:')
+            logging.error('Unknown or ambiguous destination station:')
             s = ['  %-6s %s' % (k, enc_html2utf8(s)) for s, k in self.options_to]
             print '\n'.join(s)
-
+        if self.wrong_time_format:
+            logging.error('Wrong time format')
+            
 
 re_rarePep = re.compile('farePep')
 re_fareStd = re.compile('fareStd')
