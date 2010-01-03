@@ -344,21 +344,23 @@ class FindConnectionPageUnclear(FindConnectionPage):
     def __init__(self, arg):
         FindConnectionPage.__init__(self, arg)
 
+        self.options_fr0m = None
+        self.options_to = None
+        self.time_error = None
+        self.date_error = None
+
         m = self.soup.find('select', attrs = {'name' : re.compile('REQ0JourneyStopsS0K')})
         if m:
             self.options_fr0m = [(i.string, i['value']) for i in m.findAll('option')]
-        else:
-            self.options_fr0m = None
         m = self.soup.find('select', attrs = {'name' : re.compile('REQ0JourneyStopsZ0K')})
         if m:
             self.options_to = [(i.string, i['value']) for i in m.findAll('option')]
-        else:
-            self.options_to = None
         m = self.soup.find('div', attrs = {'id' : re.compile('timeErr0')})
-        if m:
-            self.wrong_time_format = True
-        else:
-            self.wrong_time_format = False
+        if m and m.string != '&nbsp;':
+            self.time_error = enc_html2utf8(m.string.strip())
+        m = self.soup.find('div', attrs = {'id' : re.compile('dateErr20')})
+        if m and m.string != '&nbsp;':
+            self.date_error = enc_html2utf8(m.string.strip())
 
     @classmethod
     def check(cls, page):
@@ -368,6 +370,9 @@ class FindConnectionPageUnclear(FindConnectionPage):
             return True
         # <div id="timeErr0" class="errormsg clearfix ">...</div>
         m = page.soup.find('div', attrs = {'id' : re.compile('timeErr0')})
+        if m:
+            return True
+        m = page.soup.find('div', attrs = {'id' : re.compile('dateErr20')})
         if m:
             return True
         return False
@@ -381,8 +386,10 @@ class FindConnectionPageUnclear(FindConnectionPage):
             logging.error('Unknown or ambiguous destination station:')
             s = ['  %-6s %s' % (k, enc_html2utf8(s)) for s, k in self.options_to]
             print '\n'.join(s)
-        if self.wrong_time_format:
-            logging.error('Wrong time format')
+        if self.time_error:
+            logging.error('Wrong time: %s' % self.time_error)
+        if self.date_error:
+            logging.error('Wrong date: %s' % self.date_error)
             
 
 re_rarePep = re.compile('farePep')
@@ -401,16 +408,12 @@ class TimetablePage(HtmlPage):
         self.link_later = None
         self.connections = []
 
-        try:
-            self.form = self.get_form('formular2')
-        except RuntimeError:
-            raise UnexpectedPage(self.progress_pos, self.response.geturl())
-        
-        logging.debug('selected form:\n' + str(self.form))
-
         if self.progress_pos <> 'Auswahl':
             raise UnexpectedPage(self.progress_pos, self.response.geturl())
 
+        self.form = self.get_form('formular2')
+        
+        logging.debug('selected form:\n' + str(self.form))
 
         control = self.form.find_control('REQ0Tariff_TravellerAge.1')
         if not control.value and not control.readonly:
