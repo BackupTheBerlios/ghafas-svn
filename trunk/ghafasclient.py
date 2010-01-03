@@ -131,7 +131,7 @@ class Fare:
         self.url = url
         self.clazz = clazz
 
-    def __repr__(self):
+    def short_string(self):
         return str(self)
 
     def __str__(self):
@@ -239,23 +239,23 @@ class Connection:
             self.duration,
             )
 
-    def __repr__(self):
+    def short_string(self):
         return ';'.join((
-            self.st_dep,
+            enc_html2utf8(self.st_dep),
             format_time('%d.%m.%y %H:%M', self.dep_time),
             ','.join(self.trains),
-            self.st_arr,
+            enc_html2utf8(self.st_arr),
             format_time('%d.%m.%y %H:%M', self.arr_time),
             self.duration, self.changes,
-            repr(self.fare_n), repr(self.fare_s),
+            self.fare_n.short_string(), self.fare_s.short_string(),
             ))
 
     def __str__(self):
         return '%-20s %s  %s\n%-20s %s   %5s %-2s  %6s  %6s' % (
-            self.st_dep,
+            enc_html2utf8(self.st_dep),
             format_time('%d.%m.%y %H:%M', self.dep_time),
             ','.join(self.trains),
-            self.st_arr,
+            enc_html2utf8(self.st_arr),
             format_time('%d.%m.%y %H:%M', self.arr_time),
             self.duration, self.changes,
             self.fare_n, self.fare_s,
@@ -467,7 +467,7 @@ class TimetablePage(HtmlPage):
         self.connections.sort()
 
     def __str__(self):
-        return '\n\n'.join([str(c) for c in self.connections])
+        return '\n\n'.join([unicode(c) for c in self.connections])
 
     def fill_form(self, travelData):
         logging.info('fill form "%s"...' % self.form.name)
@@ -709,7 +709,7 @@ def _log_status(s):
     logging.info(s)
 
 def _add_connection(c):
-    print repr(c)
+    print c.short_string()
 
 def main():
     log_level = logging.INFO
