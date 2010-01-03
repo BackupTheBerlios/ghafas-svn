@@ -149,7 +149,7 @@ class Traveller:
         self.alias = alias
         self.age = age
         self.bahncard = bahncard
-    
+
 
 class TravelData:
     def __init__(
@@ -217,8 +217,8 @@ class Connection:
     def __cmp__(self, other):
         r = cmp(self.dep_time, other.dep_time)
         if r: return r
-        return cmp(self.arr_time, other.arr_time) 
-        
+        return cmp(self.arr_time, other.arr_time)
+
     def fields(self):
         return [self, self.fare_n, self.fare_s]
 
@@ -279,7 +279,7 @@ class HtmlPage:
             self.soup = arg.soup
         else:
             self.url = arg
-        
+
         logging.debug('HtmlPage: %s' % self.url)
 
         self.response = urlopen(self.url)
@@ -338,7 +338,7 @@ class FindConnectionPage(HtmlPage):
     def submit(self):
         logging.info('submit form "%s"...' % self.form.name)
         return self.form.click('start')
-    
+
 
 class FindConnectionPageUnclear(FindConnectionPage):
     def __init__(self, arg):
@@ -390,7 +390,7 @@ class FindConnectionPageUnclear(FindConnectionPage):
             logging.error('Wrong time: %s' % self.time_error)
         if self.date_error:
             logging.error('Wrong date: %s' % self.date_error)
-            
+
 
 re_rarePep = re.compile('farePep')
 re_fareStd = re.compile('fareStd')
@@ -400,7 +400,7 @@ class TimetablePage(HtmlPage):
     def __init__(self, arg):
         logging.info('open time table page')
         HtmlPage.__init__(self, arg)
-   
+
         self.ok = False
         self.age_required = False
         self.links_check_availability = []
@@ -412,7 +412,7 @@ class TimetablePage(HtmlPage):
             raise UnexpectedPage(self.progress_pos, self.response.geturl())
 
         self.form = self.get_form('formular2')
-        
+
         logging.debug('selected form:\n' + str(self.form))
 
         control = self.form.find_control('REQ0Tariff_TravellerAge.1')
@@ -447,7 +447,7 @@ class TimetablePage(HtmlPage):
             #colums = row.findAll('td', recursive=False)
             #if len(colums) < 2 or colums[2].contents[0] != MARK_TEXT_FROM:
             #    continue
-            
+
             try:
                 row_class = row['class']
             except KeyError:
@@ -480,10 +480,10 @@ class TimetablePage(HtmlPage):
         logging.info('submit form "%s"...' % self.form.name)
         return self.form.click('HWAI=~GLOBALAPPLICATION;&newTariff')
 
-    def parse_connection(self, departure_row, arrival_row):                
+    def parse_connection(self, departure_row, arrival_row):
         departure_cols = departure_row.findAll('td', recursive=False)
         arrival_cols = arrival_row.findAll('td', recursive=False)
-        
+
         conn = (
             # st_dep
             departure_cols[0].contents[3].contents[0],
@@ -506,13 +506,13 @@ class TimetablePage(HtmlPage):
             )
         conn = [urllib2.unquote(i.replace('&nbsp;', '').strip()) for i in conn]
         conn = Connection(*conn)
-        
+
         farePep = departure_row.find('td', attrs = {'class' : re_rarePep})
         fareStd = departure_row.find('td', attrs = {'class' : re_fareStd})
-        
+
         conn.fare_s = self.parse_fare(farePep)
         conn.fare_n = self.parse_fare(fareStd)
-        
+
         conn.url = self.response.geturl()
         return conn
 
@@ -653,17 +653,17 @@ def query(travelData, f_add, f_log):
         f_log('Resolve query...')
         result = request_timetable_page(travelData)
         #show_resolved_yourtimetable_page(result)
-        
+
         try:
             pos = result.connections.index(timetable[-1]) + 1
         except ValueError:
             pos = 0
-            
+
         conn = result.connections[pos:]
-        
+
         timetable.extend(conn)
         result = get_resolved_timetable_page(result)
-        
+
         for c in conn:
             f_add(c)
 

@@ -58,7 +58,7 @@ def init_gettext(domain):
             break
         except:
             pass
-        
+
 init_gettext('ghafas')
 
 
@@ -105,7 +105,7 @@ def find_pixmaps_path(filename):
         ]
     paths = [os.path.join(*path) for path in paths]
     return find_path(paths, filename)
- 
+
 def find_stations_path(filename):
     paths = [
         (sys.prefix, 'share', 'ghafas', 'stations', filename),
@@ -114,7 +114,7 @@ def find_stations_path(filename):
         ]
     paths = [os.path.join(*path) for path in paths]
     return find_path(paths, filename)
- 
+
 
 class PropertyEntry(gtk.Entry):
     def __init__(self, name, value, layout=None):
@@ -265,14 +265,14 @@ class Base:
         self.lvtimetablecolumn0.pack_start(self.lvtimetablecell0, True)
         self.lvtimetablecolumn0.set_cell_data_func(self.lvtimetablecell0, set_markup_from_connection, 0)
         self.lvtimetable.append_column(self.lvtimetablecolumn0)
-        
+
         self.lvtimetablecolumn1 = gtk.TreeViewColumn()
         self.lvtimetablecolumn1.set_title(_('Normal fare'))
         self.lvtimetablecell1 = gtk.CellRendererText()
         self.lvtimetablecolumn1.pack_start(self.lvtimetablecell1, True)
         self.lvtimetablecolumn1.set_cell_data_func(self.lvtimetablecell1, set_text_from_pyobject, 1)
         self.lvtimetable.append_column(self.lvtimetablecolumn1)
-        
+
         self.lvtimetablecolumn2 = gtk.TreeViewColumn()
         self.lvtimetablecolumn2.set_title(_('Savings fare'))
         self.lvtimetablecell2 = gtk.CellRendererText()
