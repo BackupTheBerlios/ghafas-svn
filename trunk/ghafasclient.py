@@ -121,7 +121,7 @@ def enc_html2utf8(s):
     return s
 
 class Fare:
-    def __init__(self, fare=None, confirmed=False, url=None, clazz=2):
+    def __init__(self, fare=None, confirmed=False, url=None, clazz=2, conn_past=False):
         if fare:
             # FIXME: test for string type
             fare = float(fare.replace(',', '.'))
@@ -130,6 +130,7 @@ class Fare:
         self.confirmed = confirmed # confirmed availability
         self.url = url
         self.clazz = clazz
+        self.conn_past = conn_past
 
     def to_csv(self):
         s = ''
@@ -142,6 +143,8 @@ class Fare:
         # FIXME this is wrong, should be self.clazz !+ travaller.clazz
         if self.clazz == 1:
             s += 'F'
+        if self.conn_past:
+            s += 'P'
         return ';'.join((f, s))
 
     def __str__(self):
@@ -531,12 +534,17 @@ class TimetablePage(HtmlPage):
 
         url = None
         confirmed = True
+        conn_past = False
 
+        MARK_CONN_PAST = 'Verbindung liegt in der Vergangenheit'
         for incident in content.findAll('a'):
             if incident.contents[0] == MARK_LINK_CHECK_AVAILABILTY:
                 confirmed = False
             elif incident.span and incident.span.contents[0] == MARK_LINK_BOOKING:
                 url = incident['href']
+        for incident in content.findAll('span'):
+            if incident.string == MARK_CONN_PAST:
+                conn_past = True
 
         c = str(content).replace('&nbsp;', ' ')
         m = re_eur.search(c)
@@ -546,7 +554,7 @@ class TimetablePage(HtmlPage):
             else:
                 clazz = 2
             return Fare(m.group(1), url=url, clazz=clazz, confirmed=confirmed)
-        return Fare(confirmed=confirmed)
+        return Fare(confirmed=confirmed, conn_past=conn_past)
 
     def get_link_later(self):
         logging.debug('get_link_later...')
