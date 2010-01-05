@@ -132,7 +132,17 @@ class Fare:
         self.clazz = clazz
 
     def to_csv(self):
-        return str(self)
+        s = ''
+        if self.fare:
+            f = '%.2f' % (self.fare)
+            if not self.confirmed:
+                s += 'U'
+        else:
+            f = '-'
+        # FIXME this is wrong, should be self.clazz !+ travaller.clazz
+        if self.clazz == 1:
+            s += 'F'
+        return ';'.join((f, s))
 
     def __str__(self):
         s = ''
