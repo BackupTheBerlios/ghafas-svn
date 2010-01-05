@@ -136,7 +136,7 @@ class Fare:
         if self.fare:
             f = '%.2f' % (self.fare)
             if not self.confirmed:
-                s += 'U'
+                s += '?'
         else:
             f = '-'
         # FIXME this is wrong, should be self.clazz !+ travaller.clazz
