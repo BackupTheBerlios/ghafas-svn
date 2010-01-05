@@ -131,7 +131,7 @@ class Fare:
         self.url = url
         self.clazz = clazz
 
-    def short_string(self):
+    def to_csv(self):
         return str(self)
 
     def __str__(self):
@@ -239,7 +239,7 @@ class Connection:
             self.duration,
             )
 
-    def short_string(self):
+    def to_csv(self):
         return ';'.join((
             enc_html2utf8(self.st_dep),
             format_time('%d.%m.%y %H:%M', self.dep_time),
@@ -247,7 +247,7 @@ class Connection:
             enc_html2utf8(self.st_arr),
             format_time('%d.%m.%y %H:%M', self.arr_time),
             self.duration, self.changes,
-            self.fare_n.short_string(), self.fare_s.short_string(),
+            self.fare_n.to_csv(), self.fare_s.to_csv(),
             ))
 
     def __str__(self):
@@ -712,7 +712,7 @@ def _log_status(s):
     logging.info(s)
 
 def _add_connection(c):
-    print c.short_string()
+    print c.to_csv()
 
 def main():
     log_level = logging.INFO
