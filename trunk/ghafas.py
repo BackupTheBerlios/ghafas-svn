@@ -64,10 +64,10 @@ init_gettext('ghafas')
 
 bahncards = [
         _("No reduction"),
-        _("BC25, 2nd class"),
         _("BC25, 1st class"),
+        _("BC25, 2nd class"),
+        _("BC50, 1st class"),
         _("BC50, 2nd class"),
-        _("BC50, 1st class")
         ]
 
 clazzes = [

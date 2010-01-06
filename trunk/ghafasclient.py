@@ -173,13 +173,16 @@ class TravelData:
         self.fr0m = fr0m
         self.to = to
         self.dep_time = parse_time(dep_date, dep_time)
-        if not arr_date:
+        if not arr_date or arr_date == '-':
             arr_date = dep_date
-        if not arr_time:
+        if not arr_time or arr_time == '-':
             arr_time = dep_time
         self.arr_time = parse_time(arr_date, arr_time)
         if travellers:
-            self.travellers = travellers
+            if isinstance(travellers, str):
+                self.travellers = [Traveller(bahncard=int(travellers))]
+            else:
+                self.travellers = travellers
         else:
             self.travellers = [Traveller()]
         self.clazz = clazz
@@ -345,8 +348,9 @@ class FindConnectionPage(HtmlPage):
         self.form['REQ0JourneyStopsZ0G'] = convert_encoding(travelData.to)
         self.form['REQ0JourneyDate'] = travelData.get_departure_date()
         self.form['REQ0JourneyTime'] = travelData.get_departure_time()
-        self.form['REQ0Tariff_TravellerReductionClass.1'] = [str(travelData.travellers[0].bahncard+1)]
+        self.form['REQ0Tariff_TravellerReductionClass.1'] = [str(travelData.travellers[0].bahncard)]
         self.form['REQ0Tariff_Class'] = [str(travelData.clazz)]
+        print self.form['REQ0Tariff_TravellerReductionClass.1']
 
     def submit(self):
         logging.info('submit form "%s"...' % self.form.name)
@@ -618,6 +622,8 @@ def request_timetable_page(travelData, complete=True):
     if not timetable_page.ok:
         open_browser_and_exit(timetable_page.response.geturl())
 
+    open_browser(timetable_page.response.geturl())
+
     if complete:
         while timetable_page.connections[-1].arr_time < travelData.arr_time:
             if not timetable_page.link_later:
@@ -688,7 +694,7 @@ def query(travelData, f_add, f_log):
 # ----------------- command line interface starts here ------------------------
 
 testTravellers = [
-        Traveller('Homer', age = 45, bahncard = 3)
+        Traveller('Homer', age = 45, bahncard = 4)
         ]
 
 testTravelData0 = TravelData(
