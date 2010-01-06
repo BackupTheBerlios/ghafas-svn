@@ -350,7 +350,6 @@ class FindConnectionPage(HtmlPage):
         self.form['REQ0JourneyTime'] = travelData.get_departure_time()
         self.form['REQ0Tariff_TravellerReductionClass.1'] = [str(travelData.travellers[0].bahncard)]
         self.form['REQ0Tariff_Class'] = [str(travelData.clazz)]
-        print self.form['REQ0Tariff_TravellerReductionClass.1']
 
     def submit(self):
         logging.info('submit form "%s"...' % self.form.name)
