@@ -260,8 +260,8 @@ class Connection:
         return ';'.join((
             enc_html2utf8(self.st_dep),
             enc_html2utf8(self.st_arr),
-            format_time('%d.%m.%y %H:%M', self.dep_time),
-            format_time('%d.%m.%y %H:%M', self.arr_time),
+            format_time('%d.%m.%y;%H:%M', self.dep_time),
+            format_time('%d.%m.%y;%H:%M', self.arr_time),
             ','.join(self.trains),
             self.duration, self.changes,
             self.fare_n.to_csv(), self.fare_s.to_csv(),
