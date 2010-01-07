@@ -59,6 +59,7 @@ BAHN_BASE_URL = 'http://reiseauskunft.bahn.de'
 BAHN_QUERY_URL = BAHN_BASE_URL + '/bin/query.exe/d'
 
 archive_pages = False
+browse_results = False
 
 
 def init_logger(level):
@@ -621,7 +622,8 @@ def request_timetable_page(travelData, complete=True):
     if not timetable_page.ok:
         open_browser_and_exit(timetable_page.response.geturl())
 
-    open_browser(timetable_page.response.geturl())
+    if browse_results:
+        open_browser(timetable_page.response.geturl())
 
     if complete:
         while timetable_page.connections[-1].arr_time < travelData.arr_time:
@@ -740,12 +742,15 @@ def _add_connection(c):
 def main():
     log_level = logging.INFO
 
-    opts, args = getopt.getopt(sys.argv[1:], 'adq', [])
+    opts, args = getopt.getopt(sys.argv[1:], 'abdq', [])
 
     for o, v in opts:
         if o == '-a':
             global archive_pages
             archive_pages = True
+        elif o == '-b':
+            global browse_results
+            browse_results = True
         elif o == '-d':
             log_level = logging.DEBUG
         elif o == '-q':
