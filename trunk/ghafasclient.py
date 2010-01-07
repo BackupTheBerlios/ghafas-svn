@@ -397,11 +397,11 @@ class FindConnectionPageUnclear(FindConnectionPage):
         if self.options_fr0m:
             logging.error('Unknown or ambiguous departure station:')
             s = ['  %-6s %s' % (k, enc_html2utf8(s)) for s, k in self.options_fr0m]
-            print '\n'.join(s)
+            print >> sys.stderr, '\n'.join(s)
         if self.options_to:
             logging.error('Unknown or ambiguous destination station:')
             s = ['  %-6s %s' % (k, enc_html2utf8(s)) for s, k in self.options_to]
-            print '\n'.join(s)
+            print >> sys.stderr, '\n'.join(s)
         if self.time_error:
             logging.error('Wrong time: %s' % self.time_error)
         if self.date_error:
@@ -735,7 +735,7 @@ def _log_status(s):
     logging.info(s)
 
 def _add_connection(c):
-    print c.to_csv()
+    sys.stdout.write(c.to_csv().encode('utf-8') + '\n')
 
 def main():
     log_level = logging.INFO
