@@ -268,7 +268,7 @@ class Connection:
             ))
 
     def __str__(self):
-        return '%-20s %s  %s\n%-20s %s   %5s %-2s  %6s  %6s' % (
+        return ' * %-20s %s  %s\n  %-20s %s   %5s %-2s  %6s  %6s' % (
             enc_html2utf8(self.st_dep),
             format_time('%d.%m.%y %H:%M', self.dep_time),
             ','.join(self.trains),
