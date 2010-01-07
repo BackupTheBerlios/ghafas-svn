@@ -268,7 +268,7 @@ class Connection:
             ))
 
     def __str__(self):
-        return ' * %-20s %s  %s\n  %-20s %s   %5s %-2s  %6s  %6s' % (
+        return ' > %-20s %s  %s\n   %-20s %s   %5s %-2s  %6s  %6s' % (
             enc_html2utf8(self.st_dep),
             format_time('%d.%m.%y %H:%M', self.dep_time),
             ','.join(self.trains),
@@ -487,7 +487,7 @@ class TimetablePage(HtmlPage):
         self.connections.sort()
 
     def __str__(self):
-        return '\n\n'.join([unicode(c) for c in self.connections])
+        return '\n'.join([unicode(c) for c in self.connections])
 
     def fill_form(self, travelData):
         logging.info('fill form "%s"...' % self.form.name)
@@ -614,7 +614,7 @@ def request_timetable_page(travelData, complete=True):
         timetable_page_result = timetable_page.submit()
         timetable_page = TimetablePage(timetable_page_result)
 
-    logging.info(timetable_page)
+    logging.info('Results table:\n%s' % timetable_page)
 
     if timetable_page.link_check_all_avail:
         timetable_page = TimetablePage(timetable_page.link_check_all_avail)
@@ -632,7 +632,7 @@ def request_timetable_page(travelData, complete=True):
             logging.info('extend time table')
             response = timetable_page.get_link_later()
             timetable_page = TimetablePage(response)
-            logging.info(timetable_page)
+            logging.info('Results table:\n%s' % timetable_page)
 
     return timetable_page
 
