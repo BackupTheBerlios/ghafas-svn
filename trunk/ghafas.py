@@ -347,7 +347,7 @@ class Base:
         def _add(c):
             self.lvtimetabledata.append(c.fields())
 
-        ghafasclient.query(travelData, _add, _log)
+        ghafasclient.query(travelData, _log, f_add=_add)
 
         self.statusbar.push(self.statusbar.get_context_id(""), "")
 

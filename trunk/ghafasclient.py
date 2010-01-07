@@ -658,7 +658,7 @@ def show_resolved_yourtimetable_page(timetable_page):
     open_browser(timetable_page.response.geturl())
 
 
-def query(travelData, f_add, f_log):
+def query(travelData, f_log, f_init=None, f_add=None):
     f_log('Run query...')
     result = request_timetable_page(travelData)
     #show_resolved_yourtimetable_page(result)
@@ -666,8 +666,9 @@ def query(travelData, f_add, f_log):
     f_log('Resolve query...')
     result = get_resolved_timetable_page(result)
 
+    if f_init: f_init(None)
     for c in result.connections:
-        f_add(c)
+        if f_add: f_add(c)
 
     timetable = result.connections
 
@@ -690,7 +691,7 @@ def query(travelData, f_add, f_log):
         result = get_resolved_timetable_page(result)
 
         for c in conn:
-            f_add(c)
+            if f_add: f_add(c)
 
 # ----------------- command line interface starts here ------------------------
 
@@ -765,7 +766,7 @@ def main():
         travelData = TravelData(*args)
 
     try:
-        query(travelData, _add_connection, _log_status)
+        query(travelData, _log_status, None, _add_connection)
     except UnexpectedPage, e:
         logging.error(e)
         open_browser(e.url)
