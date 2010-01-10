@@ -1,0 +1,85 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXFileReference section */
+		3D03503D0F0D197800F93998 /* ghafasclient.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = ghafasclient.py; sourceTree = "<group>"; };
+		3D03503E0F0D197800F93998 /* ghafas.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = ghafas.py; sourceTree = "<group>"; };
+		3D03503F0F0D197800F93998 /* ghafas */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ghafas; sourceTree = "<group>"; };
+		3D0350410F0D197800F93998 /* BeautifulSoup.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = BeautifulSoup.py; sourceTree = "<group>"; };
+		3D0350420F0D197800F93998 /* ClientForm.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = ClientForm.py; sourceTree = "<group>"; };
+		3D0350430F0D197800F93998 /* sgmllib.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = sgmllib.py; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		3D0350290F0D18FF00F93998 = {
+			isa = PBXGroup;
+			children = (
+				3D03503D0F0D197800F93998 /* ghafasclient.py */,
+				3D03503E0F0D197800F93998 /* ghafas.py */,
+				3D03503F0F0D197800F93998 /* ghafas */,
+				3D0350400F0D197800F93998 /* ghafaslib */,
+			);
+			sourceTree = "<group>";
+		};
+		3D0350400F0D197800F93998 /* ghafaslib */ = {
+			isa = PBXGroup;
+			children = (
+				3D0350410F0D197800F93998 /* BeautifulSoup.py */,
+				3D0350420F0D197800F93998 /* ClientForm.py */,
+				3D0350430F0D197800F93998 /* sgmllib.py */,
+			);
+			path = ghafaslib;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXProject section */
+		3D03502B0F0D18FF00F93998 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 3D03502E0F0D18FF00F93998 /* Build configuration list for PBXProject "ghafas" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 0;
+			mainGroup = 3D0350290F0D18FF00F93998;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		3D03502C0F0D18FF00F93998 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		3D03502D0F0D18FF00F93998 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3D03502E0F0D18FF00F93998 /* Build configuration list for PBXProject "ghafas" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D03502C0F0D18FF00F93998 /* Debug */,
+				3D03502D0F0D18FF00F93998 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3D03502B0F0D18FF00F93998 /* Project object */;
+}
