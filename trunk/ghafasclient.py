@@ -40,6 +40,8 @@ import sys
 import urllib2
 import StringIO
 import tempfile
+import sqlite3
+import hashlib
 
 ghafaslib_path = os.path.join(os.path.dirname(__file__), 'ghafaslib')
 sys.path.insert(0, ghafaslib_path)
@@ -69,6 +71,64 @@ def init_logger(level):
     logging.basicConfig(level=level, format=format, stream=sys.stderr)
     #filename='/tmp/myapp.log', filemode='w'
 
+
+class Database:
+    def __init__(self):
+        self.db_path = 'kursbuch.db'
+
+        db_missing = not os.path.exists(self.db_path)
+
+        self.conn = sqlite3.connect(self.db_path)
+
+        self.c = self.conn.cursor()
+
+        # Create table
+        if db_missing:
+            self.c.execute("""create table connections (
+                    hash text,
+                    station0 text, station1 text, time0 text, time1 text,
+                    duration text, trains text, changes integer
+                    )""")
+
+        # Save (commit) the changes
+        self.conn.commit()
+
+    def close(self):
+        # We can also close the cursor if we are done with it
+        c.close()
+
+    def add(self, c):
+        if self.contains(c.hash()):
+            return
+
+        # Insert a row of data
+        self.c.execute("""insert into connections values (
+                '%s','%s','%s','%s','%s','%s','%s',%s
+                )""" % (
+                    c.hash(),
+                    enc_html2utf8(c.st_dep),
+                    enc_html2utf8(c.st_arr),
+                    format_time('%d.%m.%y %H:%M', c.dep_time),
+                    format_time('%d.%m.%y %H:%M', c.arr_time),
+                    ','.join(c.trains),
+                    c.duration,
+                    c.changes,
+                ))
+        self.conn.commit()
+
+    def contains(self, hashcode):
+        self.c.execute("""select * from connections
+                where hash = '%s'
+                """ % hashcode
+                )
+        return self.c.fetchall()
+
+    def dump(self):
+        self.c.execute('select * from connections order by time0')
+        for row in self.c:
+            print row
+
+db = Database()
 
 
 def tuples2dict(ts):
@@ -235,6 +295,17 @@ class Connection:
         r = cmp(self.dep_time, other.dep_time)
         if r: return r
         return cmp(self.arr_time, other.arr_time)
+
+    def hash(self):
+        s = ' '.join((
+            enc_html2utf8(self.st_dep),
+            enc_html2utf8(self.st_arr),
+            format_time('%d.%m.%y;%H:%M', self.dep_time),
+            format_time('%d.%m.%y;%H:%M', self.arr_time),
+            ','.join(self.trains),
+            self.duration, self.changes,
+            ))
+        return hashlib.md5(s).hexdigest()
 
     def fields(self):
         return [self, self.fare_n, self.fare_s]
@@ -739,11 +810,14 @@ def _log_status(s):
 
 def _add_connection(c):
     sys.stdout.write(c.to_csv().encode('utf-8') + '\n')
+    db.add(c)
 
 def main():
     log_level = logging.INFO
 
-    opts, args = getopt.getopt(sys.argv[1:], 'abdq', [])
+    opts, args = getopt.getopt(sys.argv[1:], 'abdq', (
+            'db',
+            ))
 
     for o, v in opts:
         if o == '-a':
@@ -752,6 +826,9 @@ def main():
         elif o == '-b':
             global browse_results
             browse_results = True
+        elif o == '--db':
+            db.dump()
+            sys.exit()
         elif o == '-d':
             log_level = logging.DEBUG
         elif o == '-q':
