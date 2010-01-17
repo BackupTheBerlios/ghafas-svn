@@ -86,8 +86,15 @@ class Database:
         if db_missing:
             self.c.execute("""create table connections (
                     hash text,
-                    station0 text, station1 text, time0 text, time1 text,
+                    station0 text, station1 text,
+                    time0 text, time1 text,
                     duration text, trains text, changes integer
+                    )""")
+            self.c.execute("""create table prices (
+                    conn_hash text,
+                    price real,
+                    fare text,
+                    request_time real
                     )""")
 
         # Save (commit) the changes
@@ -97,23 +104,34 @@ class Database:
         # We can also close the cursor if we are done with it
         c.close()
 
-    def add(self, c):
-        if self.contains(c.hash()):
-            return
+    def add(self, conn):
+        if not self.contains(conn.connection.hash()):
+            c = conn.connection
+            self.c.execute("""insert into connections values (
+                    '%s','%s','%s','%s','%s','%s','%s',%s
+                    )""" % (
+                        c.hash(),
+                        enc_html2utf8(c.st_dep),
+                        enc_html2utf8(c.st_arr),
+                        format_time('%d.%m.%y %H:%M', c.dep_time),
+                        format_time('%d.%m.%y %H:%M', c.arr_time),
+                        ','.join(c.trains),
+                        c.duration,
+                        c.changes,
+                    ))
 
-        # Insert a row of data
-        self.c.execute("""insert into connections values (
-                '%s','%s','%s','%s','%s','%s','%s',%s
-                )""" % (
-                    c.hash(),
-                    enc_html2utf8(c.st_dep),
-                    enc_html2utf8(c.st_arr),
-                    format_time('%d.%m.%y %H:%M', c.dep_time),
-                    format_time('%d.%m.%y %H:%M', c.arr_time),
-                    ','.join(c.trains),
-                    c.duration,
-                    c.changes,
-                ))
+        ts = time.time()
+        a = (
+            conn.connection.hash(),
+            float(conn.fare_s),
+            ts,
+            )
+        self.c.execute("""insert into prices values (
+                ?,?,'N',?
+                )""", a)
+        self.c.execute("""insert into prices values (
+                ?,?,'D',?
+                )""", a)
         self.conn.commit()
 
     def contains(self, hashcode):
@@ -124,7 +142,12 @@ class Database:
         return self.c.fetchall()
 
     def dump(self):
+        print 'connections:'
         self.c.execute('select * from connections order by time0')
+        for row in self.c:
+            print row
+        print 'prices:'
+        self.c.execute('select * from prices order by price')
         for row in self.c:
             print row
 
@@ -207,6 +230,9 @@ class Fare:
         if self.conn_past:
             s += 'P'
         return ';'.join((f, s))
+
+    def __float__(self):
+        return self.fare
 
     def __str__(self):
         s = ''
@@ -832,7 +858,7 @@ def _log_status(s):
 
 def _add_connection(c):
     sys.stdout.write(c.to_csv().encode('utf-8') + '\n')
-    db.add(c.connection)
+    db.add(c)
 
 def main():
     log_level = logging.INFO
