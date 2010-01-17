@@ -286,9 +286,6 @@ class Connection:
         self.changes = changes
         self.trains = [s.strip() for s in trains.split(',')]
 
-        self.fare_n = Fare()
-        self.fare_s = Fare()
-
         self.url = None
 
     def __cmp__(self, other):
@@ -305,10 +302,7 @@ class Connection:
             ','.join(self.trains),
             self.duration, self.changes,
             ))
-        return hashlib.md5(s).hexdigest()
-
-    def fields(self):
-        return [self, self.fare_n, self.fare_s]
+        return hashlib.md5(unicode(s).encode('utf-8')).hexdigest()
 
     def markup(self):
         time_f = '<span foreground="blue"><b>%s</b></span>'
@@ -335,18 +329,43 @@ class Connection:
             format_time('%d.%m.%y;%H:%M', self.arr_time),
             ','.join(self.trains),
             self.duration, self.changes,
-            self.fare_n.to_csv(), self.fare_s.to_csv(),
             ))
 
     def __str__(self):
-        return ' > %-20s %s  %s\n   %-20s %s   %5s %-2s  %6s  %6s' % (
+        return ' > %-20s %s  %s\n   %-20s %s   %5s %-2s' % (
             enc_html2utf8(self.st_dep),
             format_time('%d.%m.%y %H:%M', self.dep_time),
             ','.join(self.trains),
             enc_html2utf8(self.st_arr),
             format_time('%d.%m.%y %H:%M', self.arr_time),
             self.duration, self.changes,
-            self.fare_n, self.fare_s,
+            )
+
+
+class PricedConnection:
+    def __init__(self):
+        self.connection = None
+        self.fare_n = Fare()
+        self.fare_s = Fare()
+
+    def __cmp__(self, other):
+        return cmp(self.connection, other.connection)
+
+    def fields(self):
+        return [self.connection, self.fare_n, self.fare_s]
+
+    def to_csv(self):
+        return ';'.join((
+            self.connection.to_csv(),
+            self.fare_n.to_csv(),
+            self.fare_s.to_csv(),
+            ))
+
+    def __str__(self):
+        return '%2s  %6s  %6s' % (
+            self.connection,
+            self.fare_n,
+            self.fare_s,
             )
 
 
@@ -357,6 +376,7 @@ class UnexpectedPage:
 
     def __str__(self):
         return 'UnexpectedPage: %s' % self.page
+
 
 class HtmlPage:
     def __init__(self, arg):
@@ -594,15 +614,17 @@ class TimetablePage(HtmlPage):
             )
         conn = [urllib2.unquote(i.replace('&nbsp;', '').strip()) for i in conn]
         conn = Connection(*conn)
+        conn.url = self.response.geturl()
 
         farePep = departure_row.find('td', attrs = {'class' : re_rarePep})
         fareStd = departure_row.find('td', attrs = {'class' : re_fareStd})
 
-        conn.fare_s = self.parse_fare(farePep)
-        conn.fare_n = self.parse_fare(fareStd)
+        pconn = PricedConnection()
+        pconn.connection = conn
+        pconn.fare_s = self.parse_fare(farePep)
+        pconn.fare_n = self.parse_fare(fareStd)
 
-        conn.url = self.response.geturl()
-        return conn
+        return pconn
 
     def parse_fare(self, content):
         if not content: return Fare()
@@ -697,7 +719,7 @@ def request_timetable_page(travelData, complete=True):
         open_browser(timetable_page.response.geturl())
 
     if complete:
-        while timetable_page.connections[-1].arr_time < travelData.arr_time:
+        while timetable_page.connections[-1].connection.arr_time < travelData.arr_time:
             if not timetable_page.link_later:
                 break
             logging.info('extend time table')
@@ -743,9 +765,9 @@ def query(travelData, f_log, f_init=None, f_add=None):
 
     timetable = result.connections
 
-    while timetable[-1].arr_time < travelData.arr_time:
+    while timetable[-1].connection.arr_time < travelData.arr_time:
         f_log('Run query...')
-        travelData.dep_time = timetable[-1].dep_time
+        travelData.dep_time = timetable[-1].connection.dep_time
 
         f_log('Resolve query...')
         result = request_timetable_page(travelData)
@@ -810,7 +832,7 @@ def _log_status(s):
 
 def _add_connection(c):
     sys.stdout.write(c.to_csv().encode('utf-8') + '\n')
-    db.add(c)
+    db.add(c.connection)
 
 def main():
     log_level = logging.INFO
