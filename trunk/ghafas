@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.5
+#!/usr/bin/env python
 
 # coding=utf-8
 # $HeadURL$
@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 try:
+    # Try to run a installed release.
     import ghafas
     ghafas.main()
 
@@ -38,10 +39,14 @@ except ImportError:
     import sys
     import os.path
 
+    # TODO: try to find python version which has pygtk installed.
+    interpreter = 'python2.6'
     apppath = sys.argv[0]
 
     if os.path.exists(apppath + '.py'):
-        err = os.system('python2.5 %s.py' % apppath)
+        cmd = '%s %s.py' % (interpreter, apppath)
+        print cmd
+        err = os.system(cmd)
         sys.exit(err)
 
 
