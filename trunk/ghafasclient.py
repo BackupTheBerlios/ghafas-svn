@@ -615,28 +615,31 @@ class TimetablePage(HtmlPage):
         return self.form.click('HWAI=~GLOBALAPPLICATION;&newTariff')
 
     def parse_connection(self, departure_row, arrival_row):
-        departure_cols = departure_row.findAll('td', recursive=False)
-        arrival_cols = arrival_row.findAll('td', recursive=False)
+        def get_col1(row, s):
+            return row.find('td', attrs = {'class' : re.compile(s)}).string.strip()
+
+        def get_col2(row, s):
+            return row.find('td', attrs = {'class' : re.compile(s)}).div.string.strip()
 
         conn = (
             # st_dep
-            departure_cols[0].contents[3].contents[0],
+            get_col2(departure_row, 'station'),
             # st_arr
-            arrival_cols[0].contents[0],
+            get_col1(arrival_row, 'station'),
             # dt_dep
-            departure_cols[1].contents[0].split()[1],
+            get_col1(departure_row, 'date$').split()[1],
             # tm_dep
-            departure_cols[3].contents[0],
+            get_col1(departure_row, 'time$'),
             # dt_arr
-            arrival_cols[1].contents[0].split()[1],
+            get_col1(arrival_row, 'date$').split()[1],
             # tm_arr
-            arrival_cols[3].contents[0],
+            get_col1(arrival_row, 'time$'),
             # duration
-            departure_cols[4].string,
+            get_col1(departure_row, 'duration'),
             # changes
-            departure_cols[5].string,
+            get_col1(departure_row, 'changes'),
             # trains
-            departure_cols[6].a.contents[-1],
+            get_col1(departure_row, 'products'),
             )
         conn = [urllib2.unquote(i.replace('&nbsp;', '').strip()) for i in conn]
         conn = Connection(*conn)
