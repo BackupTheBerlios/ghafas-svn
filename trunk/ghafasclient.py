@@ -232,7 +232,7 @@ class Fare:
         return ';'.join((f, s))
 
     def __float__(self):
-        return self.fare
+        return self.fare if self.fare else -1.0
 
     def __str__(self):
         s = ''
@@ -616,8 +616,12 @@ class TimetablePage(HtmlPage):
 
     def parse_connection(self, departure_row, arrival_row):
         def get_col1(row, s):
-            return row.find('td', attrs = {'class' : re.compile(s)}).string.strip()
-
+            col = row.find('td', attrs = {'class' : re.compile(s)})
+            if col.string:
+                return col.string.strip()
+            else:
+                return col.contents[-1].string.strip()
+                
         def get_col2(row, s):
             return row.find('td', attrs = {'class' : re.compile(s)}).div.string.strip()
 
@@ -672,7 +676,7 @@ class TimetablePage(HtmlPage):
             if incident.string == MARK_CONN_PAST:
                 conn_past = True
 
-        c = str(content).replace('&nbsp;', ' ')
+        c = str(content).replace('&nbsp;', ' ')        
         m = re_eur.search(c)
         if m:
             if '1.Klasse' in c:
@@ -855,6 +859,17 @@ testTravelData2 = TravelData(
         clazz = 1
         )
 
+
+# international connection.
+testTravelData3 = TravelData(
+        'Stuttgart',
+        'Paris',
+        (datetime.date.today()+datetime.timedelta(14)).strftime('%d.%m.%Y'),
+        '08:00',
+        (datetime.date.today()+datetime.timedelta(14)).strftime(''),
+        '14:00',
+        travellers = testTravellers
+        )
 
 def _log_status(s):
     logging.info(s)
