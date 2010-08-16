@@ -166,10 +166,15 @@ def sleep():
     time.sleep(t)
 
 def open_browser(link):
+    import platform
+    
     logging.info('open link in browser: %s' % link)
     xdgopen = '/usr/bin/xdg-open'
     if os.path.exists(xdgopen):
         cmd = xdgopen
+    elif platform.system().lower() == 'windows':
+        # Will open the default browser:
+        cmd = "explorer"
     else:
         # mac os x
         cmd = 'open'
@@ -621,7 +626,7 @@ class TimetablePage(HtmlPage):
                 return col.string.strip()
             else:
                 return col.contents[-1].string.strip()
-                
+
         def get_col2(row, s):
             return row.find('td', attrs = {'class' : re.compile(s)}).div.string.strip()
 
@@ -676,7 +681,7 @@ class TimetablePage(HtmlPage):
             if incident.string == MARK_CONN_PAST:
                 conn_past = True
 
-        c = str(content).replace('&nbsp;', ' ')        
+        c = str(content).replace('&nbsp;', ' ')
         m = re_eur.search(c)
         if m:
             if '1.Klasse' in c:
