@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.5
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # $HeadURL$
@@ -94,7 +94,7 @@ class Database:
                     conn_hash text,
                     price real,
                     fare text,
-                    request_time real
+                    request_time text
                     )""")
 
         # Save (commit) the changes
@@ -113,18 +113,17 @@ class Database:
                         c.hash(),
                         enc_html2utf8(c.st_dep),
                         enc_html2utf8(c.st_arr),
-                        format_time('%d.%m.%y %H:%M', c.dep_time),
-                        format_time('%d.%m.%y %H:%M', c.arr_time),
-                        ','.join(c.trains),
+                        format_time2(c.dep_time),
+                        format_time2(c.arr_time),
                         c.duration,
+                        ','.join(c.trains),
                         c.changes,
                     ))
 
-        ts = time.time()
         a = (
             conn.connection.hash(),
             float(conn.fare_s),
-            ts,
+            format_time2(time.time()),
             )
         self.c.execute("""insert into prices values (
                 ?,?,'N',?
@@ -167,7 +166,7 @@ def sleep():
 
 def open_browser(link):
     import platform
-    
+
     logging.info('open link in browser: %s' % link)
     xdgopen = '/usr/bin/xdg-open'
     if os.path.exists(xdgopen):
@@ -199,6 +198,9 @@ def parse_time(d, t):
 
 def format_time(f, t):
     return time.strftime(f, time.localtime(t))
+
+def format_time2(t):
+    return time.strftime('%y%m%d-%H%M', time.localtime(t))
 
 def convert_encoding(s, src='utf-8', dst='iso-8859-1'):
     return s.decode(src).encode(dst)
